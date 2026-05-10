@@ -1,0 +1,7 @@
+interface:
+  display_name: "Engineering Resilience"
+  short_description: "Resilience and async doctrine"
+  default_prompt: "Use $engineering-resilience for retries, timeouts, async work, idempotency, and concurrency changes."
+
+policy:
+  allow_implicit_invocation: false

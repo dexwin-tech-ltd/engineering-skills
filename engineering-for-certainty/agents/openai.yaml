@@ -1,0 +1,7 @@
+interface:
+  display_name: "Engineering for Certainty"
+  short_description: "Core certainty-first coding doctrine"
+  default_prompt: "Use $engineering-for-certainty as the core doctrine for this code change."
+
+policy:
+  allow_implicit_invocation: true

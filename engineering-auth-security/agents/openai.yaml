@@ -1,0 +1,7 @@
+interface:
+  display_name: "Engineering Auth Security"
+  short_description: "Auth and session security doctrine"
+  default_prompt: "Use $engineering-auth-security for auth, sessions, cookies, CSRF, and permission-boundary changes."
+
+policy:
+  allow_implicit_invocation: false

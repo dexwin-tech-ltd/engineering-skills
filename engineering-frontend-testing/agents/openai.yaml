@@ -1,0 +1,7 @@
+interface:
+  display_name: "Engineering Frontend Testing"
+  short_description: "Frontend testing and accessibility doctrine"
+  default_prompt: "Use $engineering-frontend-testing for web/mobile test stacks, accessibility, and E2E coverage."
+
+policy:
+  allow_implicit_invocation: false

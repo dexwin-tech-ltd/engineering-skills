@@ -1,2 +1,27 @@
 # eng-for-certainty
-Installable engineering skill family synced from seyofori/skills.
+
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `0c5a558b9e7b5743be8a17f1935b19ce257a8550`.
+
+Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
+
+## Included skills
+
+- `engineering-for-certainty`
+- `engineering-observability`
+- `engineering-resilience`
+- `engineering-auth-security`
+- `engineering-frontend-testing`
+
+## Install
+
+Install the skill family:
+
+```bash
+npx skills add seyofori/eng-for-certainty
+```
+
+Install an individual companion skill:
+
+```bash
+npx skills add seyofori/eng-for-certainty@engineering-resilience
+```
