@@ -28,7 +28,7 @@ Apply these only when relevant:
 
 - Language: TypeScript.
 - Package manager: pnpm.
-- Web frontend: React + Vite + React Router + Tailwind.
+- Web frontend: React + Vite + TanStack Router + Tailwind.
 - Mobile: Expo React Native.
 - Backend: Fastify.
 - Validation: Zod.
