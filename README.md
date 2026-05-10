@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `cdf22b09c5d33780b388d951637bd56ddd1cbb9d`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `cb9f0d1671e0d5dc81be16b1b4d8133c0bb9bc22`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 

@@ -31,7 +31,9 @@ Apply these only when relevant:
 - Web frontend: React + Vite + TanStack Router + Tailwind.
 - Mobile: Expo React Native.
 - Form UI library (web/mobile): TanStack Form.
+- Server state and query orchestration (web/mobile): TanStack Query.
 - Backend: Fastify.
+- Database queries: Drizzle.
 - Validation: Zod.
 - Result library: neverthrow.
 - Path aliases: prefer `@` and `#` aliases over deep relative imports when the repo supports them; add aliases for new projects.
@@ -64,6 +66,7 @@ Keep adapters thin and domain logic explicit.
 - Routes/controllers/adapters handle auth checks, parsing, validation, mapping, and response presentation only.
 - Domain services contain business rules and return `Result<T, E>` or `ResultAsync<T, E>`.
 - Repositories own persistence access and validate database records at the persistence boundary.
+- Prefer Drizzle as the default database query package for new work unless the repo already standardizes on another persistence stack.
 - Cross-app or cross-feature logic belongs in shared packages/modules, not copied across apps.
 - Do not read `process.env` or global config inside business logic. Inject configuration explicitly.
 - Avoid hidden global state; prefer pure functions and explicit dependencies.
@@ -88,6 +91,7 @@ Use the same certainty rules in UI code.
 - Views are presentational: explicit props in, callbacks out, minimal local logic.
 - Prefer reducers over multiple related `useState` calls, especially for transition-heavy flows or 2+ related state values.
 - API calls live in API/client adapter modules only. Components, screens, routes, stores, and hooks must not call `fetch`, `axios`, or raw clients directly.
+- Prefer TanStack Query as the default server-state/query library for both web and mobile projects.
 - Hooks call API adapters and expose discriminated status unions such as `idle | loading | error | loaded`; avoid flat `isLoading`/`isError` state leaking through the app.
 - Prefer TanStack Form as the default form-state and form-UI orchestration library for both web and mobile projects.
 - Validate all form inputs with Zod schemas. Reuse field schemas across blur validation and submit/step validation.
@@ -128,7 +132,7 @@ For Fastify projects:
 - Do not hand-author JSON Schema for API schemas except for unavoidable framework gaps.
 - Use one dedicated response schema per status code.
 - Validate response payloads before sending. Prefer one reusable helper that validates against the Zod schema and prevents invalid output from leaving the boundary.
-- For database migrations, edit schema source files and run the generator. Do not hand-edit generated migration metadata.
+- For Drizzle-backed database migrations, edit schema source files and run the generator. Do not hand-edit generated migration metadata.
 
 ## Frontend Build Sequence
 
@@ -140,7 +144,7 @@ For web or mobile features:
 4. Hook tests for query/mutation behavior and status unions.
 5. Flow tests for reducer transitions and orchestration.
 6. View/component tests for rendering, permissions, success states, and error states.
-7. Implementation from API adapter inward to hook, flow, and view.
+7. Implementation from API adapter inward to TanStack Query hook, flow, and view.
 8. Apply `$engineering-frontend-testing` when the work touches platform-specific unit-test stacks, accessibility, or E2E coverage.
 
 ## Review Checklist
