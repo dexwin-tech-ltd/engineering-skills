@@ -30,6 +30,7 @@ Apply these only when relevant:
 - Package manager: pnpm.
 - Web frontend: React + Vite + TanStack Router + Tailwind.
 - Mobile: Expo React Native.
+- Form UI library (web/mobile): TanStack Form.
 - Backend: Fastify.
 - Validation: Zod.
 - Result library: neverthrow.
@@ -88,6 +89,7 @@ Use the same certainty rules in UI code.
 - Prefer reducers over multiple related `useState` calls, especially for transition-heavy flows or 2+ related state values.
 - API calls live in API/client adapter modules only. Components, screens, routes, stores, and hooks must not call `fetch`, `axios`, or raw clients directly.
 - Hooks call API adapters and expose discriminated status unions such as `idle | loading | error | loaded`; avoid flat `isLoading`/`isError` state leaking through the app.
+- Prefer TanStack Form as the default form-state and form-UI orchestration library for both web and mobile projects.
 - Validate all form inputs with Zod schemas. Reuse field schemas across blur validation and submit/step validation.
 - Extract and display user-facing validation messages; never expose raw Zod errors in UI.
 - Use exhaustive matching for non-boolean discriminants. Avoid nested ternaries; use reducer transitions or pattern matching.
