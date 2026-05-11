@@ -38,6 +38,37 @@ Apply these only when relevant:
 - Result library: neverthrow.
 - Path aliases: prefer `@` and `#` aliases over deep relative imports when the repo supports them; add aliases for new projects.
 
+## Linting and Formatting
+
+- For TypeScript/JavaScript projects that do not already standardize on another tool, prefer ESLint for linting and Prettier for formatting.
+- Preserve the repo's existing toolchain when one already exists; do not migrate a repo from Biome, dprint, Rome, Standard, or another established formatter/linter unless the user explicitly asks.
+- Use ESLint for correctness, maintainability, and bug-prevention rules. Use Prettier for layout and whitespace only. Do not duplicate formatting rules in ESLint.
+- Prefer ESLint flat config for new projects.
+- For TypeScript projects, prefer `typescript-eslint` for parsing and TypeScript-aware rules.
+- Prefer repo scripts that make the distinction explicit: `lint`, `lint:fix`, `format`, and `format:check`.
+
+### Recommended ESLint Defaults
+
+- `@typescript-eslint/no-unused-vars` with `_`-prefixed unused parameters/variables ignored when intentionally unused.
+- `@typescript-eslint/no-floating-promises`.
+- `@typescript-eslint/no-misused-promises`.
+- `@typescript-eslint/consistent-type-imports`.
+- `@typescript-eslint/switch-exhaustiveness-check`.
+- `eqeqeq`.
+- `curly`.
+- `prefer-const`.
+
+### Recommended Prettier Defaults
+
+- Keep Prettier opinionated and minimal; avoid style bikeshedding.
+- For new projects without an existing convention, default to:
+  - `printWidth: 100`
+  - `singleQuote: true`
+  - `trailingComma: "all"`
+  - `semi: true`
+  - `arrowParens: "always"`
+- If a repo already has an established formatting style, keep that style instead of reformatting unrelated code.
+
 ## First Move
 
 Before editing code:
@@ -161,4 +192,5 @@ Before declaring work complete, verify:
 - Relevant companion skills were applied when work touched observability, resilience, auth/security, or frontend testing/accessibility.
 - New shared contracts or logic live in shared packages/modules when used across boundaries.
 - Imports follow repo aliases (`@`, `#`) instead of brittle deep relative paths where possible.
+- Formatter and linter expectations are satisfied for the changed scope; ESLint owns code-quality rules and Prettier owns formatting.
 - Any skipped doctrine rule has a concrete, documented reason.
