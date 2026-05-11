@@ -69,6 +69,14 @@ Apply these only when relevant:
   - `arrowParens: "always"`
 - If a repo already has an established formatting style, keep that style instead of reformatting unrelated code.
 
+### Recommended Git Hook Defaults
+
+- Prefer local git hooks or equivalent local automation for fast feedback when the repo supports them.
+- Pre-commit should run formatting and linting against staged files, plus the unit-test command when the repo's unit suite is reliably fast enough for commit-time feedback.
+- Pre-push should run the broader test gates: full unit tests, integration tests, and E2E tests when those commands already exist in the repo.
+- Prefer explicit repo scripts for hook entry points, such as `test:unit`, `test:integration`, and `test:e2e`.
+- Do not silently skip missing commands. Either wire hooks only to commands that exist or fail with a clear message so the repo's guarantees stay trustworthy.
+
 ## First Move
 
 Before editing code:
@@ -136,6 +144,7 @@ TDD is mandatory by default.
 
 - For new features and behavior changes: write the failing test first, implement the minimum to pass, then refactor with tests green.
 - If TDD is intentionally skipped, state the concrete reason before implementation.
+- When setting up repo automation, prefer commit-time hooks for fast checks and push-time hooks for broader suites, while keeping CI as the authoritative full-environment validation.
 - Cover success paths, failure paths, validation failures, error variants, and exhaustive mapping.
 - For API endpoints, test status codes, response payloads, and actionable error details.
 - API integration tests are mandatory for endpoint changes. Exercise the real app wiring end-to-end through route, service, and persistence layers; mock only true external systems at the boundary.
@@ -193,4 +202,5 @@ Before declaring work complete, verify:
 - New shared contracts or logic live in shared packages/modules when used across boundaries.
 - Imports follow repo aliases (`@`, `#`) instead of brittle deep relative paths where possible.
 - Formatter and linter expectations are satisfied for the changed scope; ESLint owns code-quality rules and Prettier owns formatting.
+- Hook-driven local validation matches repo policy for the changed scope: pre-commit runs staged format/lint plus unit tests, and pre-push runs unit, integration, and E2E tests when the repo defines those commands.
 - Any skipped doctrine rule has a concrete, documented reason.
