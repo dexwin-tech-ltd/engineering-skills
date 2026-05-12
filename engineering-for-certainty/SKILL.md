@@ -21,7 +21,9 @@ Apply these only when relevant:
 
 - Use `$engineering-observability` for centralized logging, Better Stack setup, correlation/request IDs, sanitization/redaction, and frontend log ingestion.
 - Use `$engineering-resilience` for external-call timeouts/retries, mutation safety, concurrency, idempotency, queues, cron, webhooks, and async processing.
-- Use `$engineering-auth-security` for cookies, sessions, CSRF, token handling, auth boundaries, and permission enforcement.
+- Use `$engineering-auth-security` for cookies, sessions, CSRF, token handling,
+  auth boundaries, permission enforcement, and shared permission-registry
+  conventions.
 - Use `$engineering-frontend-testing` for web/mobile test-stack choices, accessibility quality bars, and web/mobile E2E doctrine.
 
 ## Preferred Defaults

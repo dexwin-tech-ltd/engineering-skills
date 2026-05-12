@@ -30,6 +30,22 @@ Apply this skill when the work includes:
   role-name checks or boolean capability flags.
 - Define permission keys in a shared package so backend, frontend, and shared
   contracts can depend on the same source of truth.
+- In repos with a dedicated permissions package, define permissions as a nested
+  resource/action registry in the shape
+  `{ resource: { action: "resource.action" } }`.
+- Keep the top-level resource key, nested action key, and string literal
+  aligned so the registry stays self-describing and easy to audit. Prefer
+  `role: { create: "role.create" }`, not flattened maps, renamed aliases, or
+  values that drift from the canonical permission name.
+- Export shared permission registries as `as const` so callers get stable
+  literal types from the same source of truth.
+- Example:
+  ```ts
+  export const PERMISSIONS = {
+    role: { create: "role.create", update: "role.update" },
+    user: { create: "user.create" },
+  } as const;
+  ```
 - Prefer seeded system roles plus explicit custom roles when the product needs
   role management. Seeded roles should stay system-managed and immutable unless
   the repo intentionally models a controlled cloning or migration flow.
@@ -55,7 +71,8 @@ Apply this skill when the work includes:
 - Test login, logout, refresh, and expired-session behavior when touched.
 - Test backend permission enforcement, not only UI gating.
 - Test seeded-role protection, custom-role behavior, and shared permission-key
-  validation when role management changes.
+  and registry-shape validation when role management or permission-registry
+  changes.
 - Test policy-registry resolution and both `all_of` and `any_of` policy
   evaluation when authorization rules change.
 - Test CSRF behavior whenever cookie-based auth changes.
