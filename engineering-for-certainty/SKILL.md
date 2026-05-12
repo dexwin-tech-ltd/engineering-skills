@@ -45,6 +45,7 @@ Apply these only when relevant:
 - Use ESLint for correctness, maintainability, and bug-prevention rules. Use Prettier for layout and whitespace only. Do not duplicate formatting rules in ESLint.
 - Prefer ESLint flat config for new projects.
 - For TypeScript projects, prefer `typescript-eslint` for parsing and TypeScript-aware rules.
+- In monorepos, ESLint and Prettier should be wired to work consistently across apps and packages. Prefer shared root config or shared config packages over drifting per-package defaults.
 - Prefer repo scripts that make the distinction explicit: `lint`, `lint:fix`, `format`, and `format:check`.
 
 ### Recommended ESLint Defaults
@@ -110,7 +111,51 @@ Keep adapters thin and domain logic explicit.
 - Do not read `process.env` or global config inside business logic. Inject configuration explicitly.
 - Avoid hidden global state; prefer pure functions and explicit dependencies.
 - Model mutually exclusive state as discriminated unions, not scattered booleans.
+- For closed sets of values, prefer enums or const-backed literal unions over
+  booleans and unconstrained strings. Use discriminated literal variants where
+  exhaustive matching is required.
 - Exhaustively handle discriminated unions. Adding a variant should break compilation until every branch is handled.
+- Organize backend, frontend, and shared packages by domain ownership rather than broad technical buckets.
+- Shared packages such as contracts should mirror domain ownership rather than becoming global dumping grounds.
+- Default to kebab-case for non-component filenames. React component files should use the component name as the filename.
+
+### Backend Module Structure
+
+- For API backends, organize code by domain modules under
+  `apps/api/src/modules`.
+- Domain directory names should be plural and kebab-case where applicable.
+- Do not default to top-level file-type buckets inside modules such as
+  `routes`, `services`, or `repositories`. Prefer domain-local files such as:
+  - `[domain].route.ts`
+  - `[domain].service.ts`
+  - `[domain].repository.ts`
+  - `[domain].errors.ts`
+- Normalize non-conforming filenames during structural refactors, such as
+  snake_case to kebab-case.
+- Keep access-control or identity modules focused on authentication,
+  authorization, session, and identity-lifecycle concerns.
+- Business-domain behavior should be owned by its business module even when
+  exposed through access-control-adjacent routes or entrypoints.
+- Cross-domain workflows belong in first-class process modules under
+  `modules`; do not force cross-domain orchestration into a single business
+  domain module.
+- Allow helper files only when necessary. Cross-module helpers belong in shared
+  `src/lib`, module-specific helpers may live in module-local `lib` folders,
+  and tiny one-off helpers should stay in the owning domain file.
+- Keep wiring in a dedicated bootstrap layer. `app.ts` stays thin and focused
+  on server setup and module route registration.
+- Register one route entrypoint per module in app wiring.
+- Use strict constructor or factory dependency injection only.
+- Build one typed `deps` object at startup and inject dependencies into module
+  factories.
+- Do not use Fastify decorate as a dependency container.
+- Keep request-scoped context explicit in function parameters.
+- Do not read global config or environment inside services or repositories.
+- Instantiate repositories once with `db` at startup.
+- Repositories should expose `withTransaction(tx)` to produce transaction-scoped
+  instances with the same interface.
+- Services own transaction boundaries.
+- Keep cross-domain orchestration explicit and deterministic.
 
 ## Errors and Results
 
@@ -120,11 +165,29 @@ Keep adapters thin and domain logic explicit.
 - Every error variant should be tested and mapped exhaustively at the boundary.
 - HTTP/API error responses should include actionable, sanitized `details` when the client can use them to fix or understand the failure.
 - Unknown infrastructure failures should be normalized into explicit error variants such as `service_unavailable`.
+- Each module owns its domain errors in `[domain].errors.ts`.
+- Cross-cutting errors belong in shared infrastructure errors.
+- Continue using shared infrastructure error variants for technical failures,
+  such as `service_unavailable`.
+- Cross-module authorization or permission failures belong in shared
+  infrastructure or authorization error layers, not a single business module.
+- Define module errors with exported variant constants, named error types, and
+  small factory helpers in `[domain].errors.ts`.
+- Prefer discriminated `type` variants for service and repository errors; do not
+  scatter inline `{ type: "..." as const }` shapes across the codebase.
 
 ## Frontend and Mobile Structure
 
 Use the same certainty rules in UI code.
 
+- Organize frontend code by domain modules as well, not broad file-type buckets
+  as the default. Screens, flows, views, hooks, client adapters, and tests
+  should stay aligned to the same domain ownership model where the repo
+  structure allows it.
+- Shared packages such as contracts should use domain folders with per-endpoint,
+  per-feature, or per-workflow files plus domain-level exports.
+- Cross-domain UI or app workflows should live in explicit flow or process
+  modules rather than being buried inside a single domain component or screen.
 - Screens/pages/routes stay thin. They render one flow/container component and avoid branching orchestration logic.
 - Flows own orchestration: data loading, transitions, reducer dispatch, navigation side effects, and exhaustive state matching.
 - Views are presentational: explicit props in, callbacks out, minimal local logic.
@@ -151,6 +214,11 @@ TDD is mandatory by default.
 - When work touches observability, resilience, auth/security, or frontend testing/accessibility, apply the relevant companion skill and test those behaviors explicitly.
 - Prefer test names that state given/when/then behavior. If the repo has a local test naming style, follow it.
 - For debugging: first build a deterministic repro loop. Convert the minimized repro into a regression test before fixing when a valid seam exists.
+- Test file naming should mirror production file naming, such as
+  `[domain].route.test.ts`, `[domain].service.test.ts`, and
+  `[domain].repository.test.ts`.
+- Structural migrations must preserve behavior and prove that with tests.
+- Keep test structure aligned with the real module structure.
 
 ## Backend Build Sequence
 
@@ -165,6 +233,15 @@ For endpoint or service work:
 7. Exhaustive error mapping and response validation.
 8. Mandatory integration tests for key behavior and failure cases.
 
+- Contracts in `packages/contracts` should align with domain ownership.
+- Prefer per-endpoint contract files within a domain folder plus domain-level
+  exports.
+- Keep existing endpoint paths stable during structural migrations.
+- Keep behavior stable during structural migrations: no response, status-code,
+  or message drift.
+- For large structural refactors, prefer codemod-style file moves and import
+  rewrites first, then targeted manual cleanup.
+
 For Fastify projects:
 
 - Declare request/response schemas in route metadata for OpenAPI when the project supports it.
@@ -172,7 +249,7 @@ For Fastify projects:
 - Do not hand-author JSON Schema for API schemas except for unavoidable framework gaps.
 - Use one dedicated response schema per status code.
 - Validate response payloads before sending. Prefer one reusable helper that validates against the Zod schema and prevents invalid output from leaving the boundary.
-- For Drizzle-backed database migrations, edit schema source files and run the generator. Do not hand-edit generated migration metadata.
+- For Drizzle-backed database migrations, edit schema source files and run the generator. Never hand-edit generated migration files or generated migration metadata.
 
 ## Frontend Build Sequence
 
@@ -204,3 +281,9 @@ Before declaring work complete, verify:
 - Formatter and linter expectations are satisfied for the changed scope; ESLint owns code-quality rules and Prettier owns formatting.
 - Hook-driven local validation matches repo policy for the changed scope: pre-commit runs staged format/lint plus unit tests, and pre-push runs unit, integration, and E2E tests when the repo defines those commands.
 - Any skipped doctrine rule has a concrete, documented reason.
+- Relevant unit and integration tests pass for the changed scope.
+- No stale imports remain to old module paths or legacy naming.
+- App wiring imports only module route entrypoints.
+- Module files and directories follow the agreed naming conventions.
+- Domain ownership stays consistent across backend, frontend, and shared
+  packages for the changed scope.
