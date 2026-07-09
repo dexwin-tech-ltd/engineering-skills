@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `9069de77ab36ea1e6694ed251337f7ab723902bd`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `de787086a7ffe81c5eaa4b066a37898b2c05c608`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -10,7 +10,10 @@ Do not edit this repository directly. Make changes in `seyofori/skills` and let 
 - `engineering-observability`
 - `engineering-resilience`
 - `engineering-auth-security`
-- `engineering-frontend-testing`
+- `engineering-frontend`
+- `code-review`
+- `issue-review`
+- `grill-with-docs`
 
 ## Install
 
@@ -24,4 +27,16 @@ Install an individual companion skill:
 
 ```bash
 npx skills add seyofori/eng-for-certainty@engineering-resilience
+```
+
+Install issue review:
+
+```bash
+npx skills add seyofori/eng-for-certainty@issue-review
+```
+
+Install docs-backed grilling:
+
+```bash
+npx skills add seyofori/eng-for-certainty@grill-with-docs
 ```

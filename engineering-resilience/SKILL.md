@@ -19,15 +19,26 @@ Apply this skill when the work includes:
 
 ## Doctrine
 
+### Timeouts and Cancellation
+
 - Every outbound HTTP, queue, or third-party call must define an explicit timeout.
 - Propagate cancellation and `AbortSignal` semantics through adapters when the platform supports them.
-- Retry only safe or idempotent operations.
+
+### Retry Rules
+
+- Retry only operations that are idempotent or explicitly marked as safe, such as operations that do not introduce additional side effects on repeated execution.
 - Retries must be bounded, use exponential backoff with jitter, and define a clear stop condition.
 - Do not hide infinite retries, silent fallbacks, or background retry loops inside adapters.
+
+### Error Mapping and Write Safety
+
 - Timeouts, cancellations, rate limits, and upstream failures must be mapped into explicit infrastructure error variants instead of leaking transport-library errors.
 - Multi-step writes that must succeed together require explicit transaction boundaries.
 - Duplicate-prone externally triggered writes require idempotency protection.
 - Concurrency behavior must be explicit. Use transactions, locks, optimistic concurrency, unique constraints, or equivalent safeguards instead of assuming single-writer behavior.
+
+### Async Processing
+
 - Jobs, queues, cron tasks, and webhooks must validate payloads at their boundary with Zod.
 - Async handlers must be idempotent where retries or duplicate delivery are possible.
 - Retry policy, backoff strategy, and dead-letter behavior must be explicit for async work.

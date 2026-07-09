@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Staff-level code review checklist"
+  default_prompt: "Use $code-review to perform a staff-level review of this change."

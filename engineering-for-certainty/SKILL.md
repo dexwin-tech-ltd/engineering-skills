@@ -1,19 +1,24 @@
 ---
 name: engineering-for-certainty
-description: Core certainty-first coding doctrine for software projects. Use by default for implementation, review, debugging, planning, and code generation; pair with companion skills when work touches observability, resilience, auth/security, or frontend testing.
+description: Core certainty-first coding doctrine for software projects. Use by default for implementation, review, debugging, planning, and code generation; pair with companion skills when work touches observability, resilience, auth/security, or frontend engineering.
 ---
 
 # Engineering for Certainty
 
-Use this skill by default for coding projects. It is the core doctrine: keep the defaults broadly applicable, preserve the repo's existing stack unless the user asks to migrate, and pull in companion skills only when the work touches those specialized areas.
+Use this skill by default for coding projects. It is the core doctrine for implementation, review, debugging, planning, and code generation. Keep the defaults broadly applicable. Preserve the repo's existing stack and conventions by default. If the task is already a structural refactor, keep behavior stable while normalizing naming and layout within the refactored scope, even when the legacy naming convention differs. Apply companion skills only when the work directly modifies files in those areas or explicitly integrates with their APIs.
 
 ## Priorities
 
-- Always validate boundaries.
-- Keep adapters thin and business logic explicit.
-- Use `Result<T, E>` / `ResultAsync<T, E>` for expected failures.
-- Write the right tests first.
-- Apply specialized companion skills only when the work touches those areas.
+Resolve instruction conflicts in this order, top to bottom.
+
+1. Preserve existing repo conventions unless the user asked for a migration.
+2. If the task is already a structural refactor, keep behavior stable while normalizing naming and layout within the refactored scope.
+3. Apply specialized companion skills only when the work directly modifies files in those areas or explicitly integrates with their APIs.
+4. Always validate boundaries.
+5. Keep adapters thin and business logic explicit.
+6. Use `Result<T, E>` / `ResultAsync<T, E>` for expected failures.
+7. Write tests for critical paths and expected failures first.
+8. If a case is still unclear, prefer the most conservative interpretation that preserves existing behavior and ask for clarification before changing architecture or stack.
 
 ## Companion Skills
 
@@ -22,9 +27,10 @@ Apply these only when relevant:
 - Use `$engineering-observability` for centralized logging, Better Stack setup, correlation/request IDs, sanitization/redaction, and frontend log ingestion.
 - Use `$engineering-resilience` for external-call timeouts/retries, mutation safety, concurrency, idempotency, queues, cron, webhooks, and async processing.
 - Use `$engineering-auth-security` for cookies, sessions, CSRF, token handling,
-  auth boundaries, permission enforcement, and shared permission-registry
+  auth boundaries, centralized Fastify auth-plugin boundaries, typed actor
+  context propagation, permission enforcement, and shared permission-registry
   conventions.
-- Use `$engineering-frontend-testing` for web/mobile test-stack choices, accessibility quality bars, and web/mobile E2E doctrine.
+- Use `$engineering-frontend` for frontend architecture, API integration, forms, accessibility quality bars, and web/mobile testing doctrine.
 
 ## Preferred Defaults
 
@@ -42,8 +48,8 @@ Apply these only when relevant:
 
 ## Linting and Formatting
 
-- For TypeScript/JavaScript projects that do not already standardize on another tool, prefer ESLint for linting and Prettier for formatting.
-- Preserve the repo's existing toolchain when one already exists; do not migrate a repo from Biome, dprint, Rome, Standard, or another established formatter/linter unless the user explicitly asks.
+- For new projects or TypeScript/JavaScript projects that do not already standardize on another tool, prefer ESLint for linting and Prettier for formatting.
+- Preserve the repo's existing toolchain when one already exists; this rule overrides the ESLint/Prettier default for established repos. Do not migrate a repo from Biome, dprint, Rome, Standard, or another established formatter/linter unless the user explicitly asks.
 - Use ESLint for correctness, maintainability, and bug-prevention rules. Use Prettier for layout and whitespace only. Do not duplicate formatting rules in ESLint.
 - Prefer ESLint flat config for new projects.
 - For TypeScript projects, prefer `typescript-eslint` for parsing and TypeScript-aware rules.
@@ -80,6 +86,46 @@ Apply these only when relevant:
 - Prefer explicit repo scripts for hook entry points, such as `test:unit`, `test:integration`, and `test:e2e`.
 - Do not silently skip missing commands. Either wire hooks only to commands that exist or fail with a clear message so the repo's guarantees stay trustworthy.
 
+## Version Control and Releases
+
+Use explicit version-control semantics so project history communicates intent and release impact.
+
+- Preserve the repo's established branch, commit, and release conventions when they exist.
+- For new repos or repos without a stated convention, prefer Conventional Commits, conventional branch names, and SemVer.
+- Treat commit messages, branch names, and version bumps as part of the engineering contract. They should help future maintainers understand what changed, why it changed, and whether consumers must react.
+
+### Conventional Commits
+
+- Use Conventional Commits for human-authored commits by default:
+  `<type>(<scope>): <description>`.
+- Prefer these commit types unless the repo defines another set:
+  `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`, `perf`, `style`, `chore`, and `revert`.
+- Use a scope when it clarifies ownership, such as `feat(auth): ...`, `fix(api): ...`, or `docs(issue-review): ...`.
+- Keep the description imperative and concrete. Prefer "validate invite token expiry" over "updates auth stuff".
+- Mark breaking changes explicitly with `!` after the type or scope and explain the impact in the body, for example `feat(api)!: require actor context`.
+- Use commit bodies for rationale, migration notes, validation performed, and issue references when the subject alone is not enough.
+- Do not hide behavior changes inside `chore`, `refactor`, or `style` commits. If runtime behavior changes, use the type that describes the user or system impact.
+
+### Conventional Branching
+
+- Use conventional branch names for new branches when the repo does not specify another pattern:
+  `<type>/<short-kebab-description>`.
+- Align branch type with the dominant intent: `feat/`, `fix/`, `docs/`, `refactor/`, `test/`, `build/`, `ci/`, `perf/`, `chore/`, or `release/`.
+- Keep branch names short, lowercase, and kebab-case. Include a ticket or issue key only when the repo uses one, such as `fix/pm-123-token-expiry`.
+- When a change mixes unrelated intents, split the work instead of using a vague branch such as `misc` or `updates`.
+- For Codex-created branches, preserve the platform-required prefix when present, then apply the conventional name after it, such as `codex/fix/token-expiry`.
+
+### Semantic Versioning
+
+- For packages, public APIs, plugins, CLIs, schemas, SDKs, and shared contracts, follow SemVer unless the repo has a documented alternative.
+- Increment `MAJOR` for breaking changes, including removed APIs, incompatible schema changes, changed error contracts, changed CLI flags, or behavior that existing consumers reasonably depend on.
+- Increment `MINOR` for backward-compatible features, new optional fields, new endpoints, new commands, or new capabilities.
+- Increment `PATCH` for backward-compatible fixes, documentation corrections shipped with a package, internal refactors with no consumer-visible behavior change, and compatible dependency or build fixes.
+- Treat database migrations, generated contracts, and exported TypeScript types as release-impacting surfaces when downstream consumers depend on them.
+- Record migration guidance for every breaking change. The guidance should state who is affected, what they must change, and how to verify the migration.
+- Do not bump versions mechanically. Choose the bump from the highest-impact change in the release.
+- In monorepos, follow the repo's versioning model. If packages are independently versioned, bump only affected packages and any dependents whose published contract changes.
+
 ## First Move
 
 Before editing code:
@@ -88,6 +134,45 @@ Before editing code:
 2. Identify the repo's equivalents for contracts, adapters/routes/controllers, services/domain logic, repositories/persistence, hooks, flows, views, and tests.
 3. For non-trivial work, perform a gap review before implementation. Resolve missing scope, contracts, errors, persistence behavior, orchestration, UI states, and test strategy.
 4. Do not implement from an inconsistent plan. Update the plan or state the unresolved gap first.
+
+## Mid-Implementation Discoveries
+
+During implementation, do not silently expand the plan. Classify discoveries as
+mechanical, material, or blocking.
+
+Mechanical discoveries may be handled without user confirmation when they
+preserve the issue's intent, behavior, architecture, and scope. Examples include
+import fixes, local naming alignment, formatting, adapting to an existing
+equivalent helper, or adding a narrowly required test fixture.
+
+Material discoveries require pausing before further implementation. Pause when
+the work would:
+
+- Change acceptance criteria, user-visible behavior, public API contracts,
+  schemas, migrations, permissions, auth behavior, error contracts,
+  observability behavior, dependency choices, or test strategy.
+- Touch modules, files, domains, or workflows outside the issue's affected
+  surface.
+- Add a new architectural pattern, new dependency, new persistence behavior, or
+  new cross-domain orchestration.
+- Convert a scoped issue into a broader refactor or product decision.
+- Require choosing between multiple plausible product or domain meanings.
+
+Blocking discoveries require stopping until the plan is corrected. Stop when
+the issue contradicts current code, depends on missing prerequisites, violates
+repo doctrine, or cannot satisfy its acceptance criteria as written.
+
+For material or blocking discoveries:
+
+1. Stop implementation at the smallest coherent point.
+2. Report the discovery, why it changes the plan, affected files/tests, and 1-2
+   concrete options.
+3. Recommend one option.
+4. Wait for user direction before continuing.
+5. After approval, update the canonical issue or plan when one exists before
+   implementing the revised scope.
+
+Do not continue implementing a revised plan from memory or implication alone.
 
 ## Trust Boundaries
 
@@ -159,6 +244,26 @@ Keep adapters thin and domain logic explicit.
 - Services own transaction boundaries.
 - Keep cross-domain orchestration explicit and deterministic.
 
+### Fastify Auth Plugin Pattern
+
+- For Fastify backends, centralize auth extraction in one boundary helper that
+  resolves bearer token or session cookie input into a typed actor context.
+- Expose auth extraction through app or plugin wiring, such as a decorated
+  `extractAuth(request)` method, and use one guard pattern for protected routes.
+- Keep route handlers thin: call the extractor or guard, map boundary failures,
+  and pass actor context explicitly into services.
+- Services own permission checks and policy evaluation; routes should not
+  duplicate authorization decisions.
+- Keep authorization policy registries endpoint-keyed using method+path strings
+  and a flat shape, for example:
+  `export const AUTHORIZATION_POLICIES = { "GET /users": { type: "allOf", permissions: [PERMISSIONS.user.viewAll] } } as const satisfies Record<string, AuthorizationPolicy>`.
+- Map auth outcomes explicitly and exhaustively at the boundary: missing or
+  invalid auth to 401, insufficient permissions to 403, and infrastructure
+  failures to shared service-unavailable variants.
+- Keep auth parsing and policy-resolution behavior deterministic and testable.
+- For cookie policy, CSRF, and permission-registry depth, apply
+  `$engineering-auth-security`.
+
 ## Errors and Results
 
 - Domain services must not throw for expected failures.
@@ -178,34 +283,11 @@ Keep adapters thin and domain logic explicit.
 - Prefer discriminated `type` variants for service and repository errors; do not
   scatter inline `{ type: "..." as const }` shapes across the codebase.
 
-## Frontend and Mobile Structure
-
-Use the same certainty rules in UI code.
-
-- Organize frontend code by domain modules as well, not broad file-type buckets
-  as the default. Screens, flows, views, hooks, client adapters, and tests
-  should stay aligned to the same domain ownership model where the repo
-  structure allows it.
-- Shared packages such as contracts should use domain folders with per-endpoint,
-  per-feature, or per-workflow files plus domain-level exports.
-- Cross-domain UI or app workflows should live in explicit flow or process
-  modules rather than being buried inside a single domain component or screen.
-- Screens/pages/routes stay thin. They render one flow/container component and avoid branching orchestration logic.
-- Flows own orchestration: data loading, transitions, reducer dispatch, navigation side effects, and exhaustive state matching.
-- Views are presentational: explicit props in, callbacks out, minimal local logic.
-- Prefer reducers over multiple related `useState` calls, especially for transition-heavy flows or 2+ related state values.
-- API calls live in API/client adapter modules only. Components, screens, routes, stores, and hooks must not call `fetch`, `axios`, or raw clients directly.
-- Prefer TanStack Query as the default server-state/query library for both web and mobile projects.
-- Hooks call API adapters and expose discriminated status unions such as `idle | loading | error | loaded`; avoid flat `isLoading`/`isError` state leaking through the app.
-- Prefer TanStack Form as the default form-state and form-UI orchestration library for both web and mobile projects.
-- Validate all form inputs with Zod schemas. Reuse field schemas across blur validation and submit/step validation.
-- Extract and display user-facing validation messages; never expose raw Zod errors in UI.
-- Use exhaustive matching for non-boolean discriminants. Avoid nested ternaries; use reducer transitions or pattern matching.
-- Add a short comment above every `useEffect` explaining why the effect exists.
-
 ## Testing Doctrine
 
 TDD is mandatory by default.
+
+Apply testing rules in this order: critical behavior correctness first, then failure and validation coverage, then naming and structural consistency.
 
 - For new features and behavior changes: write the failing test first, implement the minimum to pass, then refactor with tests green.
 - If TDD is intentionally skipped, state the concrete reason before implementation.
@@ -213,7 +295,7 @@ TDD is mandatory by default.
 - Cover success paths, failure paths, validation failures, error variants, and exhaustive mapping.
 - For API endpoints, test status codes, response payloads, and actionable error details.
 - API integration tests are mandatory for endpoint changes. Exercise the real app wiring end-to-end through route, service, and persistence layers; mock only true external systems at the boundary.
-- When work touches observability, resilience, auth/security, or frontend testing/accessibility, apply the relevant companion skill and test those behaviors explicitly.
+- When work touches observability, resilience, auth/security, or frontend engineering/accessibility, apply the relevant companion skill and test those behaviors explicitly.
 - Prefer test names that state given/when/then behavior. If the repo has a local test naming style, follow it.
 - For debugging: first build a deterministic repro loop. Convert the minimized repro into a regression test before fixing when a valid seam exists.
 - Test file naming should mirror production file naming, such as
@@ -252,19 +334,12 @@ For Fastify projects:
 - Use one dedicated response schema per status code.
 - Validate response payloads before sending. Prefer one reusable helper that validates against the Zod schema and prevents invalid output from leaving the boundary.
 - For Drizzle-backed database migrations, edit schema source files and run the generator. Never hand-edit generated migration files or generated migration metadata.
+- For protected routes, use the shared auth extractor or guard wiring instead of duplicating token parsing in handlers.
+- Keep actor context flow explicit from request boundary to service call; do not fetch auth context from hidden globals inside services.
 
 ## Frontend Build Sequence
 
-For web or mobile features:
-
-1. Plan/gap review, including UI states and error states.
-2. Shared contracts and API adapter types.
-3. API adapter tests for request/response validation and error mapping.
-4. Hook tests for query/mutation behavior and status unions.
-5. Flow tests for reducer transitions and orchestration.
-6. View/component tests for rendering, permissions, success states, and error states.
-7. Implementation from API adapter inward to TanStack Query hook, flow, and view.
-8. Apply `$engineering-frontend-testing` when the work touches platform-specific unit-test stacks, accessibility, or E2E coverage.
+For web or mobile features, apply `$engineering-frontend`.
 
 ## Review Checklist
 
@@ -277,15 +352,23 @@ Before declaring work complete, verify:
 - Config is injected rather than read from globals inside business logic.
 - Returned data is validated at the boundary before it is sent back out.
 - Tests cover the new behavior, validation, and error variants.
-- Relevant companion skills were applied when work touched observability, resilience, auth/security, or frontend testing/accessibility.
+- Relevant companion skills were applied when work touched observability, resilience, auth/security, or frontend engineering/accessibility.
 - New shared contracts or logic live in shared packages/modules when used across boundaries.
 - Imports follow repo aliases (`@`, `#`) instead of brittle deep relative paths where possible.
 - Formatter and linter expectations are satisfied for the changed scope; ESLint owns code-quality rules and Prettier owns formatting.
 - Hook-driven local validation matches repo policy for the changed scope: pre-commit runs staged format/lint plus unit tests, and pre-push runs unit, integration, and E2E tests when the repo defines those commands.
+- Commit messages, branch names, and version bumps follow the repo's convention, or Conventional Commits, conventional branching, and SemVer when no local convention exists.
 - Any skipped doctrine rule has a concrete, documented reason.
 - Relevant unit and integration tests pass for the changed scope.
+- Any mid-implementation discoveries were classified; material or blocking
+  discoveries were approved and reflected in the canonical issue or plan before
+  continuing.
 - No stale imports remain to old module paths or legacy naming.
 - App wiring imports only module route entrypoints.
 - Module files and directories follow the agreed naming conventions.
 - Domain ownership stays consistent across backend, frontend, and shared
   packages for the changed scope.
+- Protected-route behavior uses one auth extraction and guard pattern for the
+  changed scope.
+- Auth error mapping distinguishes 401 and 403 auth outcomes from
+  service-unavailable infrastructure failures.

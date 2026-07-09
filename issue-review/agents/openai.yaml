@@ -1,0 +1,4 @@
+interface:
+  display_name: "Issue Review"
+  short_description: "Review issue files for agent handoff readiness."
+  default_prompt: "Review this issue file for agent handoff readiness: <path>"

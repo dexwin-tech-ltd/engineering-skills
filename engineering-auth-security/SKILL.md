@@ -20,10 +20,18 @@ Apply this skill when the work includes:
 
 ## Doctrine
 
-- Prefer `httpOnly` secure cookies when the architecture allows it.
+### Session and Token Handling
+
+- Prefer `httpOnly` secure cookies unless all of the following are true: the requirement is recorded in repo docs or an ADR, the feature needs direct client-side cookie reads, and a server-managed session alternative was evaluated and rejected for a documented technical reason.
 - Never store long-lived secrets or refresh tokens in insecure client storage.
 - Make CSRF protection explicit when cookie-based auth is used.
 - Session validation and refresh boundaries must be explicit and testable.
+- Treat auth/session configuration as injected infrastructure, not hidden global state.
+
+### Authorization Model
+
+Apply this subsection in order: shared permission source first, registry shape second, role modeling third, and boundary enforcement throughout.
+
 - Keep auth and permission checks explicit in both backend and UI. UI checks never replace backend authorization.
 - Use shared permission constants or shared auth contracts where available; do not hard-code authorization literals when a shared package exists.
 - Model authorization with granular string permission keys rather than coarse
@@ -51,6 +59,9 @@ Apply this skill when the work includes:
   the repo intentionally models a controlled cloning or migration flow.
 - Keep role provenance and scope explicit in the model. Do not infer protected
   or platform-level roles from naming conventions alone.
+
+### Policy and Backend Boundaries
+
 - Centralize policy definitions in a server-side registry referenced by routes
   and services.
 - Policy definitions should support `all_of` and `any_of` semantics when the
@@ -64,7 +75,6 @@ Apply this skill when the work includes:
 - Authorization failures should return structured, stable error codes that can
   be mapped exhaustively at the boundary.
 - In Fastify or similar backends, perform auth checks before parsing request bodies when parsing errors could leak information.
-- Treat auth/session configuration as injected infrastructure, not hidden global state.
 
 ## Testing and Review
 
