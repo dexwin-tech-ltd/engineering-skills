@@ -41,7 +41,7 @@ Always follow priority 1. When priorities conflict, preserve correctness and acc
 - Put non-trivial reducers in a `reducers/` folder inside the relevant domain module, flow, or feature module instead of colocating reducer transition logic inside route, screen, or view files.
 - Cross-domain UI or app workflows should live in explicit flow or process modules rather than being buried inside a single domain component or screen.
 - Use exhaustive matching for non-boolean discriminants. Avoid nested ternaries; use reducer transitions or pattern matching.
-- Add a short comment above every `useEffect` explaining why the effect exists.
+- In React and React Native hooks or components, add a brief comment above every `useEffect` explaining what that effect does and why it exists.
 
 ## API Integration
 
