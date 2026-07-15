@@ -1,90 +1,235 @@
 ---
 name: code-review
-description: Perform staff-level code reviews for diffs, pull requests, commits, branches, or local changes. Use when the user asks for a code review, PR review, change review, risk review, or wants issues found across correctness, security, reliability, data integrity, performance, observability, maintainability, and testing quality.
+description: Perform evidence-verified, staff-level code reviews for diffs, pull requests, commits, branches, local changes, or specific files. Use when the user asks for a code review, PR review, change review, risk review, or wants material issues found across correctness, security, reliability, data integrity, performance, observability, maintainability, and testing quality.
 ---
 
 # Code Review
 
-## Overview
+## Objective
 
-Perform a staff-level code review that prioritizes material engineering risk over style. Review as a senior engineer, SRE, security engineer, QA engineer, and future maintainer.
+Find material engineering risks with high recall, then independently refute or verify every candidate before reporting it. Prioritize correctness, security, data integrity, reliability, and operational safety over style. Keep ordinary reviews read-only.
 
-Use subagents for focused passes when that is more efficient and available, especially for broad changes, security-sensitive code, concurrency/data-integrity work, or large test suites. Keep subagent prompts scoped to raw artifacts or clear review areas; do not pass conclusions you want them to confirm.
+Use logical independence between finder passes. Use subagents when available and worthwhile for broad changes, security-sensitive code, concurrency or data-integrity work, or independent verification. Do not create one subagent per angle mechanically. Give subagents raw artifacts or bounded review areas without leaking expected conclusions.
 
-## Review Workflow
+## Pipeline
 
-1. Identify the review target: local diff, branch diff, commit range, PR, or specific files.
-2. Read the relevant code, tests, schemas/contracts, migrations, configuration, and documentation needed to understand the change.
-3. Explain your understanding of the change before listing issues.
-4. Review the change for:
-   - Correctness
-   - Security
-   - Reliability
-   - Data integrity
-   - Performance
-   - Observability
-   - Maintainability
-   - Testing quality
-5. Identify hidden assumptions, edge cases, failure modes, and future maintenance risks.
-6. Refute candidate findings before reporting them.
-7. Run or recommend targeted validation when it materially improves confidence.
-8. Report only material issues. Ignore style issues unless they materially affect readability, correctness, maintainability, or operational safety.
+Run the review as five distinct phases:
 
-## False-Positive Control
+1. Gather the target, intent, governing rules, and validation context.
+2. Find candidate issues through independent review angles.
+3. Normalize and deduplicate candidates by root cause.
+4. Verify every survivor and run targeted validation where useful.
+5. Rank and report confirmed findings, then residual risks and open questions.
 
-Treat initial review observations as candidate findings, not findings. Before reporting one:
+## Phase 0: Gather the Review Scope
 
-1. State the precise failure claim and the code path or behavior it depends on.
-2. Identify what evidence would disprove it.
-3. Search the relevant code, tests, schemas/contracts, docs, config, migrations, and call sites for that evidence.
-4. Check whether existing invariants, guards, types, feature flags, transaction boundaries, retries, tests, or usage constraints already make the candidate harmless.
-5. Classify the candidate:
-   - **Confirmed**: evidence supports a real, material risk.
-   - **Refuted**: repo evidence shows the risk is already handled or cannot occur. Drop it.
-   - **Uncertain**: evidence is mixed or depends on an unstated assumption. Either gather more evidence or present it as an open question/residual risk, not as a finding.
+### Resolve the target
 
-Prefer at least two independent evidence points for High or Critical findings when practical, such as the changed code plus a missing/contradictory test, or a call site plus a schema/contract mismatch. One direct evidence point is enough for mechanically provable issues, such as a missing export, failing command, type error, or unreachable file path.
+Honor a user-supplied PR, branch, commit, range, file list, or explicit base before applying defaults.
 
-Use subagents as an independent validation surface when all of these are true:
+For an implicit local or branch review:
 
-- Subagent or multi-agent tools are available.
-- The candidate is material enough that a false positive would waste significant user time or steer the fix incorrectly.
-- The validation can be scoped without telling the subagent the expected conclusion.
+1. Inspect repository status before selecting the diff.
+2. Prefer the merge-base range `@{upstream}...HEAD` when an upstream exists.
+3. Otherwise use the repository's actual default branch when discoverable, then a local `main` or `master`, then `HEAD~1` as the final fallback.
+4. Include staged and unstaged changes for an implicit local or branch review. For an explicit committed target, exclude them unless the user asks to include local work.
+5. List relevant untracked files separately because `git diff HEAD` does not include them.
+6. Detect renames, submodules, generated files, lockfiles, migrations, and binary changes instead of silently excluding them.
+7. Record the selected base, head, working-tree inclusion, and reviewed file set. Explain an unexpectedly empty target.
 
-Ask subagents to inspect raw artifacts or a bounded review area and return evidence-backed findings. Compare their result with your own refutation pass; do not report a finding solely because a subagent said so.
+Do not fetch, pull, switch branches, or mutate repository state merely to gather a review unless the user authorized it.
 
-## Finding Standard
+### Recover intent and contracts
 
-For every issue, include:
+Read the smallest sufficient set of artifacts that define the intended behavior:
 
-- Severity
-- Impact
-- Reasoning
-- Suggested fix
+- PR or issue description and acceptance criteria.
+- Feature files, plans, ADRs, and relevant documentation.
+- Schemas, API contracts, migrations, configuration, and public types.
+- Existing tests and nearby implementation examples.
 
-Ground findings in concrete files, lines, code paths, behaviors, or missing tests. Do not pad the review with speculative concerns; if a risk depends on an assumption, state the assumption explicitly.
+Compare the diff with the stated intent. Treat an incomplete or contradictory change as a candidate even when the edited code is internally consistent.
+
+### Read governing instructions
+
+Read every applicable `AGENTS.md`, `CLAUDE.md`, repository instruction, ancestor instruction, and relevant architecture or contribution document. For convention findings, cite the exact governing rule; do not report vibes-based style preferences.
+
+### Choose review effort
+
+Honor an explicit user effort level. Otherwise scale effort by change risk, not only diff size:
+
+- **Low**: resolve scope, scan each hunk and enclosing function, audit removed behavior, and verify a small set of high-confidence candidates.
+- **Medium**: run all relevant core finder angles, trace changed contracts, inspect tests, and verify every survivor.
+- **High**: run independent focused passes, activate relevant specialist angles, and independently verify material candidates.
+- **Max**: use the widest justified fan-out, trace broader contracts and architecture, and run the strongest safe targeted validation.
+
+Increase effort for privilege boundaries, irreversible writes, migrations, public contracts, concurrency, financial or sensitive data, core workflows, and weak test coverage. State the chosen effort and reviewed scope in the final response.
+
+## Phase 1: Find Candidate Issues
+
+Treat every observation as a candidate, not a finding. Run each relevant angle independently so one framing does not suppress another.
+
+### A. Line-by-line correctness
+
+Inspect every hunk and its enclosing function or module. Look for inverted conditions, off-by-one behavior, missing awaits, falsy-zero or empty-value bugs, copy-paste errors, swallowed failures, invalid state transitions, wrong defaults, and incomplete branches.
+
+Report unchanged code only when the change makes it newly reachable, changes its inputs or ordering, removes a protecting invariant, changes its lifecycle, or expands its trust boundary. Attach the candidate to the closest causal changed line when possible.
+
+### B. Removed-behavior audit
+
+For every meaningful deletion or replacement:
+
+1. Name the validation, guard, cleanup, error mapping, ordering, side effect, or invariant the old code provided.
+2. Locate where the new code re-establishes it.
+3. Create a candidate when the behavior disappeared, weakened, or moved behind a narrower condition.
+
+### C. Cross-file contract tracing
+
+For each changed exported function, endpoint, event, schema, database shape, error contract, or public type:
+
+- Inspect callers, consumers, callees, and relevant adapters.
+- Compare old and new preconditions, return shapes, nullability, error behavior, timing, and side effects.
+- Check sibling implementations for inconsistent updates.
+- Check whether tests exercise the real integration boundary.
+
+### D. Security and authorization
+
+Inspect trust boundaries, authentication, authorization, tenant isolation, input validation, output sanitization, secrets, injection risks, unsafe deserialization, session or token handling, and privilege changes. Trace actor context and permission checks end to end rather than inferring safety from route names or UI restrictions.
+
+### E. Data integrity and persistence
+
+Inspect schemas, migrations, transactions, uniqueness, foreign keys, destructive writes, partial updates, backfills, ordering, serialization, precision, compatibility, and rollback behavior. Look for durable corruption or loss paths as well as immediate failures.
+
+### F. Reliability and concurrency
+
+Inspect retries, timeouts, cancellation, idempotency, queues, webhooks, cron, races, atomicity, resource cleanup, error recovery, and partial failure. Verify whether an operation can be repeated safely and whether failure leaves state recoverable.
+
+### G. Reuse
+
+Search the repository before claiming duplication. Name the existing helper, abstraction, or shared module and explain the material divergence or defect risk caused by reimplementation.
+
+### H. Simplification and state modeling
+
+Look for redundant or derivable state, near-duplicate branches, contradictory booleans, deep nesting, dead code, and unnecessary indirection. Create a candidate only when the complexity causes credible defect or maintenance risk; name the simpler form.
+
+### I. Performance and resource lifetime
+
+Inspect redundant work, sequential independent calls, unbounded queries or loops, hot-path and startup cost, repeated parsing or allocation, N+1 behavior, cache invalidation, memory retention, and closures that capture large scopes. Tie the concern to a realistic workload.
+
+### J. Observability and operations
+
+Check whether failures can be detected, attributed, and diagnosed. Inspect structured errors, logs, metrics, traces, correlation context, redaction, alerts, and recovery signals when the change alters operational behavior. Do not demand instrumentation unrelated to the changed risk.
+
+### K. Testing quality
+
+Check whether tests cover the changed contract, success paths, expected failures, boundaries, and regression scenario. Detect tests that mock away the disputed behavior, assert implementation details, pass vacuously, or omit real wiring. Treat missing tests as supporting evidence for a behavior risk, not automatically as a standalone finding.
+
+### L. Architectural altitude and conventions
+
+Look for special cases bolted onto shared infrastructure, workarounds that bypass existing abstractions, and fixes that leave the same invariant broken for sibling consumers. Name the deeper mechanism that should own the behavior. Report convention violations only when an applicable rule can be cited and the violation is material.
+
+Activate specialist depth automatically when the diff touches auth, migrations, destructive persistence, concurrency, queues, public APIs, caching or hot paths, observability, or frontend accessibility and async state.
+
+## Candidate Standard
+
+Normalize each candidate before verification:
+
+```text
+file
+line
+category
+provisional_severity
+summary
+failure_scenario
+code_path
+supporting_evidence
+assumption
+refuting_evidence_to_find
+suggested_fix
+```
+
+Write `failure_scenario` as concrete input or state -> executed path -> wrong output, corruption, security exposure, outage, or material maintenance consequence. Drop candidates that have no nameable material failure or consequence.
+
+Allow finders to return their strongest candidates first. Use a soft limit of six candidates per angle to control noise, but never suppress additional Critical or High candidates. Record when an angle was truncated.
+
+## Phase 2: Normalize and Deduplicate
+
+Collapse candidates that share one root cause. Prefer one finding that names all affected consumers over repeated symptoms. Keep candidates separate when they require different fixes or have independently actionable failure paths.
+
+Re-evaluate provisional severity after deduplication; broad impact may raise severity, while duplicated symptoms must not inflate it.
+
+## Phase 3: Verify Every Survivor
+
+For each candidate:
+
+1. Restate the precise failure claim and required code path.
+2. Identify the evidence that would disprove it.
+3. Search relevant code, tests, contracts, schemas, documentation, configuration, migrations, call sites, and runtime constraints.
+4. Check guards, types, feature flags, transaction boundaries, retries, tests, deployment assumptions, and usage constraints.
+5. Reconstruct reachability from entrypoint to failure.
+6. Assign exactly one verdict.
+
+Use these verdicts:
+
+- **CONFIRMED**: Repository or runtime evidence supports a reachable, material failure.
+- **CONDITIONAL**: The failure is realistic but depends on a clearly stated environment, state, workload, or product assumption.
+- **REFUTED**: Cited evidence proves the path is guarded, impossible, already handled in the change, or immaterial. Drop it.
+- **NEEDS_CONTEXT**: Required product or operational context cannot be recovered. Ask or list it as an open question; do not present it as a finding.
+
+Only `CONFIRMED` candidates become normal findings. Place `CONDITIONAL` candidates under residual risk with their assumptions. If further evidence establishes reachability, reclassify the candidate as `CONFIRMED` before reporting it as a finding. Never report a finding solely because a subagent proposed it.
+
+Prefer two independent evidence points for Critical or High findings when practical. One direct point is enough for mechanically provable failures such as a type error, missing export, failing command, unreachable path, or reproduced defect.
+
+For independent verification, give the verifier the candidate, diff, relevant files, and raw context without the finder's preferred verdict. Ask it to seek both confirming and refuting evidence. If subagents are unavailable or unjustified, perform a separate skeptical pass with the same standard.
+
+### Targeted validation
+
+Run the narrowest safe command that materially changes confidence: a focused test, type check, build, linter, static analysis, minimal reproduction, integration test, or schema or migration validation.
+
+Distinguish validation executed from validation merely recommended. A passing test refutes a candidate only when the test exercises the disputed behavior and contains a meaningful assertion. Do not mutate production systems or external state during validation.
+
+## Severity and Ranking
 
 Use severity consistently:
 
-- Critical: likely exploitable security issue, data loss/corruption, severe outage, or broken core workflow.
-- High: likely production bug, privilege boundary issue, reliability regression, or missing protection for important data.
-- Medium: plausible edge-case bug, operational blind spot, maintainability risk that will likely cause defects, or meaningful test gap.
-- Low: minor risk worth fixing but unlikely to cause material harm soon.
+- **Critical**: Likely exploitable security issue, irreversible data loss or corruption, severe outage, or broken core workflow.
+- **High**: Likely production bug, privilege-boundary failure, reliability regression, or missing protection for important data.
+- **Medium**: Reachable edge-case bug, operational blind spot, material performance issue, maintainability risk likely to cause defects, or meaningful test gap tied to changed behavior.
+- **Low**: Minor but concrete risk worth fixing that is unlikely to cause material harm soon.
 
-## Output Format
+Rank by severity and impact, then confidence, breadth, category, and urgency. When otherwise comparable, place correctness, security, data integrity, and reliability before cleanup, altitude, and convention findings. Do not let a trivial correctness issue outrank a materially higher-severity architectural risk.
 
-Start with the understanding of the change, then list findings ordered by severity. Include file and line references whenever possible.
+## Output
 
-Use this structure:
+Put actionable findings first. For each finding include:
 
-1. Understanding of the change
-2. Findings
-3. Hidden assumptions, edge cases, failure modes, and future maintenance risks
-4. Tests or validation performed
-5. Residual risk or open questions
+- Severity and verifier verdict.
+- Clickable file and precise line.
+- One-sentence defect statement.
+- Concrete failure scenario and affected code path.
+- Evidence and impact.
+- Suggested correction.
+- Explicit assumption when applicable.
+- Missing regression test when relevant.
 
-If no material issues exist, explicitly state:
+Default to at most ten findings, but never omit confirmed Critical or High findings because of the cap. Fill remaining slots with the strongest Medium and Low findings. State how many verified lower-priority findings were omitted, if any.
 
-`No material issues identified.`
+Then provide:
 
-Do not bury material findings below a summary. Keep summaries brief and secondary to actionable review results.
+1. Brief understanding of the change.
+2. Scope and effort used.
+3. Validation performed and results.
+4. Conditional residual risks, `NEEDS_CONTEXT` questions, and remaining coverage gaps.
+
+If no material issues survive verification, state `No material issues identified.` Do not manufacture findings to fill the format.
+
+Use human-readable output by default. Provide structured JSON when the user requests machine-readable output, preserving severity, verdict, file, line, summary, failure scenario, evidence, and suggested fix.
+
+## Comment and Fix Modes
+
+Keep a normal review read-only.
+
+- With an explicit comment request or `--comment`, post only confirmed, deduplicated findings, avoid duplicate comments, and attach each comment to the causal changed line when the platform permits.
+- With an explicit fix request or `--fix`, present the review first, then begin a separate implementation phase. Do not auto-fix `CONDITIONAL` or `NEEDS_CONTEXT` candidates. Validate applied fixes and summarize the resulting changes.
+
+Do not post externally or modify the working tree unless the user explicitly requested that action.
