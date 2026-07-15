@@ -88,6 +88,8 @@ Every criterion must be testable or inspectable. It should describe an observabl
 Good: "`getApprovedQuestions` excludes draft and rejected records."
 Bad: "question filtering works correctly."
 
+When a criterion uses universal or negative language ("only", "all", "every", "never", "no other"), verify it cannot be satisfied by a weaker existential check. Either the issue enumerates the exact elements the claim covers and states that each must independently hold, or it says explicitly that the check is a spot-check and why that's acceptable. A criterion like "the file contains only placeholder values" is otherwise easy to implement as "at least one placeholder is present" — a check that passes even when most of the listed values are real.
+
 ### 5. Scope Boundary
 
 State what is explicitly not changing. This prevents adjacent refactors, UX expansion, schema churn, or product decisions from leaking into the task.
@@ -114,9 +116,13 @@ Include:
 
 Name upstream blockers, downstream dependents, and ordering constraints. Check roadmap and nearby issue files for implied dependencies the issue forgot to mention.
 
+If this issue changes or extends a rule, convention, or domain concept that another issue file explicitly claims to inherit, match, or reuse (search sibling issue files for phrases like "match issue #N", "per issue #N", "same as #N", "inherits from #N"), or that is documented in `CONTEXT.md`/`CONTEXT-MAP.md`, open every referencing file now. Either reconcile them in this same review pass, or record an explicit follow-up issue to do so before this issue is marked ready — never leave a referencing issue or the glossary silently stale.
+
 ### 8. Test Approach
 
 Name the test file or test layer. Include at least one concrete scenario in the repo's local test style. Critical behavior changes must include tests for success, expected failures, validation failures, and error mapping where those cases apply.
+
+When an acceptance criterion names a specific runtime mechanism (a "scheduled" job, a "background" retry, an "on reconnect" handler), the Test Approach must state whether verification exercises that literal mechanism or a named, justified proxy (e.g. a manual one-shot invocation of the same script the scheduler calls). An unstated substitution leaves a criterion looking tested when only an adjacent code path was actually exercised.
 
 If no local convention is visible, use:
 
@@ -159,6 +165,7 @@ Apply only when the issue scope triggers them. Use repo-specific docs and existi
 - **Resilience**: require timeout, retry/backoff, idempotency, concurrency, and recovery behavior where relevant.
 - **External data boundary**: name the validator/parser/schema used before raw data reaches domain logic; prefer `.safeParse()` or the repo's equivalent boundary API.
 - **Database writes or concurrent writes**: state uniqueness constraints, idempotency, race handling, and deletion policy.
+- **Destructive test operations against shared-tooling infrastructure**: when the Test Approach includes operations that delete or reset state (volume/database teardown, `down -v`-style resets, bucket/queue purges) against infrastructure whose tooling (compose project name, database name, bucket name, queue name, etc.) could also be used to run a real or production instance, require the issue to name how the test instance is isolated (a distinct project name, prefix, or environment label) so its teardown can never reach a real instance's resources.
 - **Event or audit emission**: name event types and payload constraints; verify schema files if the repo has them.
 - **Shell execution**: state the approved command wrapper or argument-safety pattern.
 - **Outbound HTTP or third-party APIs**: require timeout, retry policy where appropriate, and named error mapping.
@@ -193,8 +200,9 @@ Before editing, verify:
   material discoveries that require user approval.
 - Auth, schema, event, import, migration, and error-handling choices match repo conventions.
 - Trust boundaries, domain ownership, expected-failure contracts, and test coverage meet engineering-for-certainty expectations or document a concrete exception.
-- Companion engineering doctrines were applied for observability, resilience, auth/security, and frontend engineering/accessibility when those areas were in scope.
+- Companion engineering doctrines were applied for observability, resilience, auth/security, and frontend testing/accessibility when those areas were in scope.
 - File paths, line numbers, and symbol names still match after verification.
+- Any rule or concept this issue changes has been checked against every issue file or glossary entry that claims to inherit it (gate 7); each is either reconciled or has a tracked follow-up.
 
 Resolve every contradiction with the user before writing.
 
