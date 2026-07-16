@@ -27,8 +27,9 @@ If no issue path is provided, ask for one before proceeding.
 3. **Verify claims against code**: check paths, symbols, line references, tests, schemas, commands, and stated behavior.
 4. **Review gates one at a time**: ask about each gap separately, provide a recommended answer, and wait for confirmation before continuing.
 5. **Accumulate answers**: do not edit the issue during the review.
-6. **Cross-validate**: check all resolved answers for contradictions and missing dependencies.
-7. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
+6. **Build traceability**: map each acceptance criterion to its production owner and exact verification before implementation begins.
+7. **Cross-validate**: check the resolved issue, traceability ledger, and conditional gates for contradictions and missing dependencies.
+8. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
 
 Never write placeholders, TODOs, partial decisions, or "TBD" sections to the issue. The file is either unchanged while review is in progress or fully resolved when review is complete.
 
@@ -76,6 +77,8 @@ Vague phrases like "improve this", "fix logic", or "clean up" do not pass.
 ### 2. Affected Surface
 
 The issue must name the affected files, modules, routes, commands, tables, schemas, APIs, UI flows, or docs. Include line numbers when the relevant area is narrow. A whole-file reference is acceptable only when the whole file is intentionally in scope.
+
+When behavior depends on a platform or library mechanism, name the literal mechanism and its production owner. Do not accept abstractions such as "refetch," "refresh," "protect route exit," or "handle navigation" without the concrete API, hook, event, or interception point—for example, an imperative query call or History API interception—and the symbol or module that invokes it. Verify that the installed framework and version support the named mechanism.
 
 ### 3. Root Cause Or Background
 
@@ -126,7 +129,19 @@ If the issue changes a config value, protocol, or URL with existing consumers, s
 
 Name the test file or test layer. Include at least one concrete scenario in the repo's local test style. Critical behavior changes must include tests for success, expected failures, validation failures, and error mapping where those cases apply.
 
+Before implementation, include a traceability ledger with one row per acceptance criterion:
+
+| Criterion | Production owner | Exact test or verification |
+|---|---|---|
+| `<criterion ID and outcome>` | `<file + symbol/module>` | `<test file + case name, or justified manual check>` |
+
+Split criteria that have multiple independently observable outcomes. Every row must name the code that owns the behavior and the exact evidence that will prove it; broad entries such as "frontend," "service layer," or "covered by tests" do not pass. Manual verification is acceptable only when automation is impractical and the issue explains why.
+
+Require a post-implementation issue-against-diff audit by an independent reviewer or a separate skeptical pass that did not rely on the implementer's completion summary. Reconcile every ledger row against the actual production diff and test evidence, identify unplanned changes, and leave the issue unverified while any row lacks evidence.
+
 When an acceptance criterion names a specific runtime mechanism (a "scheduled" job, a "background" retry, an "on reconnect" handler), the Test Approach must state whether verification exercises that literal mechanism or a named, justified proxy (e.g. a manual one-shot invocation of the same script the scheduler calls). An unstated substitution leaves a criterion looking tested when only an adjacent code path was actually exercised.
+
+Apply the same rule to platform and library mechanisms named under Affected Surface: exercise the actual API, hook, event, or interception path, or name and justify the proxy and its blind spot.
 
 When the issue introduces a new artifact covered by an existing repo-wide invariant, such as image pinning, network exposure, or secrets hygiene, inspect the shared test files or suites that encode that invariant. The Test Approach must name the existing assertions and explicitly extend them to the new service, image, port, secret, or other artifact rather than adding only scenario-specific tests.
 
@@ -151,6 +166,8 @@ If the issue adds persisted state alongside existing persisted state already enu
 ### 10. Observability And Errors
 
 If the issue changes runtime behavior, state expected error behavior and any logging, metrics, audit events, or user-visible messages needed by the repo's conventions. If none are needed, say why.
+
+When errors use a discriminated union or coded envelope, require a code-to-details matrix that names each error code, its compatible `details` shape, its producer, and each consumer's behavior. The Test Approach must cover every valid mapping plus missing envelopes, malformed envelopes, unknown codes, and code-incompatible `details`. State the fallback behavior for invalid combinations; do not let consumers trust `details` based on shape alone or a code alone.
 
 ### 11. Engineering Certainty
 
@@ -177,9 +194,10 @@ Apply only when the issue scope triggers them. Use repo-specific docs and existi
 - **Event or audit emission**: name event types and payload constraints; verify schema files if the repo has them.
 - **Shell execution**: state the approved command wrapper or argument-safety pattern.
 - **Outbound HTTP or third-party APIs**: require timeout, retry policy where appropriate, and named error mapping.
-- **Discriminated unions or enums**: name every exhaustive handling site that must change.
+- **Discriminated unions or enums**: name every exhaustive handling site that must change; for coded errors, apply the code-to-details matrix and envelope tests from gate 10.
 - **Result/error contracts**: follow the repo's expected-failure style and do not introduce throw-based expected failures or conflicting patterns silently.
-- **Frontend behavior**: include states, accessibility expectations, responsive behavior, and the user flow that proves the change.
+- **Frontend behavior**: include states, accessibility expectations, responsive behavior, and the user flow that proves the change. Name and verify the literal platform or library mechanism for imperative querying, navigation interception, subscriptions, focus restoration, or similar behavior.
+- **Async frontend mutations**: for every in-flight state, require a transition table with rows for each mutable control and for success, failure, retry, discard, and navigation. Each row must state whether the action is allowed, which snapshot owns the pending data, the next state, and the user-visible result. Cover edits made while a request is pending, stale or superseded responses, retry ownership, discard semantics, and navigation away/back. Every allowed transition and prohibited action must map to an exact test in the traceability ledger.
 - **Generated code or fixtures**: state regeneration commands and which generated files should or should not be edited by hand.
 - **Security or privacy**: state secret handling, PII exposure, data retention, and permission implications.
 
@@ -200,20 +218,12 @@ If code or docs can answer the question, inspect them instead of asking the user
 
 Before editing, verify:
 
-- Acceptance criteria match what the affected surface can produce.
-- Every acceptance criterion has a corresponding test or verification step.
-- Scope boundaries do not contradict acceptance criteria.
-- Dependencies are complete and ordered.
-- Implementation change-control rules distinguish mechanical adjustments from
-  material discoveries that require user approval.
-- Auth, schema, event, import, migration, and error-handling choices match repo conventions.
-- Trust boundaries, domain ownership, expected-failure contracts, and test coverage meet engineering-for-certainty expectations or document a concrete exception.
-- Companion engineering doctrines were applied for observability, resilience, auth/security, and frontend testing/accessibility when those areas were in scope.
-- File paths, line numbers, and symbol names still match after verification.
-- Any rule or concept this issue changes has been checked against every issue file or glossary entry that claims to inherit it (gate 7); each is either reconciled or has a tracked follow-up.
-- Any changed config value, protocol, or URL has been checked against every existing consumer (gate 7) for changed failure modes and error classification, not only happy-path breakage.
-- Every acceptance criterion using universal, negative, or mutual-exclusivity language (gate 4) has verification covering every claimed element and direction, with compensating verification for structural test blind spots.
-- The Test Approach extends every existing repo-wide invariant that applies to a new artifact (gate 8), and existing operational documentation is reconciled when persisted state is added (gate 9).
+- **Consistency**: acceptance criteria, scope, dependencies, implementation guardrails, and affected production owners agree; paths, symbols, and line references still exist.
+- **Traceability**: every independently observable criterion has one or more ledger rows with an exact production owner and exact test or justified manual verification; the post-implementation audit is named.
+- **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
+- **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
+- **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
+- **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
 
 Resolve every contradiction with the user before writing.
 
@@ -243,6 +253,8 @@ Severity: High | Medium | Low | Very Low
 ## Dependencies
 
 ## Test Approach
+
+### Traceability Ledger
 
 ## Notes
 ```
