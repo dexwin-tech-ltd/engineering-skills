@@ -57,6 +57,7 @@ Report mismatches before gate review:
 - Referenced functions, classes, types, constants, routes, tables, commands, events, or config keys that do not exist where claimed.
 - Behavior claims contradicted by current code or tests.
 - Dependency claims contradicted by roadmap, issue files, or completed-work archives.
+- Existing adjacent documentation that the issue would leave stale or false. When an issue adds content to a README, runbook, setup guide, enumerated list, exception rule, or placeholder-swap procedure, verify the neighboring claims against the current repo rather than checking only the new instructions for internal consistency.
 
 Do not proceed past a mismatch until the correct reference is confirmed or the issue is updated in the accumulated answers.
 
@@ -80,6 +81,8 @@ The issue must name the affected files, modules, routes, commands, tables, schem
 
 When behavior depends on a platform or library mechanism, name the literal mechanism and its production owner. Do not accept abstractions such as "refetch," "refresh," "protect route exit," or "handle navigation" without the concrete API, hook, event, or interception point—for example, an imperative query call or History API interception—and the symbol or module that invokes it. Verify that the installed framework and version support the named mechanism.
 
+When the issue introduces an environment variable that a runtime component reads directly, name the literal delivery mechanism, not only its presence in `.env` or `.env.example`. Trace the specific variable from its consumer—such as a workflow expression or `process.env` read—through every required injection point, such as a Compose `environment:` block or systemd `Environment=` entry. Do not infer its delivery from a superficially similar variable.
+
 ### 3. Root Cause Or Background
 
 For bugs, identify the root cause rather than only the symptom. For features and chores, include enough background for an agent to make local judgment calls without re-litigating the product decision.
@@ -93,7 +96,9 @@ Bad: "question filtering works correctly."
 
 When a criterion uses universal or negative language ("only", "all", "every", "never", "no other"), verify it cannot be satisfied by a weaker existential check. Either the issue enumerates the exact elements the claim covers and states that each must independently hold, or it says explicitly that the check is a spot-check and why that's acceptable. A criterion like "the file contains only placeholder values" is otherwise easy to implement as "at least one placeholder is present" — a check that passes even when most of the listed values are real.
 
-When a criterion claims mutual exclusivity ("reachable from X, not from anyone else"), require independent verification in both directions: reject every disallowed side, and identify and accept the allowed side specifically rather than merely proving that some request succeeds. If the test method has a structural blind spot in either direction, state the blind spot and require a named compensating manual or automated verification step.
+When a criterion claims mutual exclusivity ("reachable from X, not from anyone else"), require independent verification in both directions: reject every disallowed side, and identify and accept the allowed side specifically rather than merely proving that some request succeeds. If the test method has a structural blind spot in either direction, state the blind spot and require a named compensating manual or automated verification step. For example, same-Docker-host traffic may use hairpin NAT and therefore cannot prove source-IP behavior across a genuine external network boundary.
+
+When a criterion combines a formatted or rounded value shown to a user with a pass/fail or status indicator derived from the same raw quantity, require an explicit rule preventing disagreement at rounding boundaries. Derive both from the same displayed value, or state the precise reason divergence is intentional.
 
 ### 5. Scope Boundary
 
@@ -145,6 +150,8 @@ Apply the same rule to platform and library mechanisms named under Affected Surf
 
 When the issue introduces a new artifact covered by an existing repo-wide invariant, such as image pinning, network exposure, or secrets hygiene, inspect the shared test files or suites that encode that invariant. The Test Approach must name the existing assertions and explicitly extend them to the new service, image, port, secret, or other artifact rather than adding only scenario-specific tests.
 
+When verification is split between standalone checks and a live or deployed instance, identify whether the live-only portion contains the scenario most likely to expose an integration defect, such as cross-branch recombination, interacting failure paths, or multi-service behavior. If it does, the issue must remain explicitly unverified—use a status such as `Needs Verification`, not `Done` with a caveat—until that scenario has run successfully.
+
 If no local convention is visible, use:
 
 ```ts
@@ -161,7 +168,7 @@ it(`
 
 If the issue changes persisted data, generated artifacts, imports, migrations, deployment config, background jobs, or external integrations, state how the change is applied, rolled back or retried, and verified.
 
-If the issue adds persisted state alongside existing persisted state already enumerated in documentation, update every affected table, destructive-operations warning, backup or restore runbook, and blast-radius description. Documenting the new state in isolation does not pass when existing operational guidance would become false or incomplete.
+If the issue adds persisted state alongside existing persisted state already enumerated in documentation, update every affected table, destructive-operations warning, backup or restore runbook, and blast-radius description. Documenting the new state in isolation does not pass when existing operational guidance would become false or incomplete. For example, a warning that says an operation destroys "both" named volumes becomes false when a third volume is added.
 
 ### 10. Observability And Errors
 
@@ -200,6 +207,7 @@ Apply only when the issue scope triggers them. Use repo-specific docs and existi
 - **Async frontend mutations**: for every in-flight state, require a transition table with rows for each mutable control and for success, failure, retry, discard, and navigation. Each row must state whether the action is allowed, which snapshot owns the pending data, the next state, and the user-visible result. Cover edits made while a request is pending, stale or superseded responses, retry ownership, discard semantics, and navigation away/back. Every allowed transition and prohibited action must map to an exact test in the traceability ledger.
 - **Generated code or fixtures**: state regeneration commands and which generated files should or should not be edited by hand.
 - **Security or privacy**: state secret handling, PII exposure, data retention, and permission implications.
+- **Pinned third-party tool or version-dependent defaults**: when the design relies on a tool, image, framework, or library default, verify the assumption against the exact pinned version using its source, release notes, or changelog rather than current-version knowledge. If the behavior can change silently on upgrade, require the controlling flag, environment variable, or config value to be set explicitly.
 
 If the repo has domain-specific gates, apply them after discovery. Examples include approved-only content, event schema invariants, tenant boundaries, import provenance, or feature-flag rules.
 
@@ -223,7 +231,10 @@ Before editing, verify:
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
 - **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
-- **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
+- **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; rounded displays agree with derived status indicators; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
+- **Configuration delivery**: every new environment variable reaches its exact runtime consumer through named injection points; every version-dependent default is verified against the pinned version and made explicit when it may drift.
+- **Documentation truth**: new instructions do not leave neighboring claims, enumerations, warnings, or runbooks false or incomplete.
+- **Verification status**: work that defers its highest-risk integration scenario remains explicitly unverified rather than being marked done with a caveat.
 
 Resolve every contradiction with the user before writing.
 
