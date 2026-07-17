@@ -1,6 +1,6 @@
 ---
 name: issue-review
-description: Review an existing issue, ticket, feature file, bug report, roadmap item, or implementation handoff for agent readiness. Use when Codex is asked to tighten, validate, rewrite, prepare, or assess an issue so another agent or engineer can implement it with zero clarifying questions.
+description: Review an existing issue, ticket, feature file, bug report, roadmap item, or implementation handoff for agent readiness. Use when Codex is asked to tighten, validate, rewrite, prepare, or assess an issue so another agent or engineer can implement it with zero clarifying questions, including validating or assigning a stable numbered Conventional Commit-style filename.
 ---
 
 # Issue Review
@@ -23,7 +23,7 @@ If no issue path is provided, ask for one before proceeding.
 ## Workflow
 
 1. **Read the issue**: identify the requested change, claimed files, dependencies, and current structure.
-2. **Discover repo conventions**: inspect local docs and examples before applying generic rules.
+2. **Discover repo conventions**: inspect local docs and examples before applying generic rules, including issue filename rules and the next unused issue reference.
 3. **Verify claims against code**: check paths, symbols, line references, tests, schemas, commands, and stated behavior.
 4. **Review gates one at a time**: ask about each gap separately, provide a recommended answer, and wait for confirmation before continuing.
 5. **Accumulate answers**: do not edit the issue during the review.
@@ -45,6 +45,28 @@ Before gate review, inspect only the relevant local sources:
 - Architecture or engineering doctrine docs, including `engineering-for-certainty`-style local guidance when present.
 
 Prefer the repo's current issue format and testing style over this skill's fallback structure. If the repo has multiple contexts, use `CONTEXT-MAP.md` or nearby context docs to select the right context before reviewing terminology.
+
+### Issue File Naming
+
+For pending issue files, require the default filename format
+`NN-<conventional-type>-<kebab-case-name>.md`, for example
+`28-feat-student-progress-dashboard.md` or
+`29-fix-session-report-score-rounding.md`.
+
+- Use a two-digit, zero-padded, stable issue reference (`00`, `01`, ...).
+  Assign the next unused number from the repository's canonical issue index or
+  issue directory. Do not renumber existing issues when priority changes.
+- Use the Conventional Commit type that describes the work: `feat`, `fix`,
+  `refactor`, `test`, `docs`, `chore`, `perf`, `build`, or `ci`.
+- Keep the remaining name concise and kebab-case. Do not repeat the type or a
+  redundant implementation verb in the name.
+- If the repository defines a stricter compatible convention, follow it. If it
+  defines a conflicting convention, report the conflict instead of silently
+  renaming the issue.
+- Completed historical issues may retain their existing names. Numbered
+  sub-issue packs may retain an explicit pack-local numbering scheme.
+- When the final review rewrites or renames an issue, update the canonical
+  roadmap/index and every in-repository reference in the same write pass.
 
 If the issue uses a domain term that conflicts with the local glossary or product docs, stop and ask the user to resolve the term before continuing.
 
@@ -227,6 +249,7 @@ If code or docs can answer the question, inspect them instead of asking the user
 Before editing, verify:
 
 - **Consistency**: acceptance criteria, scope, dependencies, implementation guardrails, and affected production owners agree; paths, symbols, and line references still exist.
+- **Issue identity**: pending issue filenames follow the discovered convention, use a stable number and valid Conventional Commit type, and all roadmap/index and sibling references resolve after any rename.
 - **Traceability**: every independently observable criterion has one or more ledger rows with an exact production owner and exact test or justified manual verification; the post-implementation audit is named.
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
