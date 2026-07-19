@@ -44,7 +44,12 @@ Apply these only when relevant:
 - Database queries: Drizzle.
 - Validation: Zod.
 - Result library: neverthrow.
-- Path aliases: prefer `@` and `#` aliases over deep relative imports when the repo supports them; add aliases for new projects.
+- Path aliases: for new TypeScript/JavaScript projects, use named `#...`
+  aliases for private imports within an app or package, and reserve
+  `@scope/package` specifiers for workspace or published packages. Prefer
+  `package.json#imports` where supported, with matching TypeScript, bundler, and
+  test configuration as required. Preserve established repository conventions
+  unless the user requests a migration.
 
 ## Linting and Formatting
 
@@ -304,6 +309,41 @@ Apply testing rules in this order: critical behavior correctness first, then fai
 - Structural migrations must preserve behavior and prove that with tests.
 - Keep test structure aligned with the real module structure.
 
+### Mutation Analysis
+
+- Use mutation analysis as a post-green adversarial audit. Start with
+  behavior-first tests, reach green, then strengthen observable-contract
+  assertions against meaningful survivors and rerun both ordinary and mutation
+  suites; do not write mutant-specific implementation checks.
+- Require it when a plausible small mutation could cause unauthorized access;
+  incorrect money, entitlement, grading, ranking, or scoring; an invalid state
+  transition or invariant; persisted-data damage; consequential validation
+  failure; an incorrect public contract or exhaustive outcome mapping; or a wrong
+  reusable domain decision.
+- Base the trigger on impact, not directory, test type, or line count. Simple
+  wiring, generated code, framework adapters, presentation-only code, and
+  non-behavioral transformations are normally out of scope. When triggered, run
+  the affected scope or record why the technique is unsuitable.
+- Gate on reviewed-survivor completeness and non-regression, not a universal
+  score. Establish a non-blocking baseline, prevent unjustified regression, and
+  tighten it as meaningful survivors are eliminated.
+- Classify every survivor. Meaningful survivors and uncovered mutants block
+  completion; equivalent or irrelevant survivors require recorded justification.
+  Require every survivor to be addressed, not every mutant to be killed.
+- Store run-specific classifications in the canonical issue, pull request, or CI
+  artifact, not a permanent mutant allowlist. Permit only narrow, justified,
+  version-controlled structural exclusions; never exclude code or operators to
+  improve the score.
+- Treat timeouts, runner errors, and tool failures as inconclusive and fail closed
+  until resolved or an alternative assurance technique is approved. Invalid
+  mutants proven by compilation or type checking are not test gaps.
+- Keep mutation analysis out of Git hooks. Run targeted local or agent validation
+  and pull-request CI when triggered, plus a periodic clean full run to refresh
+  the baseline and catch incremental-analysis blind spots.
+- Preserve an established tool. Otherwise prefer StrykerJS for TypeScript and
+  JavaScript, and the ecosystem-appropriate engine for other languages. Adapt its
+  runner, monorepo, performance, and reporting configuration to the repository.
+
 ## Backend Build Sequence
 
 For endpoint or service work:
@@ -354,7 +394,10 @@ Before declaring work complete, verify:
 - Tests cover the new behavior, validation, and error variants.
 - Relevant companion skills were applied when work touched observability, resilience, auth/security, or frontend engineering/accessibility.
 - New shared contracts or logic live in shared packages/modules when used across boundaries.
-- Imports follow repo aliases (`@`, `#`) instead of brittle deep relative paths where possible.
+- Imports follow the repository's established aliases instead of brittle deep
+  relative paths where possible; for new conventions, use named `#...` aliases
+  for package-private imports and `@scope/package` specifiers for package
+  boundaries.
 - Formatter and linter expectations are satisfied for the changed scope; ESLint owns code-quality rules and Prettier owns formatting.
 - Hook-driven local validation matches repo policy for the changed scope: pre-commit runs staged format/lint plus unit tests, and pre-push runs unit, integration, and E2E tests when the repo defines those commands.
 - Commit messages, branch names, and version bumps follow the repo's convention, or Conventional Commits, conventional branching, and SemVer when no local convention exists.
