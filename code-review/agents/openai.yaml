@@ -2,3 +2,6 @@ interface:
   display_name: "Code Review"
   short_description: "Evidence-verified, multi-pass code review"
   default_prompt: "Use $code-review to perform an evidence-verified review of this change, report material findings first, and after I verify them, propose any warranted issue-review improvements."
+
+policy:
+  allow_implicit_invocation: true

@@ -177,6 +177,12 @@ Use these verdicts:
 - **REFUTED**: Cited evidence proves the path is guarded, impossible, already handled in the change, or immaterial. Drop it.
 - **NEEDS_CONTEXT**: Required product or operational context cannot be recovered. Ask or list it as an open question; do not present it as a finding.
 
+Route uncertainty before assigning `NEEDS_CONTEXT`:
+
+- **Discoverable fact**: inspect code, tests, contracts, documentation, configuration, history, or available tools.
+- **User-owned decision**: ask a numbered question that states the decision, impact, options, and recommendation. Keep it out of findings until answered.
+- **Empirical unknown**: run the narrowest safe targeted validation or investigation that can resolve it. Do not ask the user to guess runtime behavior.
+
 Only `CONFIRMED` candidates become normal findings. Place `CONDITIONAL` candidates under residual risk with their assumptions. If further evidence establishes reachability, reclassify the candidate as `CONFIRMED` before reporting it as a finding. Never report a finding solely because a subagent proposed it.
 
 Prefer two independent evidence points for Critical or High findings when practical. One direct point is enough for mechanically provable failures such as a type error, missing export, failing command, unreachable path, or reproduced defect.
@@ -222,6 +228,8 @@ Then provide:
 3. Validation performed and results.
 4. Conditional residual risks, `NEEDS_CONTEXT` questions, and remaining coverage gaps.
 
+Before delivering the review, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them.
+
 If no material issues survive verification, state `No material issues identified.` Do not manufacture findings to fill the format.
 
 Use human-readable output by default. Provide structured JSON when the user requests machine-readable output, preserving severity, verdict, file, line, summary, failure scenario, evidence, and suggested fix.
@@ -234,7 +242,7 @@ For each user-confirmed finding:
 
 1. Recover the governing issue, ticket, feature file, plan, or implementation handoff used for the change. If none exists, state that the finding cannot support an `issue-review` improvement.
 2. Trace the finding to the planning artifact: identify the missing, ambiguous, contradictory, weakly testable, or unverifiable instruction that allowed the defect. Distinguish a planning failure from an implementation mistake made despite clear guidance.
-3. Inspect the current `issue-review` skill before proposing changes. Check whether an existing gate already covers the failure and was merely not followed; do not propose duplicate doctrine.
+3. Inspect the current `issue-review` skill before proposing changes. Check whether an existing gate already covers the failure and was merely not followed; do not propose duplicate doctrine. If `issue-review` is unavailable, skip this retrospective and state that dependency clearly.
 4. Test generality. Propose a skill change only when it would prevent a recurring class of issue-writing or issue-review failures across projects, not when it encodes project-specific facts or the details of one bug.
 5. Prefer the smallest change that adds a check, sharpens an existing gate, or requires stronger evidence. Preserve the distinct roles: `issue-review` improves implementation instructions; `code-review` diagnoses the resulting code.
 

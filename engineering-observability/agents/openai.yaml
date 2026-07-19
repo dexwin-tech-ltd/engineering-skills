@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $engineering-observability for logging, Better Stack, correlation IDs, and log-ingestion changes."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

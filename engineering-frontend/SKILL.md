@@ -123,3 +123,4 @@ For web or mobile features:
 - User-visible states and flows that affect navigation, form submission, authentication, checkout or payment, destructive actions, or error recovery include accessibility coverage.
 - Supported-platform flows that cover core business actions, high-traffic journeys, or failure recovery include mandatory E2E coverage.
 - If a platform or E2E tool is unsupported in the repo, document the limitation and prioritize accessibility plus unit/component and flow coverage on supported platforms.
+- Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

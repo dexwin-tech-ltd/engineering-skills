@@ -1,6 +1,6 @@
 ---
 name: engineering-observability
-description: Explicit observability doctrine with clear logging, redaction, correlation ID, and ingestion rules for work that touches telemetry.
+description: Explicit observability doctrine with clear logging, redaction, correlation ID, and ingestion rules. Use when work touches logs, metrics, traces, telemetry, alerting, audit records, request IDs, or frontend log ingestion.
 ---
 
 # Engineering Observability
@@ -46,3 +46,4 @@ Apply this skill when the work includes any of the following:
 - Test correlation/request ID propagation on the changed path.
 - Test redaction/sanitization behavior when logging changes.
 - Verify frontend log ingestion validates payloads before forwarding.
+- Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

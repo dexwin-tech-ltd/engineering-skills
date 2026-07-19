@@ -25,8 +25,8 @@ If no issue path is provided, ask for one before proceeding.
 1. **Read the issue**: identify the requested change, claimed files, dependencies, and current structure.
 2. **Discover repo conventions**: inspect local docs and examples before applying generic rules, including issue filename rules and the next unused issue reference.
 3. **Verify claims against code**: check paths, symbols, line references, tests, schemas, commands, and stated behavior.
-4. **Review gates one at a time**: ask about each gap separately, provide a recommended answer, and wait for confirmation before continuing.
-5. **Accumulate answers**: do not edit the issue during the review.
+4. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, and batch user-owned decisions into dependency-aware rounds with stable question IDs.
+5. **Accumulate answers**: maintain the decision map across rounds; do not edit the issue during the review.
 6. **Build traceability**: map each acceptance criterion to its production owner and exact verification before implementation begins.
 7. **Cross-validate**: check the resolved issue, traceability ledger, and conditional gates for contradictions and missing dependencies.
 8. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
@@ -235,14 +235,17 @@ If the repo has domain-specific gates, apply them after discovery. Examples incl
 
 ## Questioning Discipline
 
-Ask one question at a time. For each question:
+Use `$grilling` as the questioning discipline for unresolved gates and contradictions.
 
-1. State the gate or contradiction.
-2. Explain the concrete ambiguity or risk.
-3. Give the recommended answer.
-4. Wait for user confirmation before moving on.
+- **Discoverable fact**: inspect the code, docs, tests, history, or configured tools. Do not ask the user to recall repository facts.
+- **User-owned decision**: ask in a dependency-aware round using stable IDs. State the gate or contradiction, concrete risk, options, and recommended answer. Accept bulk replies such as `agree to all`, plus exceptions by ID.
+- **Empirical unknown**: run a bounded reproduction, spike, benchmark, or research pass when safe and authorized. Report the result; do not turn an investigable unknown into a preference question.
 
-If code or docs can answer the question, inspect them instead of asking the user.
+After each reply, update the decision map, resolve dependencies, and generate only the newly unblocked questions. Start another round when answers materially change the decision tree. Ask a singleton only when one blocking decision genuinely gates all useful downstream questions.
+
+For a long or multi-session review, persist the grilling decision map in a separate working artifact if useful. Never use partial issue content, placeholders, TODOs, or `TBD` sections as interview state.
+
+Before rewriting, present the resolved understanding and explicitly confirm that it is shared. The user's approval authorizes the final coherent rewrite; it does not authorize partial writes during the interview.
 
 ## Cross-Validation
 

@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $engineering-frontend for frontend modules, API adapters, hooks, flows/views, forms, accessibility, and web/mobile tests."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

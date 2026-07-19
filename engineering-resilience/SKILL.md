@@ -1,6 +1,6 @@
 ---
 name: engineering-resilience
-description: Explicit resilience doctrine for work that touches external calls, retries, mutation safety, concurrency, queues, cron tasks, webhooks, or other async processing.
+description: Explicit resilience doctrine. Use when work touches external calls, timeouts, retries, mutation safety, transactions, idempotency, concurrency, queues, cron tasks, webhooks, jobs, or other async processing.
 ---
 
 # Engineering Resilience
@@ -50,3 +50,4 @@ Apply this skill when the work includes:
 - Test idempotency, duplicate-delivery handling, or concurrency protection where the change affects writes.
 - Test retry/dead-letter behavior for changed async flows when a valid seam exists.
 - Verify no silent infinite retry loops or fallback behavior were introduced.
+- Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

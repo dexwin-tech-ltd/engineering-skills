@@ -32,6 +32,16 @@ Apply these only when relevant:
   conventions.
 - Use `$engineering-frontend` for frontend architecture, API integration, forms, accessibility quality bars, and web/mobile testing doctrine.
 
+Companion activation adds relevant checks and validation obligations. It does not authorize implementation, external writes, or scope expansion beyond the user's request.
+
+## Uncertainty Routing
+
+Classify unresolved inputs before acting:
+
+- **Discoverable fact**: inspect the repository, documentation, history, configured tools, or runtime evidence.
+- **User-owned decision**: present concrete options, tradeoffs, and a recommendation; wait when the choice would materially change behavior, architecture, scope, or product meaning.
+- **Empirical unknown**: use a bounded reproduction, test, spike, benchmark, or research pass. Do not ask the user to guess what evidence can establish.
+
 ## Preferred Defaults
 
 - Language: TypeScript.
@@ -135,10 +145,11 @@ Use explicit version-control semantics so project history communicates intent an
 
 Before editing code:
 
-1. Read the relevant local instructions, README, docs, ADRs, plan files, and nearby implementation examples.
-2. Identify the repo's equivalents for contracts, adapters/routes/controllers, services/domain logic, repositories/persistence, hooks, flows, views, and tests.
-3. For non-trivial work, perform a gap review before implementation. Resolve missing scope, contracts, errors, persistence behavior, orchestration, UI states, and test strategy.
-4. Do not implement from an inconsistent plan. Update the plan or state the unresolved gap first.
+1. Classify the request's action mode. Answer, explain, plan, review, and diagnose authorize investigation and recommendations only; change, build, implement, or fix authorize in-scope edits. Do not infer write authority from a companion skill or from discovering a possible improvement.
+2. Read the relevant local instructions, README, docs, ADRs, plan files, and nearby implementation examples.
+3. Identify the repo's equivalents for contracts, adapters/routes/controllers, services/domain logic, repositories/persistence, hooks, flows, views, and tests.
+4. For non-trivial work, perform a gap review before implementation. Resolve missing scope, contracts, errors, persistence behavior, orchestration, UI states, and test strategy.
+5. Do not implement from an inconsistent plan. Update the plan or state the unresolved gap first.
 
 ## Mid-Implementation Discoveries
 
@@ -249,25 +260,12 @@ Keep adapters thin and domain logic explicit.
 - Services own transaction boundaries.
 - Keep cross-domain orchestration explicit and deterministic.
 
-### Fastify Auth Plugin Pattern
+### Auth Boundaries
 
-- For Fastify backends, centralize auth extraction in one boundary helper that
-  resolves bearer token or session cookie input into a typed actor context.
-- Expose auth extraction through app or plugin wiring, such as a decorated
-  `extractAuth(request)` method, and use one guard pattern for protected routes.
-- Keep route handlers thin: call the extractor or guard, map boundary failures,
-  and pass actor context explicitly into services.
-- Services own permission checks and policy evaluation; routes should not
-  duplicate authorization decisions.
-- Keep authorization policy registries endpoint-keyed using method+path strings
-  and a flat shape, for example:
-  `export const AUTHORIZATION_POLICIES = { "GET /users": { type: "allOf", permissions: [PERMISSIONS.user.viewAll] } } as const satisfies Record<string, AuthorizationPolicy>`.
-- Map auth outcomes explicitly and exhaustively at the boundary: missing or
-  invalid auth to 401, insufficient permissions to 403, and infrastructure
-  failures to shared service-unavailable variants.
-- Keep auth parsing and policy-resolution behavior deterministic and testable.
-- For cookie policy, CSRF, and permission-registry depth, apply
-  `$engineering-auth-security`.
+- Keep authentication and authorization at explicit, typed boundaries.
+- Pass actor context explicitly into services; do not hide it in globals.
+- Keep routes thin, enforce permissions on the backend, and map auth outcomes exhaustively.
+- For framework-specific extraction/guard wiring, cookie policy, CSRF, and permission or policy registries, apply `$engineering-auth-security`.
 
 ## Errors and Results
 
@@ -415,3 +413,18 @@ Before declaring work complete, verify:
   changed scope.
 - Auth error mapping distinguishes 401 and 403 auth outcomes from
   service-unavailable infrastructure failures.
+
+## Completion Evidence and Handoff
+
+Before declaring work complete, record the smallest useful evidence packet:
+
+- changed behavior, contracts, and affected surfaces
+- user-owned decisions accepted during the work
+- empirical investigations performed and their results
+- exact validation commands and outcomes
+- companion skills triggered and the checks they added
+- deviations from plan or doctrine, with reasons
+- residual risks, limitations, and anything still unverified
+- canonical issue, plan, ADR, roadmap, or pull-request updates made or still required
+
+Do not collapse an unverified item into a caveated success. Every triggered companion check must be verified, or its omission and alternative assurance must be recorded in this handoff.

@@ -1,6 +1,6 @@
 ---
 name: engineering-auth-security
-description: Explicit auth and session security doctrine for work that touches cookies, tokens, sessions, CSRF, auth boundaries, or permission enforcement.
+description: Explicit auth and session security doctrine. Use when work touches cookies, tokens, sessions, CSRF, authentication boundaries, actor context, protected routes, authorization, roles, permissions, or policy enforcement.
 ---
 
 # Engineering Auth Security
@@ -62,6 +62,9 @@ Apply this subsection in order: shared permission source first, registry shape s
 
 ### Policy and Backend Boundaries
 
+- For Fastify backends, centralize bearer-token or session-cookie extraction in one boundary helper that resolves input into typed actor context.
+- Expose extraction through app or plugin wiring and use one guard pattern for protected routes. Keep route handlers thin: call the extractor or guard, map boundary failures, and pass actor context explicitly into services.
+- Keep authorization policy registries endpoint-keyed using method-and-path strings and a flat shape when the repo uses route-owned policies. Keep policy resolution deterministic and testable.
 - Centralize policy definitions in a server-side registry referenced by routes
   and services.
 - Policy definitions should support `all_of` and `any_of` semantics when the
@@ -87,3 +90,4 @@ Apply this subsection in order: shared permission source first, registry shape s
   evaluation when authorization rules change.
 - Test CSRF behavior whenever cookie-based auth changes.
 - Verify secure storage and transport assumptions match the selected architecture.
+- Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.
