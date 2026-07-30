@@ -1,6 +1,6 @@
 ---
 name: grill-me
-description: Run an explicit, relentless interview that stress-tests a plan or design until shared understanding is reached. Use when the user invokes grill-me or directly asks to be grilled without requiring domain-document updates.
+description: Run an explicit, relentless interview with thorough, self-contained questions that stress-test a plan or design until shared understanding is reached. Use when the user invokes grill-me or directly asks to be grilled without requiring domain-document updates.
 ---
 
 # Grill Me

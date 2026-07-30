@@ -1,11 +1,11 @@
 ---
 name: grilling
-description: Stress-test a plan, decision, or idea through relentless dependency-aware questioning. Use when the user wants their thinking challenged, asks to be grilled, or when another skill needs a reusable interview discipline that separates discoverable facts, user-owned decisions, and empirical unknowns.
+description: Stress-test a plan, decision, or idea through thorough, self-contained, dependency-aware questioning. Use when the user wants their thinking challenged, asks to be grilled, or when another skill needs a reusable interview discipline that separates discoverable facts, user-owned decisions, and empirical unknowns.
 ---
 
 # Grilling
 
-Resolve every material branch of the decision tree without making the user confirm obvious facts one at a time. Provide a recommended answer and brief reason for every decision.
+Resolve every material branch of the decision tree without making the user confirm obvious facts one at a time. Provide a recommended answer and clear reasoning for every decision.
 
 ## Classify before asking
 
@@ -16,6 +16,21 @@ Classify each unresolved item before putting it to the user:
 - **Empirical unknown**: identify the evidence needed. Perform safe read-only investigation when it is in scope; otherwise recommend a bounded research task or prototype and keep the dependent decision blocked rather than asking the user to guess.
 
 Recommendations are proposals, not decisions. Do not settle even a safe or reversible default until the user accepts it. Put low-consequence defaults into a round so they can be accepted together.
+
+## Make every question self-contained
+
+Default to thorough explanations. Make every decision understandable and answerable without requiring the user to ask what the question means. Become concise only when the user explicitly requests it; even then, preserve the decision, recommendation, and material trade-offs.
+
+For every question, explain:
+
+- **What the user is deciding** in plain language.
+- **Why the decision is needed now**, including the dependency that made it part of the current frontier.
+- **What materially changes** depending on the answer.
+- **The recommended answer and its reasoning**, grounded in available evidence.
+- **Each genuinely plausible alternative and its concrete trade-off**.
+- **A brief example** when the decision would otherwise remain abstract.
+
+Define unfamiliar terms inline. Put context shared by several questions in the round introduction instead of repeating it. Do not repeat settled context or add detail that does not help the user choose. If a question cannot yet be explained clearly, reclassify it as a discoverable fact or empirical unknown and investigate it instead of asking an unclear question.
 
 ## Work the decision frontier
 
@@ -35,13 +50,34 @@ Use this format:
 
 Reply `agree to all`, or list exceptions such as `R2.2: B` or `R2.4: discuss`.
 
-1. **R2.1 - Canonical owner** - Recommend: the Orders context. It already owns the lifecycle invariant.
-2. **R2.2 - Retention** - Recommend: 30 days. This matches the existing cleanup policy.
-   - A. 30 days (recommended)
-   - B. 90 days
+1. **R2.1 - Canonical owner**
+
+   **What you are deciding:** Which domain owns an order after checkout begins.
+
+   **Why this is needed now:** Retention and cleanup rules depend on one domain owning the complete lifecycle.
+
+   **What changes:** Orders ownership keeps checkout, fulfilment, and cleanup rules together. Cart ownership splits the lifecycle across two domains and requires coordination for every later transition.
+
+   **Recommend: A - Orders context.** It already owns the lifecycle invariant, so it can enforce every transition without a cross-domain handoff.
+
+   - **A. Orders context (recommended):** One owner for the complete lifecycle; requires the cart to hand off at checkout.
+   - **B. Cart context:** Keeps early checkout state near the cart; introduces shared ownership after checkout.
+
+2. **R2.2 - Retention**
+
+   **What you are deciding:** How long completed orders remain in the operational store before archival.
+
+   **Why this is needed now:** The owner cannot implement cleanup until the retention period is fixed.
+
+   **What changes:** A shorter period reduces storage and exposure of operational data. A longer period makes recent support investigations easier but retains more data.
+
+   **Recommend: A - 30 days.** This matches the existing cleanup policy and covers the normal support window.
+
+   - **A. 30 days (recommended):** Consistent with current policy; older investigations use the archive.
+   - **B. 90 days:** More operational history; higher storage and data-retention cost.
 ```
 
-Keep each item decision-shaped: one choice, its recommendation, and only genuinely plausible alternatives. Do not turn observations into questions or pad a round.
+Keep each item decision-shaped: one choice, its recommendation, and only genuinely plausible alternatives. The labels above are semantic requirements, not rigid wording; combine or rename them when the same understanding is clearer with less repetition. Do not turn observations into questions or pad a round.
 
 ## Process responses
 
