@@ -7,6 +7,8 @@ description: Review an existing issue, ticket, feature file, bug report, roadmap
 
 Review the issue file against the bar: a competent implementation agent should be able to complete it with zero clarifying questions and produce a robust, validated change. If ambiguity remains, the issue is not ready.
 
+Use plain language at a Grade 10 reading level in the rewritten issue, review findings, decision summaries, and clarification questions so they are quick and easy to understand. Prefer short sentences and familiar words. Preserve exact domain terms, code identifiers, and contract language, and explain necessary jargon when it first appears. Never simplify away technical precision.
+
 Use the user's engineering-for-certainty doctrine as the default engineering standard when reviewing software issues: preserve repo conventions, validate trust boundaries, keep adapters thin and domain logic explicit, prefer explicit expected-failure contracts, and require tests for critical behavior and failure paths.
 
 Require companion engineering doctrine when the issue touches its area:
