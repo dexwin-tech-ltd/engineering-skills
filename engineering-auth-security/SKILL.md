@@ -77,6 +77,9 @@ Apply this subsection in order: shared permission source first, registry shape s
   through to implicit allow or deny behavior.
 - Authorization failures should return structured, stable error codes that can
   be mapped exhaustively at the boundary.
+- Authentication and authorization error variants may be shared as reusable atoms, but each protected operation must compose only the variants its own guard or policy evaluation can emit.
+- Public or otherwise unprotected operations must not include authentication or authorization variants merely because those variants exist in a shared package.
+- A route, guard, or adapter that introduces authentication or authorization checks may widen the underlying operation's error union with the exact failures introduced by those checks.
 - In Fastify or similar backends, perform auth checks before parsing request bodies when parsing errors could leak information.
 
 ## Testing and Review
@@ -90,4 +93,5 @@ Apply this subsection in order: shared permission source first, registry shape s
   evaluation when authorization rules change.
 - Test CSRF behavior whenever cookie-based auth changes.
 - Verify secure storage and transport assumptions match the selected architecture.
+- Verify that auth and permission variants appear only on operations whose declared boundary can emit them.
 - Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

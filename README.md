@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `5ba8e94fef65761a0c59df5521524cd0c8875121`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `f68135771fa6d31ebcbc7bbf2a34786d69b87177`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -33,6 +33,12 @@ npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   
 ```
 
 Replace `engineering-resilience` with `engineering-observability`, `engineering-auth-security`, or `engineering-frontend` for another companion bundle.
+
+Install code review with its complete engineering doctrine:
+
+```bash
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review
+```
 
 Install issue review with its direct dependencies:
 

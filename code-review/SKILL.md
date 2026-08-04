@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Perform evidence-verified, staff-level code reviews for diffs, pull requests, commits, branches, local changes, or specific files. Use when the user asks for a code review, PR review, change review, risk review, or wants material issues found across correctness, security, reliability, data integrity, performance, observability, maintainability, and testing quality.
+description: Perform evidence-verified, staff-level code reviews for diffs, pull requests, commits, branches, local changes, or specific files. Apply engineering-for-certainty as the governing doctrine and require relevant engineering companion skills for auth/security, resilience, observability, and frontend changes.
 ---
 
 # Code Review
@@ -10,6 +10,41 @@ description: Perform evidence-verified, staff-level code reviews for diffs, pull
 Find material engineering risks with high recall, then independently refute or verify every candidate before reporting it. Prioritize correctness, security, data integrity, reliability, and operational safety over style. Keep ordinary reviews read-only.
 
 Use logical independence between finder passes. Use subagents when available and worthwhile for broad changes, security-sensitive code, concurrency or data-integrity work, or independent verification. Do not create one subagent per angle mechanically. Give subagents raw artifacts or bounded review areas without leaking expected conclusions.
+
+## Required Engineering Doctrine
+
+Before gathering review scope, load and follow `$engineering-for-certainty`.
+Treat it as the governing engineering standard while honoring its priority for
+explicit user requirements and established repository conventions.
+
+Load each companion whenever the reviewed change directly modifies its area or
+explicitly integrates with its APIs:
+
+- Load `$engineering-observability` for logs, metrics, traces, telemetry, audit
+  records, correlation context, redaction, alerting, or frontend log ingestion.
+- Load `$engineering-resilience` for external calls, retries, timeouts, mutation
+  safety, idempotency, concurrency, queues, cron tasks, webhooks, jobs, or other
+  async processing.
+- Load `$engineering-auth-security` for authentication, authorization, cookies,
+  sessions, CSRF, tokens, actor context, permissions, protected routes, policy
+  enforcement, or secrets.
+- Load `$engineering-frontend` for frontend modules, routes or screens, API
+  adapters, forms, accessibility, client state, or web and mobile testing.
+
+If `$engineering-for-certainty` or a triggered companion is unavailable, stop
+before reviewing. Name every missing skill and tell the user to install
+`code-review` together with the core doctrine and required companions. Do not
+reconstruct missing doctrine from memory.
+
+Use doctrine observations as candidate issues, not automatic findings. Every
+candidate must be applicable to the changed surface, identify a material
+consequence, and survive the normal verification pipeline. Do not infer
+process-only violations, such as failure to use TDD, from a diff that cannot
+establish how the work was performed.
+
+Use each activated companion as a finder and verification obligation, not only
+as background reading. Record the core doctrine, activated companions, and the
+checks they added in the final review scope.
 
 ## Pipeline
 
@@ -129,7 +164,10 @@ Check whether tests cover the changed contract, success paths, expected failures
 
 Look for special cases bolted onto shared infrastructure, workarounds that bypass existing abstractions, and fixes that leave the same invariant broken for sibling consumers. Name the deeper mechanism that should own the behavior. Report convention violations only when an applicable rule can be cited and the violation is material.
 
-Activate specialist depth automatically when the diff touches auth, migrations, destructive persistence, concurrency, queues, public APIs, caching or hot paths, observability, or frontend accessibility and async state.
+Use the required companions for their specialist finder and verification
+passes. Also increase review depth automatically for migrations, destructive
+persistence, public APIs, caching, hot paths, and other high-impact surfaces
+that do not belong to a companion skill.
 
 ## Candidate Standard
 
@@ -224,11 +262,15 @@ Default to at most ten findings, but never omit confirmed Critical or High findi
 Then provide:
 
 1. Brief understanding of the change.
-2. Scope and effort used.
+2. Scope, effort, doctrine skills applied, and the checks each activated companion added.
 3. Validation performed and results.
 4. Conditional residual risks, `NEEDS_CONTEXT` questions, and remaining coverage gaps.
 
 Before delivering the review, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them.
+
+Also verify that every directly affected companion area was identified and its
+skill loaded, and that doctrine observations passed the same materiality,
+reachability, refutation, and verdict requirements as every other candidate.
 
 If no material issues survive verification, state `No material issues identified.` Do not manufacture findings to fill the format.
 

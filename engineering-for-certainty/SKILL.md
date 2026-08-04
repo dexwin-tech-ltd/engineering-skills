@@ -269,22 +269,33 @@ Keep adapters thin and domain logic explicit.
 
 ## Errors and Results
 
-- Domain services must not throw for expected failures.
-- Do not use `try/catch` inside domain services. Restrict `try/catch` to adapter/client boundaries or explicit bridges to throwing libraries.
-- Public service/repository signatures should use named top-level error aliases, not inline unions inside `Result`/`ResultAsync`.
-- Every error variant should be tested and mapped exhaustively at the boundary.
-- HTTP/API error responses should include actionable, sanitized `details` when the client can use them to fix or understand the failure.
-- Unknown infrastructure failures should be normalized into explicit error variants such as `service_unavailable`.
-- Each module owns its domain errors in `[domain].errors.ts`.
-- Cross-cutting errors belong in shared infrastructure errors.
-- Continue using shared infrastructure error variants for technical failures,
-  such as `service_unavailable`.
-- Cross-module authorization or permission failures belong in shared
-  infrastructure or authorization error layers, not a single business module.
-- Define module errors with exported variant constants, named error types, and
-  small factory helpers in `[domain].errors.ts`.
-- Prefer discriminated `type` variants for service and repository errors; do not
-  scatter inline `{ type: "..." as const }` shapes across the codebase.
+- Treat expected application failures as values. Domain services and exported callable operations must not throw them.
+- Expose the narrowest truthful closed error type from each producer: include every error variant it can emit and no variant it cannot emit.
+- Apply producer-owned truthfulness recursively. Each error code owns its exact
+  required or forbidden details shape, and every nested issue discriminant is
+  coupled only to payloads a real producer branch can emit. Reject
+  optional-property bags, Cartesian products, and nested combinations that no
+  producer path can construct.
+- Use named top-level error aliases in public operation, service, and repository signatures, not inline unions inside `Result`/`ResultAsync`.
+- Reuse domain, infrastructure, authorization, and provider error variants as atomic types and factories. Compose them into a producer-specific error union at each operation boundary.
+- Do not use a global, project-wide, or domain-wide umbrella error union as an operation's return type unless that operation can genuinely emit every variant in it.
+- Expose a success-only contract or `Result<T, never>` when an operation cannot emit an application-level error under its declared boundary policy; do not invent defensive variants.
+- Restrict `try/catch` to exported callable boundaries, adapters/clients, and explicit bridges to throwing libraries.
+- Keep expected application failures as exact `Result` / `ResultAsync` values
+  through internal helper graphs. Helper callers propagate those variants
+  exhaustively; they do not throw a typed application error for an outer catch
+  block to recover.
+- Normalize unexpected execution failures observable by a boundary that promises a total `Result` contract into a sanitized, boundary-owned variant such as `internal_error`.
+- Treat a typed application error that is thrown instead of returned as an
+  unexpected transport defect and normalize it to the boundary-owned internal
+  failure. Do not inspect caught values to restore an expected application
+  code.
+- Treat network, process, provider, SDK, and platform failures outside an operation's execution as failures introduced by the calling boundary, not emitted by the called operation.
+- Widen an error union only with variants that the consuming boundary or adapter can itself introduce. Otherwise preserve the producer's exact error union.
+- Test and map every error variant exhaustively at the consuming boundary. Adding a producer variant should break affected consumers until they handle it.
+- Include actionable, sanitized `details` in HTTP/API error responses when the client can use them to understand or correct the failure.
+- Keep reusable error atoms and factories with their owning domain or infrastructure module; shared ownership does not make an error variant part of every operation contract.
+- Prefer discriminated `type` variants and small factory helpers; do not scatter inline `{ type: "..." as const }` shapes across the codebase.
 
 ## Testing Doctrine
 

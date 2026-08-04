@@ -33,6 +33,10 @@ Apply this skill when the work includes:
 ### Error Mapping and Write Safety
 
 - Timeouts, cancellations, rate limits, and upstream failures must be mapped into explicit infrastructure error variants instead of leaking transport-library errors.
+- The boundary that performs an external call owns the timeout, cancellation, rate-limit, provider, and availability failures introduced by that call.
+- Infrastructure error variants may be reusable atoms, but they are not an ambient union inherited by unrelated operations.
+- A calling operation may widen its error contract only with downstream variants it deliberately exposes and failures introduced by its own orchestration.
+- Operations that do not perform or depend on an external call must not claim that call's infrastructure failures in their result type.
 - Multi-step writes that must succeed together require explicit transaction boundaries.
 - Duplicate-prone externally triggered writes require idempotency protection.
 - Concurrency behavior must be explicit. Use transactions, locks, optimistic concurrency, unique constraints, or equivalent safeguards instead of assuming single-writer behavior.
@@ -50,4 +54,5 @@ Apply this skill when the work includes:
 - Test idempotency, duplicate-delivery handling, or concurrency protection where the change affects writes.
 - Test retry/dead-letter behavior for changed async flows when a valid seam exists.
 - Verify no silent infinite retry loops or fallback behavior were introduced.
+- Verify that each resilience error appears only in contracts whose execution path can introduce it.
 - Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

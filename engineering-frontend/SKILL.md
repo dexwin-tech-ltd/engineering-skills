@@ -58,15 +58,19 @@ Each arrow is a boundary. Nothing skips a layer.
 - Validate adapter input with `.safeParse()` before making the request. Return a typed validation error and do not call the API when request validation fails.
 - Validate success responses against the endpoint success contract before returning data.
 - Validate error responses against the endpoint error contract before mapping them into domain errors.
+- Validate and parse the exact contract for the operation being called. Do not parse operation responses through a broader domain-wide or project-wide error schema.
 - If response validation fails, map it to an explicit infrastructure failure such as `service_unavailable`; an unrecognized payload is not a domain error.
 - Prefer combined per-endpoint error contracts when the repo supports them. Parse the error body once, then exhaustively match the parsed error discriminant instead of branching on HTTP status first with a broad fallback.
 - Keep domain error unions as named top-level type aliases. Put domain error types and factories in the domain's frontend module, not inline inside adapter functions.
+- Return the operation's exact error union plus only failures introduced by the adapter itself, such as client-side input validation, transport failure, SDK rejection, or malformed response data.
+- Map transport, SDK, provider, and malformed-response failures to adapter-owned infrastructure variants such as `service_unavailable`; do not attribute them to the remote operation.
 - No `try/catch` in adapters, hooks, or flows for expected failures. Use `Result`/`ResultAsync` and restrict `try/catch` to explicit bridges to throwing libraries.
 
 ## Hooks and Server State
 
 - Prefer TanStack Query as the default server-state/query library for web and mobile projects unless the repo already standardizes on another tool.
 - Hooks call API adapters and expose the adapter result without reclassifying expected domain failures as thrown exceptions.
+- Hooks and flows receive the adapter's exact result type; do not widen it to a convenient global error union.
 - When a query or mutation awaits a `ResultAsync`, the resolved value is a `Result`; domain failures land in query/mutation `data`, not in Query's `error` state. Branch on `data.isOk()` / `data.isErr()` for domain outcomes.
 - Use TanStack Query `isError` / `error` only for unexpected thrown failures that violate the adapter contract.
 - Keep query keys short, stable, and domain-specific.
@@ -115,7 +119,7 @@ For web or mobile features:
 - Flows own orchestration; views stay presentational.
 - API calls go through the adapter boundary. No direct `fetch`, `axios`, SDK, or raw client calls leak into components, screens, routes, flows, views, or stores.
 - Requests, success responses, and error responses are validated at the adapter boundary with `.safeParse()`.
-- Endpoint error mapping is exhaustive and does not hide new typed variants behind a broad status-first fallback.
+- Endpoint error parsing and mapping use the exact operation contract, remain exhaustive, and do not hide new variants behind a broad domain schema or status-first fallback.
 - Hooks branch on `Result` values for domain outcomes instead of treating TanStack Query `isError` as the domain failure path.
 - Forms render plain user-facing strings and preserve all field and general error messages.
 - Web unit/component tests prefer `@testing-library/react`.
