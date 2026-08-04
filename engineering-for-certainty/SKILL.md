@@ -24,7 +24,7 @@ Resolve instruction conflicts in this order, top to bottom.
 
 Apply these only when relevant:
 
-- Use `$engineering-observability` for centralized logging, Better Stack setup, correlation/request IDs, sanitization/redaction, and frontend log ingestion.
+- Use `$engineering-observability` for logs, metrics, traces, audits, Better Stack or OpenTelemetry setup, correlation and trace context, sanitization/redaction, client telemetry ingestion, and signal capacity or retention.
 - Use `$engineering-resilience` for external-call timeouts/retries, mutation safety, concurrency, idempotency, queues, cron, webhooks, and async processing.
 - Use `$engineering-auth-security` for cookies, sessions, CSRF, token handling,
   auth boundaries, centralized Fastify auth-plugin boundaries, typed actor

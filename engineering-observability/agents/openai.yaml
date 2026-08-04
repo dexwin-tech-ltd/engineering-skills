@@ -1,7 +1,7 @@
 interface:
   display_name: "Engineering Observability"
-  short_description: "Observability and logging doctrine"
-  default_prompt: "Use $engineering-observability for logging, Better Stack, correlation IDs, and log-ingestion changes."
+  short_description: "Logging, metrics, tracing, and telemetry safety"
+  default_prompt: "Use $engineering-observability for safe logs, metrics, traces, audits, and client telemetry."
 
 policy:
   allow_implicit_invocation: true

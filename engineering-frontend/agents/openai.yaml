@@ -1,7 +1,7 @@
 interface:
   display_name: "Engineering Frontend"
-  short_description: "Frontend architecture, API integration, forms, accessibility, and testing doctrine"
-  default_prompt: "Use $engineering-frontend for frontend modules, API adapters, hooks, flows/views, forms, accessibility, and web/mobile tests."
+  short_description: "Frontend architecture, accessibility, telemetry, and tests"
+  default_prompt: "Use $engineering-frontend for frontend architecture, API adapters, forms, accessibility, client telemetry, and tests."
 
 policy:
   allow_implicit_invocation: true

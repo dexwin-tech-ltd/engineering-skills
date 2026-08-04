@@ -1,31 +1,33 @@
 ---
 name: engineering-observability
-description: Explicit observability doctrine for backend and frontend operational telemetry, including safe structured logging, redaction, correlation IDs, database error metadata, frontend log ingestion, capacity protection, retention, and sink failure. Use when work touches logs, metrics, traces, telemetry, alerts, audits, request IDs, or frontend logging.
+description: Explicit observability doctrine for backend and frontend operational telemetry, including safe structured logging, OpenTelemetry tracing, W3C context propagation, metrics, redaction, correlation, client ingestion, capacity protection, retention, and sink failure. Use when work touches logs, metrics, traces, spans, telemetry, alerts, audits, request IDs, or frontend logging and tracing.
 ---
 
 # Engineering Observability
 
-Use this companion skill with `$engineering-for-certainty` when work touches logging or telemetry. Apply the doctrine in order: centralized boundary, safe event contract, source adapters, correlation, ingestion and delivery, then verification.
+Use this companion skill with `$engineering-for-certainty` when work touches operational telemetry. Apply the doctrine in order: centralized configuration, signal-specific contracts, tracing and correlation, client ingestion, delivery and capacity, then verification.
 
 ## Scope
 
 Apply this skill to:
 
 - centralized logger setup or configuration
-- backend logs, metrics, trace attributes, alerts, and audit records
+- backend or frontend logs, metrics, traces, alerts, and audit records
+- trace instrumentation, span attributes, context propagation, sampling, or export
 - redaction, sanitization, retention, and log access
 - correlation or request ID propagation
 - database, provider, SDK, queue, job, or infrastructure failure logging
-- frontend operational event emission and frontend-to-backend log ingestion
+- frontend operational event or span emission and client-to-backend ingestion
 
-## Centralized Boundary
+## Centralized Configuration And Signal Boundaries
 
-- Use one centralized observability abstraction for the app. Every persisted log, metric attribute, trace attribute, and audit record must pass through it.
-- Inject the abstraction into services and repositories; do not import logger singletons into domain code as hidden global state.
-- Accept typed Safe Log Events, not arbitrary context bags, raw request objects, raw errors, or spread objects.
-- Define a closed schema per event family. Reject unknown keys and bound every string, array, nesting level, and payload size before forwarding.
+- Configure resource metadata, privacy policy, exporters, sampling, and health centrally while preserving signal-specific contracts.
+- Send logs and audits through typed event schemas, metrics through named instruments with bounded attributes, and traces through an approved tracer provider, instrumentation, processors, and exporters.
+- Inject the logger, tracer, meter, or a narrow signal-specific facade into services and repositories; do not import hidden telemetry singletons into domain code.
+- Accept typed Safe Log Events, not arbitrary context bags, raw request objects, raw errors, or spread objects. Give metrics and manual spans explicit allowlisted attribute contracts.
+- Define a closed schema per event family. Reject unknown keys and bound every accepted string, array, nesting level, and payload size before forwarding.
 - Keep logging out of business transactions and critical request completion. Logging failure must not change a successful business outcome unless the event is an explicitly authoritative audit requirement.
-- When `NODE_ENV` is `production`, missing Better Stack configuration is a startup error. In `development`, default to console logging when Better Stack is absent. Treat an unset `NODE_ENV` as development only in a verified local development environment.
+- When `NODE_ENV` is `production`, missing Better Stack logging configuration or required tracing exporter configuration is a startup error. In `development`, default to console logging and a local or no-op tracing exporter when remote sinks are absent. Treat an unset `NODE_ENV` as development only in a verified local development environment.
 - If the primary sink fails, use a bounded sanitized stderr or console fallback and surface safe aggregate health or alert signals when the repo supports them. Never recursively log a logger failure through the failing path.
 
 ## Safe Log Event Contract
@@ -69,42 +71,74 @@ db.constraint
 
 Output-validation failures and unexpected infrastructure failures must still produce a Safe Log Event through their owning source adapter.
 
+## Tracing Activation And Instrumentation
+
+Require tracing when the work explicitly changes tracing; crosses services, processes, queues, webhooks, or other asynchronous boundaries; changes a critical multi-dependency path that logs and metrics cannot diagnose; or extends a path already traced by the repo. Do not add tracing to simple local work without one of these triggers.
+
+- Preserve a compatible existing tracing stack. Otherwise use OpenTelemetry with W3C Trace Context.
+- Prefer maintained framework and library instrumentation for supported HTTP, RPC, database, provider, and messaging boundaries. Add targeted manual spans for significant domain operations, unsupported integrations, or missing causal links; do not create one span per function.
+- Create inbound server or consumer spans, outbound client or producer spans, and inject or extract context at every supported causal boundary on the affected path.
+- Use parent context for direct causal continuation, links for fan-out, fan-in, batch, or otherwise non-parental relationships, and a root span for cron or background work with no valid upstream context.
+- Let `$engineering-frontend` own where significant client spans begin. Activate browser or mobile tracing only for critical journeys that meet the same risk trigger.
+
+## Trace Context And Span Contract
+
+- Follow the applicable OpenTelemetry semantic convention for span names, kinds, attributes, and error status before defining custom fields.
+- Keep span names stable and low-cardinality. Put approved execution identifiers in bounded attributes, never in span names, and namespace application-specific attributes.
+- Review every automatic instrumentation's emitted attributes and capture settings. Allowlist or sanitize them before export; disable HTTP headers, query strings and userinfo, database statements and parameters, messaging payloads, RPC bodies, and provider request or response capture unless a narrower safe contract explicitly permits a field.
+- Mark a span as `Error` with a predictable low-cardinality `error.type` when the instrumented operation throws, returns an error result, or otherwise fails its declared contract.
+- Record a sanitized propagated exception at one owning boundary when it materially helps diagnosis. Never export raw messages, stacks, causes, bodies, query text, parameters, or third-party payloads.
+- Represent handled expected domain outcomes with a bounded outcome attribute rather than error status. Leave successful status unset unless the applicable convention requires `Ok`.
+- Treat incoming baggage as untrusted. Propagate only approved bounded keys, never put secrets or direct identity in baggage, and never use baggage for authentication or authorization.
+
 ## Correlation And Ownership
 
-- Create or propagate correlation and request IDs at every external boundary.
-- Preserve them through route, service, repository, queue, cron, webhook, job, provider, and logging flows.
+- Give each identifier one lifecycle: a request ID identifies one inbound request when the API convention needs it; trace and span IDs identify the connected execution and current operation; a separate correlation ID exists only for a business workflow spanning multiple traces or when an external contract requires it.
+- Add active trace and span IDs to structured logs. Propagate trace context through causally connected boundaries; do not manufacture request IDs for queues, cron, or jobs.
 - Derive actor, tenant, environment, and deployment context from trusted server state. Never trust a frontend payload to assert identity or authority.
 - Generate authoritative security and audit events on the backend. Frontend events are advisory operational telemetry only.
 
-## Frontend Log Ingestion
+## Client Telemetry Ingestion
 
-- Send frontend operational events through a dedicated backend endpoint. Never send client logs directly to Better Stack or another third-party sink.
-- Treat the endpoint as an untrusted public telemetry boundary. Use a strict discriminated union of allowed event types with closed per-event context schemas.
-- Reject unknown fields, wrong content types, oversized bodies, oversized batches, excessive string lengths, invalid timestamps, and unsupported event versions.
+- Send frontend operational events and trace payloads through dedicated controlled backend endpoints. Never export client telemetry directly to Better Stack, an OpenTelemetry Collector, or another third-party sink.
+- Treat each endpoint as an untrusted public telemetry boundary. Use a strict discriminated union for operational events and a closed, bounded client trace contract. Permit OTLP only when the receiver validates and reduces it to that restricted contract before export.
+- Reject unknown fields, wrong content types, unsupported versions, oversized bodies or batches, excessive span or event counts, excessive attributes or links, excessive string lengths, and invalid or implausible timestamps.
+- Allowlist accepted span names, kinds, resource fields, attributes, events, links, and baggage-derived fields. Reject or discard client-owned identity, tenant, environment, deployment, service authority, and exporter-routing metadata.
 - Authenticate ingestion by default. If pre-auth telemetry is required, expose a reduced anonymous event set with lower limits and no client-provided identity.
-- Apply rate limits and abuse protection before expensive work when the framework permits. Do not persist or log raw rate-limit keys such as IP addresses.
+- Apply rate limits and abuse protection before expensive decoding or forwarding when the framework permits. Do not persist or log raw rate-limit keys such as IP addresses.
 - Attach server-owned ingestion time, request ID, verified actor or tenant context, environment, and deployment metadata after validation.
-- Reject raw messages, stacks, breadcrumbs, console arguments, storage values, request bodies, and URLs with query strings.
+- Reject raw messages, stacks, breadcrumbs, console arguments, storage values, request bodies, form values, and URLs with query strings.
 - Return a generic response. Invalid telemetry must not disclose validation internals or create another unsafe log containing the rejected payload.
 - Prevent recursive ingestion: client or endpoint logging failures must not emit another frontend event through the same path.
 
+## Sampling And Export
+
+- Configure sampling explicitly by environment. Development and tests may sample every trace at bounded volume; production must declare and justify its root policy from measured traffic, cost, and diagnostic needs.
+- Use parent-based sampling so child spans respect the upstream decision. Use Collector-side tail sampling for slow or failed traces only when the deployment supports it and the policy is documented.
+- Keep all client exporter credentials and routing on the controlled backend. Preserve a compatible server-owned exporter; otherwise prefer OTLP through an OpenTelemetry Collector, while allowing direct backend-to-provider export when the same safety and capacity rules hold.
+- Treat missing or structurally invalid required production tracing configuration as a startup failure. After successful startup, tracing and exporter failures must fail open and never fail a business operation.
+- Export asynchronously through bounded queues and batches with explicit timeouts. Bound flush and shutdown; drop spans after capacity is exhausted and surface only safe aggregate failure and drop signals.
+
 ## Delivery, Capacity, And Retention
 
-- Treat frontend telemetry as best-effort. Use a bounded in-memory or dedicated telemetry queue, batch delivery, explicit timeouts, and a circuit breaker around the sink.
+- Treat telemetry as best-effort except when an audit event is explicitly authoritative. Use bounded in-memory or dedicated telemetry queues, batch delivery, explicit timeouts, and a circuit breaker around external sinks.
 - Apply `$engineering-resilience` to queues, retries, timeouts, backoff, circuit breaking, concurrency, and sink outages.
 - Return after bounded validation and enqueue rather than waiting synchronously for the external sink. Do not write frontend telemetry through the application database or a business transaction.
-- Define a Telemetry Budget from peak clients, maximum events per client, maximum event size, sustained rate, burst rate, queue capacity, and provider-outage duration.
+- Define one observability budget with signal-specific limits. For traces include root sampling, sampled throughput, span attributes/events/links/baggage, attribute cardinality and length, queue and batch capacity, flush interval, export timeout, provider-outage duration, and dropped-span behavior.
+- For frontend events include peak clients, maximum events and bytes per client, sustained and burst rate, queue capacity, and provider-outage duration.
 - Under pressure, drop or sample low-priority telemetry, increment safe aggregate drop metrics, and preserve business traffic. Never create an unbounded queue or retry storm.
-- Restrict log access by least privilege, audit access when required, and define retention and deletion from operational, contractual, and privacy needs. Do not keep telemetry indefinitely by default.
+- Restrict access to persisted telemetry by least privilege, audit access when required, and define per-signal retention and deletion from operational, contractual, regional, and privacy needs. Do not keep telemetry indefinitely by default.
 
 ## Testing And Review
 
-- Test production versus development startup behavior for the configured sink where a valid seam exists.
+- Test production versus development startup behavior for every required configured sink where a valid seam exists.
 - Test event schemas, unknown-key rejection, length and size limits, log-injection sanitization, and correlation propagation.
 - Seed sensitive values into raw errors, requests, database parameters, provider responses, and frontend payloads; prove that none reaches logs, metrics, traces, audits, or fallbacks.
 - Test every source adapter's allowed and forbidden fields, including missing database metadata.
-- Test frontend ingestion authentication, reduced anonymous events when present, forged identity, PII smuggling, batch and body limits, rate limits, and generic failures.
+- Test frontend event and trace ingestion authentication, reduced anonymous contracts when present, forged identity and authority, PII smuggling, schema/version rules, span/event/attribute/link limits, batch and body limits, rate limits, and generic failures.
+- Exercise the real changed HTTP, queue, job, webhook, or client-to-backend boundary where a valid integration environment exists. Prove W3C context injection/extraction, correct parent or link relationships, root-span creation, semantic names and kinds, bounded attributes, and the final exported trace.
+- Test error and expected-outcome semantics, parent-based sampling, unsampled application correctness, and that client trace export reaches only the controlled backend.
 - Load-test sustained traffic, bursts, malicious clients, repeated frontend-error loops, a full queue, sink timeouts, and provider outages against the Telemetry Budget.
-- Test logger failure and fallback behavior without recursion, unbounded memory growth, or business-operation failure.
-- Verify retention, reader access, and authoritative audit ownership when the change affects them.
+- Test logger and trace-exporter failure, timeout, saturation, dropping, fallback, and bounded shutdown without recursion, unbounded memory growth, or business-operation failure.
+- Verify per-signal retention, reader access, and authoritative audit ownership when the change affects them.
 - Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

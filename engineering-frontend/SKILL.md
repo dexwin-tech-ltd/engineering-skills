@@ -1,6 +1,6 @@
 ---
 name: engineering-frontend
-description: Frontend engineering doctrine for web/mobile architecture, API integration, forms, accessibility, operational logging, and testing. Use with engineering-for-certainty when work touches frontend modules, routes/screens, API adapters, hooks, flows/views, TanStack Query/Form, accessibility, client telemetry, or web/mobile unit/E2E coverage.
+description: Frontend engineering doctrine for web/mobile architecture, API integration, forms, accessibility, operational telemetry and tracing, and testing. Use with engineering-for-certainty when work touches frontend modules, routes/screens, API adapters, hooks, flows/views, TanStack Query/Form, accessibility, client telemetry, or web/mobile unit/E2E coverage.
 ---
 
 # Engineering Frontend
@@ -18,7 +18,7 @@ Apply this skill when the work includes:
 - web component, flow, or hook testing
 - mobile component, screen, or hook testing
 - frontend accessibility requirements
-- frontend operational logging or telemetry emission
+- frontend operational logging, tracing, or telemetry emission
 - Playwright or Maestro test coverage
 - frontend build-sequence changes related to testing
 
@@ -92,9 +92,11 @@ Each arrow is a boundary. Nothing skips a layer.
 - Preserve accessibility coverage for states that affect navigation, form submission, authentication, checkout or payment, destructive actions, or error recovery.
 - Add accessibility-aware assertions for critical user-visible flows when the local test stack supports them.
 
-## Operational Logging
+## Client Observability
 
-Apply `$engineering-observability` whenever frontend code emits operational telemetry. It owns Safe Log Event schemas, ingestion, delivery, retention, and capacity; this skill owns where and when the client emits.
+Apply `$engineering-observability` whenever frontend code emits operational telemetry. It owns signal contracts, propagation, ingestion, export, privacy, retention, and capacity; this skill owns where and when meaningful client events and spans begin.
+
+### Operational Events
 
 Emit a Frontend Operational Event only at an owned boundary or meaningful transition:
 
@@ -116,6 +118,15 @@ Do not log component renders, routine effects, keystrokes, form values, every re
 - Treat every severity as rate-limited. A critical label must not permit an event storm.
 - Keep product analytics separate and generate authoritative security or audit truth on the backend.
 
+### Client Tracing
+
+- Trace only a critical user journey that meets `$engineering-observability`'s risk trigger; do not trace every render, effect, click, navigation, or request.
+- Use supported automatic instrumentation plus targeted manual spans at meaningful journey and adapter boundaries.
+- Propagate W3C trace context only to an explicit allowlist of first-party or trusted origins. Context propagation is not telemetry export.
+- Export client span data only through the controlled backend trace endpoint. Never send it directly to an OpenTelemetry Collector, Better Stack, or another provider, and never ship exporter credentials to the client.
+- Never attach auth data, form values, user-entered content, raw URLs or query strings, direct identity, or arbitrary baggage to client spans.
+- Apply client-specific sampling, queue, payload, and privacy limits. Keep product analytics separate from operational traces.
+
 ## Testing
 
 - Prefer `@testing-library/react` for web unit/component tests.
@@ -123,6 +134,7 @@ Do not log component renders, routine effects, keystrokes, form values, every re
 - Web E2E tests are mandatory for important user-visible flows when a web app exists. Prefer Playwright.
 - Mobile E2E tests are mandatory for important user-visible flows when a mobile app exists. Prefer Maestro.
 - Test one-event-per-transition telemetry, deduplication or aggregation, production sampling and debug-event policy, queue bounds and drops, and the absence of PII or raw error objects.
+- When client tracing changes, test origin-allowlisted context propagation, controlled-backend-only span export, client sampling and limits, meaningful span ownership, and the absence of sensitive attributes or baggage.
 - Mirror production file naming. Follow the repo's naming style; otherwise prefer `test()` and given/when/then test bodies.
 
 ## Build Sequence
@@ -151,7 +163,7 @@ For web or mobile features:
 - Web unit/component tests prefer `@testing-library/react`.
 - Mobile unit/component tests follow the repo's existing Expo/Jest integration unless there is a documented reason to diverge.
 - User-visible states and flows that affect navigation, form submission, authentication, checkout or payment, destructive actions, or error recovery include accessibility coverage.
-- Frontend operational events occur only at owned boundaries or meaningful transitions, satisfy `$engineering-observability`, and cannot form render, retry, ingestion, or provider-failure loops.
+- Frontend operational events and spans occur only at owned boundaries or meaningful transitions, satisfy `$engineering-observability`, export only through the controlled backend, and cannot form render, retry, ingestion, or provider-failure loops.
 - Supported-platform flows that cover core business actions, high-traffic journeys, or failure recovery include mandatory E2E coverage.
 - If a platform or E2E tool is unsupported in the repo, document the limitation and prioritize accessibility plus unit/component and flow coverage on supported platforms.
 - Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.
