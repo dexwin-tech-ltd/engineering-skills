@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pull Request Review"
+  short_description: "Review PRs and publish verified findings"
+  default_prompt: "Use $pull-request-review to review this GitHub pull request, reconcile existing threads, and publish only findings I accept."

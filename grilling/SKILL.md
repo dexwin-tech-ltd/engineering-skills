@@ -37,7 +37,7 @@ Define unfamiliar terms inline. Put context shared by several questions in the r
 Map unresolved decisions by dependency. The current frontier contains decisions whose prerequisites are already settled.
 
 - Ask only frontier decisions. Never ask hypothetical downstream questions for branches the user has not selected.
-- Ask numbered rounds of at most 7 questions. Aim for 3-7 when enough independent decisions are eligible.
+- Ask numbered rounds of at most 10 questions. Aim for 3-10 when enough independent decisions are eligible.
 - If the frontier is larger, split it into coherent sub-rounds and keep the rest queued. Do not imply that one sub-round exhausts the frontier.
 - Use a smaller round when fewer decisions remain or one genuine fork determines which questions exist next.
 - Order by dependency first, then put likely-to-be-accepted defaults first.

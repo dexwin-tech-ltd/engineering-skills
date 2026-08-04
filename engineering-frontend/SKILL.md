@@ -1,6 +1,6 @@
 ---
 name: engineering-frontend
-description: Frontend engineering doctrine for web/mobile architecture, API integration, forms, accessibility, and testing. Use with engineering-for-certainty when work touches frontend modules, routes/screens, API adapters, hooks, flows/views, TanStack Query/Form, accessibility requirements, or web/mobile unit/E2E coverage.
+description: Frontend engineering doctrine for web/mobile architecture, API integration, forms, accessibility, operational logging, and testing. Use with engineering-for-certainty when work touches frontend modules, routes/screens, API adapters, hooks, flows/views, TanStack Query/Form, accessibility, client telemetry, or web/mobile unit/E2E coverage.
 ---
 
 # Engineering Frontend
@@ -18,6 +18,7 @@ Apply this skill when the work includes:
 - web component, flow, or hook testing
 - mobile component, screen, or hook testing
 - frontend accessibility requirements
+- frontend operational logging or telemetry emission
 - Playwright or Maestro test coverage
 - frontend build-sequence changes related to testing
 
@@ -91,12 +92,37 @@ Each arrow is a boundary. Nothing skips a layer.
 - Preserve accessibility coverage for states that affect navigation, form submission, authentication, checkout or payment, destructive actions, or error recovery.
 - Add accessibility-aware assertions for critical user-visible flows when the local test stack supports them.
 
+## Operational Logging
+
+Apply `$engineering-observability` whenever frontend code emits operational telemetry. It owns Safe Log Event schemas, ingestion, delivery, retention, and capacity; this skill owns where and when the client emits.
+
+Emit a Frontend Operational Event only at an owned boundary or meaningful transition:
+
+- an application error boundary or unhandled client failure
+- an API adapter transport failure after its bounded retry policy
+- an API response that violates its declared contract
+- an unexpected auth or session transition
+- an unexpected failure of a critical user workflow
+- an offline or online transition that materially changes an active workflow
+- an aggregate client-logger health signal such as a dropped-event count
+
+Do not log component renders, routine effects, keystrokes, form values, every request or response, every navigation or click, expected validation or domain failures without a named operational requirement, product analytics, raw errors, stacks, console arguments, storage values, arbitrary objects, or URLs with query strings.
+
+- Emit once per failure occurrence or meaningful state transition, not once per render, retry, or observer.
+- Deduplicate repeated signatures in a bounded window and aggregate repeated low-value events into counts.
+- Disable debug events in production and sample informational events when complete collection is unnecessary.
+- Use a bounded in-memory client queue, explicit event-count or byte thresholds, a maximum flush interval, and asynchronous non-blocking delivery.
+- Bound retries with backoff and jitter. Drop telemetry when the queue is full; never block user actions, grow memory without limit, or recursively log delivery failure.
+- Treat every severity as rate-limited. A critical label must not permit an event storm.
+- Keep product analytics separate and generate authoritative security or audit truth on the backend.
+
 ## Testing
 
 - Prefer `@testing-library/react` for web unit/component tests.
 - For mobile unit/component tests, prefer the repo's existing Expo/Jest integration, commonly `expo-jest`, instead of introducing a parallel test stack without a strong reason.
 - Web E2E tests are mandatory for important user-visible flows when a web app exists. Prefer Playwright.
 - Mobile E2E tests are mandatory for important user-visible flows when a mobile app exists. Prefer Maestro.
+- Test one-event-per-transition telemetry, deduplication or aggregation, production sampling and debug-event policy, queue bounds and drops, and the absence of PII or raw error objects.
 - Mirror production file naming. Follow the repo's naming style; otherwise prefer `test()` and given/when/then test bodies.
 
 ## Build Sequence
@@ -125,6 +151,7 @@ For web or mobile features:
 - Web unit/component tests prefer `@testing-library/react`.
 - Mobile unit/component tests follow the repo's existing Expo/Jest integration unless there is a documented reason to diverge.
 - User-visible states and flows that affect navigation, form submission, authentication, checkout or payment, destructive actions, or error recovery include accessibility coverage.
+- Frontend operational events occur only at owned boundaries or meaningful transitions, satisfy `$engineering-observability`, and cannot form render, retry, ingestion, or provider-failure loops.
 - Supported-platform flows that cover core business actions, high-traffic journeys, or failure recovery include mandatory E2E coverage.
 - If a platform or E2E tool is unsupported in the repo, document the limitation and prioritize accessibility plus unit/component and flow coverage on supported platforms.
 - Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

@@ -257,7 +257,7 @@ Put actionable findings first. For each finding include:
 - Explicit assumption when applicable.
 - Missing regression test when relevant.
 
-Default to at most ten findings, but never omit confirmed Critical or High findings because of the cap. Fill remaining slots with the strongest Medium and Low findings. State how many verified lower-priority findings were omitted, if any.
+Present confirmed findings in Review Batches of at most ten, ranked by severity and impact. There is no total finding cap. State whether more verified findings remain, obtain feedback on the current batch when the workflow requires adjudication, and continue until every confirmed finding has been presented. Never treat a batch boundary as permission to omit Critical or High findings; rank them into the earliest batch.
 
 Then provide:
 
@@ -266,7 +266,7 @@ Then provide:
 3. Validation performed and results.
 4. Conditional residual risks, `NEEDS_CONTEXT` questions, and remaining coverage gaps.
 
-Before delivering the review, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them.
+Before delivering each batch, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them through a composing workflow.
 
 Also verify that every directly affected companion area was identified and its
 skill loaded, and that doctrine observations passed the same materiality,
@@ -315,7 +315,9 @@ Never edit the `issue-review` skill during this retrospective unless the user se
 
 Keep a normal review read-only.
 
-- With an explicit comment request or `--comment`, post only confirmed, deduplicated findings, avoid duplicate comments, and attach each comment to the causal changed line when the platform permits.
+- For GitHub inline publication, use `$pull-request-review` as the composing workflow. This skill supplies verified findings and evidence; the composing workflow owns existing-thread reconciliation, user adjudication, responsible-engineer tagging, fix snippets, GitHub writes, and post-write verification.
+- When this skill is already running inside `$pull-request-review`, return stable finding IDs and complete candidate records to that workflow after verification. Do not load the composing skill from inside this skill or post comments directly.
+- A direct request to review a GitHub PR and publish comments should select `$pull-request-review` before analysis. If it is unavailable, keep the review read-only and name the missing workflow instead of reconstructing GitHub mutation behavior here.
 - With an explicit fix request or `--fix`, present the review first, then begin a separate implementation phase. Do not auto-fix `CONDITIONAL` or `NEEDS_CONTEXT` candidates. Validate applied fixes and summarize the resulting changes.
 
 Do not post externally or modify the working tree unless the user explicitly requested that action.

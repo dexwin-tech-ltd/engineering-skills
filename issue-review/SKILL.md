@@ -27,11 +27,12 @@ If no issue path is provided, ask for one before proceeding.
 1. **Read the issue**: identify the requested change, claimed files, dependencies, and current structure.
 2. **Discover repo conventions**: inspect local docs and examples before applying generic rules, including issue filename rules and the next unused issue reference.
 3. **Verify claims against code**: check paths, symbols, line references, tests, schemas, commands, and stated behavior.
-4. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, and batch user-owned decisions into dependency-aware rounds with stable question IDs.
-5. **Accumulate answers**: maintain the decision map across rounds; do not edit the issue during the review.
-6. **Build traceability**: map each acceptance criterion to its production owner and exact verification before implementation begins.
-7. **Cross-validate**: check the resolved issue, traceability ledger, and conditional gates for contradictions and missing dependencies.
-8. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
+4. **Decompose and name the work**: prove the issue is one Smallest Coherent Slice or create an ordered child pack, then assign every slice its exact Branch Contract and PR base.
+5. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, and batch user-owned decisions into dependency-aware rounds with stable question IDs.
+6. **Accumulate answers**: maintain the decision map across rounds; do not edit the issue during the review.
+7. **Build traceability and execution**: map each acceptance criterion to its production owner and exact verification, then define safe sequential or parallel implementation ownership.
+8. **Cross-validate**: check the resolved issue, traceability ledger, execution plan, and conditional gates for contradictions and missing dependencies.
+9. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
 
 Never write placeholders, TODOs, partial decisions, or "TBD" sections to the issue. The file is either unchanged while review is in progress or fully resolved when review is complete.
 
@@ -71,6 +72,30 @@ For pending issue files, require the default filename format
   roadmap/index and every in-repository reference in the same write pass.
 
 If the issue uses a domain term that conflicts with the local glossary or product docs, stop and ask the user to resolve the term before continuing.
+
+## Decomposition And Branch Contract
+
+Every review must make one explicit decomposition decision: either the issue is already one Smallest Coherent Slice, or it must become a parent pack of smaller child issues. Do not use line count alone.
+
+A Smallest Coherent Slice must:
+
+- have one coherent observable outcome;
+- be independently implementable, testable, and reviewable;
+- leave the repository green after integration;
+- own exact acceptance criteria, production surfaces, tests, dependencies, branch, and PR;
+- avoid splitting contracts, persistence, behavior, and proof into technical micro-tasks that are not meaningful alone.
+
+The slice need not be independently deployed when the product intentionally releases only after the full pack is complete. When splitting, record the parent, ordered children, cross-slice contracts, and release boundary. Preserve existing pack-local numbering when it is already stable.
+
+Require each slice to record its exact conventional Branch Contract before implementation:
+
+```text
+<type>/<NN>-<short-kebab-description>
+```
+
+Preserve a platform-required prefix such as `codex/`. The type and stable issue number must agree with the issue filename. A branch suggestion or pattern without the resolved name does not pass.
+
+Use Stacked Pull Requests only for real dependencies. Record each PR's head, base, preceding PR, merge order, and rebase or retarget procedure. Independent slices must share the canonical base branch and remain parallel rather than being forced into a stack.
 
 ## Claim Verification
 
@@ -192,11 +217,17 @@ it(`
 
 If the issue changes persisted data, generated artifacts, imports, migrations, deployment config, background jobs, or external integrations, state how the change is applied, rolled back or retried, and verified.
 
+Every database schema or data migration must use the `$engineering-for-certainty` Migration Proof Harness. Require an isolated disposable local database container, the prior released schema, representative legacy and boundary fixtures, the exact production migration mechanism, after-state schema and data assertions, application read/write proof, and supported repeat invocation or no-op behavior. Require rollback proof only when rollback is part of the deployment contract; otherwise name forward recovery. Structural code migrations do not trigger the database harness.
+
 If the issue adds persisted state alongside existing persisted state already enumerated in documentation, update every affected table, destructive-operations warning, backup or restore runbook, and blast-radius description. Documenting the new state in isolation does not pass when existing operational guidance would become false or incomplete. For example, a warning that says an operation destroys "both" named volumes becomes false when a third volume is added.
 
 ### 10. Observability And Errors
 
 If the issue changes runtime behavior, state expected error behavior and any logging, metrics, audit events, or user-visible messages needed by the repo's conventions. If none are needed, say why.
+
+When telemetry changes, require typed default-deny Safe Log Events. The issue must name each event family, allowed fields, source adapter, correlation ownership, retention and reader access, and tests proving that raw errors, arbitrary context, secrets, direct PII, and forbidden source-specific fields cannot reach logs, metrics, traces, audits, or fallbacks.
+
+For frontend operational logging, require the client emission boundary and condition, deduplication or aggregation rule, production sampling or debug policy, bounded queue and delivery behavior, backend ingestion schema, authentication or reduced anonymous event set, rate and payload limits, non-recursive failure path, and Telemetry Budget. Product analytics and authoritative backend security or audit events remain separate.
 
 When errors use a discriminated union or coded envelope, require a code-to-details matrix that names each error code, its compatible `details` shape, its producer, and each consumer's behavior. The Test Approach must cover every valid mapping plus missing envelopes, malformed envelopes, unknown codes, and code-incompatible `details`. State the fallback behavior for invalid combinations; do not let consumers trust `details` based on shape alone or a code alone.
 
@@ -217,7 +248,7 @@ The issue must make the robust implementation path clear:
 Apply only when the issue scope triggers them. Use repo-specific docs and existing patterns to decide whether each gate applies.
 
 - **Auth and permissions**: identify the server-side authorization boundary; client-only checks never suffice.
-- **Observability**: require sanitized logs/metrics/audit events, correlation/request context, and verification when the repo expects them.
+- **Observability**: require typed Safe Log Events, source-specific allowlists, correlation/request context, privacy and log-injection tests, retention and reader access, and verification. Apply `$engineering-resilience` when telemetry uses queues, retries, timeouts, circuit breakers, or an external sink.
 - **Resilience**: require timeout, retry/backoff, idempotency, concurrency, and recovery behavior where relevant.
 - **External data boundary**: name the validator/parser/schema used before raw data reaches domain logic; prefer `.safeParse()` or the repo's equivalent boundary API.
 - **Database writes or concurrent writes**: state uniqueness constraints, idempotency, race handling, and deletion policy.
@@ -227,11 +258,25 @@ Apply only when the issue scope triggers them. Use repo-specific docs and existi
 - **Outbound HTTP or third-party APIs**: require timeout, retry policy where appropriate, and named error mapping.
 - **Discriminated unions or enums**: name every exhaustive handling site that must change; for coded errors, apply the code-to-details matrix and envelope tests from gate 10.
 - **Result/error contracts**: follow the repo's expected-failure style and do not introduce throw-based expected failures or conflicting patterns silently.
-- **Frontend behavior**: include states, accessibility expectations, responsive behavior, and the user flow that proves the change. Name and verify the literal platform or library mechanism for imperative querying, navigation interception, subscriptions, focus restoration, or similar behavior.
+- **Frontend behavior**: include states, accessibility expectations, responsive behavior, and the user flow that proves the change. Name and verify the literal platform or library mechanism for imperative querying, navigation interception, subscriptions, focus restoration, or similar behavior. When operational logging is present, name where and when each event emits and prove it cannot fire per render, unbounded retry, or expected domain outcome.
 - **Async frontend mutations**: for every in-flight state, require a transition table with rows for each mutable control and for success, failure, retry, discard, and navigation. Each row must state whether the action is allowed, which snapshot owns the pending data, the next state, and the user-visible result. Cover edits made while a request is pending, stale or superseded responses, retry ownership, discard semantics, and navigation away/back. Every allowed transition and prohibited action must map to an exact test in the traceability ledger.
 - **Generated code or fixtures**: state regeneration commands and which generated files should or should not be edited by hand.
 - **Security or privacy**: state secret handling, PII exposure, data retention, and permission implications.
 - **Pinned third-party tool or version-dependent defaults**: when the design relies on a tool, image, framework, or library default, verify the assumption against the exact pinned version using its source, release notes, or changelog rather than current-version knowledge. If the behavior can change silently on upgrade, require the controlling flag, environment variable, or config value to be set explicitly.
+
+### Parallel Execution And Final Review
+
+For non-trivial issues, include an Execution Plan that identifies which workstreams are independent and which are ordered. Use subagents in parallel only when their production ownership and traceability rows do not overlap materially.
+
+- Give each implementation subagent bounded files or symbols, acceptance criteria, and validation responsibility.
+- Use a Helper Branch in a separate worktree for concurrent writes that require filesystem isolation. A clean review context does not itself require a worktree.
+- Name one Canonical Integration Branch from the issue's Branch Contract. The Execution Plan must name how each Helper Branch enters it: cherry-pick coherent commits, merge the branch, or rebase and fast-forward according to repository history conventions. Never copy files between worktrees as the integration mechanism.
+- Validate each helper branch, then integrate in dependency order. Resolve conflicts only on the canonical branch and re-run every affected traceability row.
+- Run the complete triggered validation and issue-against-diff audit on the combined canonical branch.
+
+Make final code review the last implementation gate. For multi-slice, medium-risk, or high-risk changes, require multiple fresh review subagents when available: independent finder passes using `$code-review` and a separate skeptical verifier that receives raw evidence without the finder's expected verdict. On the Dexwin engineering server, `code-review-dexwin` is the execution alias for the same canonical skill, not separate doctrine. For tiny low-risk changes, allow one clean reviewer plus a separate skeptical pass. If subagents are unavailable, require equivalent logically independent passes and record the limitation.
+
+Reconcile and deduplicate every confirmed finding, obtain user adjudication when the workflow requires it, fix accepted blockers, and re-run affected proof before declaring the issue complete.
 
 If the repo has domain-specific gates, apply them after discovery. Examples include approved-only content, event schema invariants, tenant boundaries, import provenance, or feature-flag rules.
 
@@ -245,6 +290,8 @@ Use `$grilling` as the questioning discipline for unresolved gates and contradic
 
 After each reply, update the decision map, resolve dependencies, and generate only the newly unblocked questions. Start another round when answers materially change the decision tree. Ask a singleton only when one blocking decision genuinely gates all useful downstream questions.
 
+Present review findings in Review Batches of at most ten. State whether more verified findings remain and continue through as many batches as necessary; there is no total finding cap. This finding limit is distinct from `$grilling`'s Interview Round limit for user-owned decisions.
+
 For a long or multi-session review, persist the grilling decision map in a separate working artifact if useful. Never use partial issue content, placeholders, TODOs, or `TBD` sections as interview state.
 
 Before rewriting, present the resolved understanding and explicitly confirm that it is shared. The user's approval authorizes the final coherent rewrite; it does not authorize partial writes during the interview.
@@ -255,14 +302,17 @@ Before editing, verify:
 
 - **Consistency**: acceptance criteria, scope, dependencies, implementation guardrails, and affected production owners agree; paths, symbols, and line references still exist.
 - **Issue identity**: pending issue filenames follow the discovered convention, use a stable number and valid Conventional Commit type, and all roadmap/index and sibling references resolve after any rename.
+- **Decomposition and branches**: the issue is one proven Smallest Coherent Slice or an ordered child pack; every slice has an exact Branch Contract, and only genuinely dependent PRs are stacked.
 - **Traceability**: every independently observable criterion has one or more ledger rows with an exact production owner and exact test or justified manual verification; the post-implementation audit is named.
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
+- **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
 - **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
 - **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; rounded displays agree with derived status indicators; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
 - **Configuration delivery**: every new environment variable reaches its exact runtime consumer through named injection points; every version-dependent default is verified against the pinned version and made explicit when it may drift.
 - **Documentation truth**: new instructions do not leave neighboring claims, enumerations, warnings, or runbooks false or incomplete.
 - **Verification status**: work that defers its highest-risk integration scenario remains explicitly unverified rather than being marked done with a caveat.
+- **Migration and telemetry evidence**: database migrations name the isolated Migration Proof Harness; frontend ingestion and other telemetry name Safe Log Event privacy tests and the Telemetry Budget.
 
 Resolve every contradiction with the user before writing.
 
@@ -276,6 +326,8 @@ Preserve the repo's established issue format when one exists. If no format exist
 Status: open
 Type: Bug | Feature | Chore | Exploration
 Severity: High | Medium | Low | Very Low
+Branch: <exact conventional branch>
+Parent: <parent issue, when this is a child slice>
 
 ## Problem / Motivation
 
@@ -290,6 +342,8 @@ Severity: High | Medium | Low | Very Low
 ## Implementation Guardrails
 
 ## Dependencies
+
+## Execution Plan
 
 ## Test Approach
 

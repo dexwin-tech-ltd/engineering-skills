@@ -318,6 +318,17 @@ Apply testing rules in this order: critical behavior correctness first, then fai
 - Structural migrations must preserve behavior and prove that with tests.
 - Keep test structure aligned with the real module structure.
 
+### Database Migration Proof
+
+- Every database schema or data migration requires a dedicated Migration Proof Harness: an isolated disposable local database container or containerized test service that cannot target a shared or production database.
+- Keep the harness local-only. Use a distinct Compose project, Testcontainers instance, database name, network, credentials, and teardown scope; do not include the proof service in production deployment manifests.
+- Build the before-state from the prior released schema and representative persisted fixtures. Include an empty database plus boundary and legacy rows that exercise changed constraints, nullability, defaults, relationships, and transformed values.
+- Run the exact production migration mechanism and generated artifacts. Do not replace it with hand-written setup SQL or direct schema synchronization.
+- Assert the after-state: schema objects, retained and transformed data, constraints and indexes, application reads and writes, and any documented invariants.
+- Verify the migration tool's supported repeat invocation or no-op behavior. Prove rollback only when rollback is part of the deployment contract; otherwise document the forward-recovery path.
+- Record the prior-state fixture identity, migration command, assertions, container isolation, and results in the canonical issue or pull request.
+- Do not require a database container for structural code migrations that do not change persisted schema or data.
+
 ### Mutation Analysis
 
 - Use mutation analysis as a post-green adversarial audit. Start with
@@ -412,6 +423,7 @@ Before declaring work complete, verify:
 - Commit messages, branch names, and version bumps follow the repo's convention, or Conventional Commits, conventional branching, and SemVer when no local convention exists.
 - Any skipped doctrine rule has a concrete, documented reason.
 - Relevant unit and integration tests pass for the changed scope.
+- Every database schema or data migration passed its isolated local Migration Proof Harness, or the work remains unverified.
 - Any mid-implementation discoveries were classified; material or blocking
   discoveries were approved and reflected in the canonical issue or plan before
   continuing.

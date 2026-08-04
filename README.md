@@ -1,8 +1,10 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `f68135771fa6d31ebcbc7bbf2a34786d69b87177`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `c3393ad156375d5cbe9a66071ce658a457be83ad`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
+
+See [CONTEXT.md](CONTEXT.md) for the shared workflow vocabulary and ownership boundaries.
 
 ## Included skills
 
@@ -12,6 +14,8 @@ Do not edit this repository directly. Make changes in `seyofori/skills` and let 
 - `engineering-auth-security`
 - `engineering-frontend`
 - `code-review`
+- `pull-request-review`
+- `pull-request-creation`
 - `issue-review`
 - `grilling`
 - `domain-modeling`
@@ -44,6 +48,18 @@ Install issue review with its direct dependencies:
 
 ```bash
 npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill grilling   --skill issue-review
+```
+
+Install pull request review with the complete review doctrine:
+
+```bash
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review
+```
+
+Install pull request creation:
+
+```bash
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill pull-request-creation
 ```
 
 Install docs-backed grilling:

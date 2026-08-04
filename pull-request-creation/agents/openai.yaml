@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pull Request Creation"
+  short_description: "Verify work and publish a review-ready PR"
+  default_prompt: "Use $pull-request-creation to verify this completed issue, publish its branch, and create or update the pull request."
