@@ -243,6 +243,40 @@ The issue must make the robust implementation path clear:
 - For structural refactors, require behavior-preservation tests and name what must not drift.
 - Identify any companion doctrine triggered by the issue and include its requirements in the issue.
 
+### 12. Issue Completion Record
+
+The rewritten issue must define its completion requirements. The issue is not
+complete until the implementation or integration agent writes an **Issue
+Completion Record** to the canonical issue file after final review and before
+reporting the issue as done. A chat summary, pull-request description, commit,
+or CI result may support the record but cannot replace it.
+
+The record must contain:
+
+- the final status and completion date;
+- the production, test, configuration, and documentation surfaces actually
+  changed;
+- the reconciled result of every traceability row, including exact validation
+  commands and outcomes;
+- the final `$code-review` outcome and the disposition of every confirmed
+  finding;
+- deviations from the issue and any unplanned changes;
+- residual risks and every unverified or deferred check, with a linked owner or
+  trigger for downstream work; and
+- branch, commit, and pull-request references when available.
+
+The implementation or integration agent owns the write-back. The final reviewer
+must verify the completed record against the raw diff, test output, and review
+evidence; the reviewer does not become the canonical issue writer. Update any
+roadmap, index, or completed-work archive that tracks the issue's status in the
+same write pass so those surfaces cannot contradict the issue.
+
+Keep the issue at `Needs Verification` while any issue-owned acceptance,
+review, or highest-risk verification gate lacks evidence. An explicitly
+out-of-scope downstream or release gate does not block `Done` only when the
+issue links it and names its owner or trigger. Never use `Done` with a caveat to
+hide missing issue-owned evidence.
+
 ## Conditional Gates
 
 Apply only when the issue scope triggers them. Use repo-specific docs and existing patterns to decide whether each gate applies.
@@ -276,7 +310,7 @@ For non-trivial issues, include an Execution Plan that identifies which workstre
 
 Make final code review the last implementation gate. For multi-slice, medium-risk, or high-risk changes, require multiple fresh review subagents when available: independent finder passes using `$code-review` and a separate skeptical verifier that receives raw evidence without the finder's expected verdict. On the Dexwin engineering server, `code-review-dexwin` is the execution alias for the same canonical skill, not separate doctrine. For tiny low-risk changes, allow one clean reviewer plus a separate skeptical pass. If subagents are unavailable, require equivalent logically independent passes and record the limitation.
 
-Reconcile and deduplicate every confirmed finding, obtain user adjudication when the workflow requires it, fix accepted blockers, and re-run affected proof before declaring the issue complete.
+Reconcile and deduplicate every confirmed finding, obtain user adjudication when the workflow requires it, fix accepted blockers, and re-run affected proof. Then complete the Issue Completion Record gate, including reviewer verification of the written record, before declaring the issue complete.
 
 If the repo has domain-specific gates, apply them after discovery. Examples include approved-only content, event schema invariants, tenant boundaries, import provenance, or feature-flag rules.
 
@@ -307,6 +341,7 @@ Before editing, verify:
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
 - **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
+- **Completion record**: the issue defines who writes and verifies its Issue Completion Record, which status-tracking surfaces must change with it, and which issue-owned or explicitly downstream gates control `Needs Verification` versus `Done`.
 - **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
 - **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; rounded displays agree with derived status indicators; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
 - **Configuration delivery**: every new environment variable reaches its exact runtime consumer through named injection points; every version-dependent default is verified against the pinned version and made explicit when it may drift.
@@ -349,7 +384,13 @@ Parent: <parent issue, when this is a child slice>
 
 ### Traceability Ledger
 
+## Completion Requirements
+
 ## Notes
 ```
 
-Omit sections that genuinely do not apply. Do not add empty sections.
+Omit sections that genuinely do not apply. Do not add empty sections. Populate
+`Completion Requirements` with the issue-specific write-back, evidence, status,
+and propagation rules during readiness review. Add the actual `Issue Completion
+Record` only after implementation evidence exists; never prefill it with
+placeholders or predicted results.

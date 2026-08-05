@@ -12,6 +12,10 @@ _Avoid_: Micro-task, smallest possible task
 The exact implementation branch name recorded by an issue before implementation begins.
 _Avoid_: Suggested branch, branch hint
 
+**Issue Completion Record**:
+The durable evidence written to the canonical issue by the implementation or integration agent after final review and before the issue is marked done. It records the final status, completion date, affected surfaces, reconciled traceability evidence, validation results, review outcome, deviations, residual risks, deferred checks, and available branch, commit, or pull-request references.
+_Avoid_: Completion summary, PR-only evidence, chat-only handoff
+
 **Code Review**:
 Platform-neutral analysis that verifies candidate defects and reports confirmed findings without external writes by default.
 _Alias_: `code-review-dexwin` on the engineering server
@@ -97,6 +101,8 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 
 - A parent issue contains one or more ordered **Smallest Coherent Slices** when the work cannot remain one coherent issue.
 - Each **Smallest Coherent Slice** owns one **Branch Contract**.
+- Every completed issue owns one **Issue Completion Record** in its canonical issue file; the implementation or integration agent writes it, and the final reviewer verifies it before the issue is marked done.
+- An issue remains `Needs Verification` while any issue-owned acceptance, review, or highest-risk verification gate lacks evidence. An explicitly out-of-scope downstream or release gate does not block issue completion when the issue links it and names its owner or trigger.
 - A **Pull Request Review** uses **Code Review** as its analysis engine.
 - **Pull Request Creation** consumes completed local work and produces a GitHub pull request; it does not implement or review the change.
 - **Pull Request Creation** derives draft or ready status from **Pull Request Readiness**; verified completed work is ready for review.
