@@ -29,6 +29,10 @@ _Avoid_: Implementation, code review, PR body drafting
 The evidence-derived state that determines whether publication is blocked, produces a draft, or produces a pull request ready for review.
 _Avoid_: Always draft, always ready
 
+**Pending Review**:
+The `pending-review` pull-request label that signals to the reviewer that corrections and regression evidence are ready for another look.
+_Avoid_: Workflow status, permission to resolve review threads
+
 **Stacked Pull Request**:
 A pull request whose branch and review diff depend on an earlier pull-request branch in an explicitly ordered issue pack.
 _Avoid_: Parallel PR, unrelated dependent branch
@@ -96,6 +100,7 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - A **Pull Request Review** uses **Code Review** as its analysis engine.
 - **Pull Request Creation** consumes completed local work and produces a GitHub pull request; it does not implement or review the change.
 - **Pull Request Creation** derives draft or ready status from **Pull Request Readiness**; verified completed work is ready for review.
+- A **Responsible Engineer** applies **Pending Review** and notifies the reviewer after pushing requested corrections and regression evidence; the label does not transfer thread-resolution ownership.
 - A **Stacked Pull Request** depends on exactly one earlier base in an ordered stack; independent slices target the canonical base branch directly.
 - A **Code Review** can produce one or more **Review Batches**.
 - A **Pull Request Review** tags the **Responsible Engineer** only after the user accepts a finding.
@@ -126,6 +131,7 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - "Clean subagent" was used as a worktree requirement - resolved: a reviewer needs a **Clean Review Context**; separate worktrees are required only for concurrent writes that need filesystem isolation.
 - "Final worktree" was used as though worktrees themselves are merged - resolved: commits from **Helper Branches** are integrated into the **Canonical Integration Branch**; files are never copied between worktrees as the integration mechanism.
 - "Draft PR" was treated as the default publication result - resolved: **Pull Request Readiness** determines the state, and verified completed work produces a pull request ready for review.
+- `pending-review` was treated as a formal workflow-status category - resolved: **Pending Review** is a reviewer-attention signal applied after corrections and evidence are ready for another look.
 - "Frontend logging" included both operational diagnosis and product analytics - resolved: **Frontend Operational Events** are a bounded observability surface; product analytics remains separate.
 - "Server-owned export" and "OpenTelemetry Collector" were treated as synonyms - resolved: **Server-Owned Trace Export** is the ownership and security rule; a Collector is one optional server-side delivery topology.
 - "Re-review" implied a separately requested workflow - resolved: **Thread Reconciliation** runs during every **Pull Request Review** when existing unresolved threads are present.

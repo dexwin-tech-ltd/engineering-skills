@@ -93,7 +93,7 @@ Use this comment structure:
 
 **Regression proof:** <exact test or verification required>
 
-Please fix this issue and resolve the thread after the correction and regression evidence are in the PR.
+After pushing the correction and regression evidence, leave this thread open, apply the `pending-review` label to the pull request, and reply here tagging the reviewer to request another look.
 
 <!-- pull-request-review:finding=<stable-finding-id>;head=<reviewed-head-sha> -->
 ```
@@ -101,6 +101,8 @@ Please fix this issue and resolve the thread after the correction and regression
 Use a GitHub suggestion block only when the replacement is exact, complete, and safe to apply at that line. For cross-file or architectural corrections, label the snippet as illustrative and name every affected owner rather than presenting an unsafe one-click patch.
 
 Resolve the Responsible Engineer from the issue's explicit GitHub implementer, falling back to the PR author. Never infer ownership from `git blame`. Allow a user-supplied override. Skip a redundant tag when the reviewing and responsible accounts are the same.
+
+Treat `pending-review` only as a reviewer-attention signal. Do not tell the Responsible Engineer to resolve workflow-owned threads; this workflow retains verification and resolution ownership. If the label is unavailable, instruct the engineer to report that in the reply and still notify the reviewer rather than creating or substituting a label.
 
 Submit `REQUEST_CHANGES` when at least one accepted finding is explicitly blocking. Otherwise submit a comment review. Do not let severity alone silently decide whether the review blocks merging; state blocking status during adjudication.
 
@@ -111,6 +113,7 @@ Re-read the submitted review and threads. Verify:
 - every accepted finding was posted exactly once;
 - no rejected or unadjudicated finding was posted;
 - anchors, responsible-engineer tags, severity, evidence, fix guidance, code, and regression proof are present;
+- every correction request tells the Responsible Engineer to leave the thread open, apply `pending-review`, and notify the reviewer after pushing the correction and regression evidence;
 - the review event matches the accepted blocking status;
 - resolved workflow-owned threads remain resolved at the current head;
 - limitations such as outdated anchors or missing permissions are explicit.

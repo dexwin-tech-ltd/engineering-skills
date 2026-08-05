@@ -74,7 +74,106 @@ Each arrow is a boundary. Nothing skips a layer.
 - Hooks and flows receive the adapter's exact result type; do not widen it to a convenient global error union.
 - When a query or mutation awaits a `ResultAsync`, the resolved value is a `Result`; domain failures land in query/mutation `data`, not in Query's `error` state. Branch on `data.isOk()` / `data.isErr()` for domain outcomes.
 - Use TanStack Query `isError` / `error` only for unexpected thrown failures that violate the adapter contract.
+- When flows or layouts consume a server-state hook, map library-specific flags into an application-owned discriminated union. Do not make consumers infer state from independent combinations of `isPending`, `isError`, `isFetching`, `data`, and `error`.
+- At minimum, distinguish `initial-loading`, terminal `initial-failure`, `ready`, `refreshing`, and `refresh-failure`. Refresh states retain usable data. Add explicit variants such as `idle` or `paused` when the query lifecycle includes them instead of collapsing those states into loading.
+- Reuse a generic application-owned mapper when multiple hooks share the same lifecycle. Domain hooks supply their exact data and failure types, map unexpected query failures, and retain the last usable value by query identity when expected refresh failures must preserve stale data.
+- Require flows and layouts to match the resulting union exhaustively. Prefer the repository's existing exhaustive-matching mechanism; do not introduce a pattern-matching dependency only to copy this example.
 - Keep query keys short, stable, and domain-specific.
+
+For an enabled query, a shared mapper can preserve the boundary without widening domain failures:
+
+```ts
+type ServerState<TData, TFailure> =
+  | { status: "initial-loading" }
+  | { status: "initial-failure"; failure: TFailure }
+  | { status: "ready"; data: TData }
+  | { status: "refreshing"; data: TData }
+  | { status: "refresh-failure"; data: TData; failure: TFailure };
+
+type QueryStateInput<TData, TFailure> = Pick<
+  UseQueryResult<Result<TData, TFailure>, unknown>,
+  | "data"
+  | "error"
+  | "isLoading"
+  | "isLoadingError"
+  | "isRefetching"
+  | "isRefetchError"
+>;
+
+type RetainedData<TData> =
+  | { status: "absent" }
+  | { status: "present"; data: TData };
+
+function mapQueryToServerState<TData, TFailure>(
+  query: QueryStateInput<TData, TFailure>,
+  retainedData: RetainedData<TData>,
+  mapUnexpectedFailure: (error: unknown) => TFailure,
+): ServerState<TData, TFailure> {
+  const currentData: RetainedData<TData> = query.data?.isOk()
+    ? { status: "present", data: query.data.value }
+    : { status: "absent" };
+  const usableData =
+    currentData.status === "present" ? currentData : retainedData;
+
+  if (query.isLoadingError) {
+    return {
+      status: "initial-failure",
+      failure: mapUnexpectedFailure(query.error),
+    };
+  }
+
+  if (query.isRefetchError) {
+    const failure = mapUnexpectedFailure(query.error);
+    return usableData.status === "present"
+      ? { status: "refresh-failure", data: usableData.data, failure }
+      : { status: "initial-failure", failure };
+  }
+
+  if (query.isRefetching && usableData.status === "present") {
+    return { status: "refreshing", data: usableData.data };
+  }
+
+  if (query.data?.isErr()) {
+    return retainedData.status === "present"
+      ? {
+          status: "refresh-failure",
+          data: retainedData.data,
+          failure: query.data.error,
+        }
+      : { status: "initial-failure", failure: query.data.error };
+  }
+
+  if (currentData.status === "present") {
+    return { status: "ready", data: currentData.data };
+  }
+
+  if (query.isLoading) {
+    return { status: "initial-loading" };
+  }
+
+  throw new Error("Query lifecycle requires another ServerState variant");
+}
+```
+
+Keep retained data keyed to the query identity so data from one query cannot appear in another. A domain hook returns `ServerState<Profile, ProfileLoadFailure>`; a flow or layout consumes it without importing TanStack Query flags:
+
+```tsx
+import { match } from "ts-pattern";
+
+return match(profileState)
+  .with({ status: "initial-loading" }, () => <ProfileSkeleton />)
+  .with({ status: "initial-failure" }, ({ failure }) => (
+    <ProfileLoadError failure={failure} />
+  ))
+  .with({ status: "ready" }, ({ data }) => <ProfileView profile={data} />)
+  .with({ status: "refreshing" }, ({ data }) => (
+    <ProfileView profile={data} refreshing />
+  ))
+  .with({ status: "refresh-failure" }, ({ data, failure }) => (
+    <ProfileView profile={data} refreshFailure={failure} />
+  ))
+  .exhaustive();
+```
 
 ## Forms and Validation
 
@@ -159,6 +258,7 @@ For web or mobile features:
 - Requests, success responses, and error responses are validated at the adapter boundary with `.safeParse()`.
 - Endpoint error parsing and mapping use the exact operation contract, remain exhaustive, and do not hide new variants behind a broad domain schema or status-first fallback.
 - Hooks branch on `Result` values for domain outcomes instead of treating TanStack Query `isError` as the domain failure path.
+- Hooks consumed by flows or layouts expose an application-owned exhaustive server-state union rather than independent query flags; background refresh and refresh failure preserve usable data, and every real lifecycle state has an explicit variant.
 - Forms render plain user-facing strings and preserve all field and general error messages.
 - Web unit/component tests prefer `@testing-library/react`.
 - Mobile unit/component tests follow the repo's existing Expo/Jest integration unless there is a documented reason to diverge.
