@@ -36,7 +36,8 @@ Always follow priority 1. When priorities conflict, preserve correctness and acc
 
 - Organize frontend code by domain modules, not broad file-type buckets, where the repo structure allows it.
 - Keep routes/pages/screens thin. They render one flow/container component and avoid branching orchestration logic.
-- Flows own orchestration: data loading, transitions, reducer dispatch, navigation side effects, and exhaustive state matching.
+- Flows own UI orchestration: consuming server state, coordinating transitions, reducer dispatch, refresh behavior, mutations, navigation side effects, and exhaustive state matching.
+- When the router or framework provides a suitable data-loading boundary, it owns navigation-timed loading and prefetching for route- or screen-critical data.
 - Views are presentational: explicit props in, callbacks out, minimal local logic.
 - Prefer reducers over multiple related `useState` calls, especially for transition-heavy flows or two or more related state values.
 - Put non-trivial reducers in a `reducers/` folder inside the relevant domain module, flow, or feature module instead of colocating reducer transition logic inside route, screen, or view files.
@@ -54,6 +55,8 @@ contract -> API/client adapter -> hook -> flow -> view
 
 Each arrow is a boundary. Nothing skips a layer.
 
+Navigation loaders and prefetch boundaries may invoke the same query definition used by the hook to populate the cache before rendering; they must not call raw clients or duplicate adapter logic.
+
 - API calls live in API/client adapter modules only. Components, screens, routes, stores, flows, views, and hooks must not call `fetch`, `axios`, SDK clients, or raw clients directly unless the repo explicitly makes that hook the adapter boundary.
 - Preserve the repo's adapter location. If no convention exists, use domain-owned adapters and one adapter file per domain surface.
 - Validate adapter input with `.safeParse()` before making the request. Return a typed validation error and do not call the API when request validation fails.
@@ -70,6 +73,9 @@ Each arrow is a boundary. Nothing skips a layer.
 ## Hooks and Server State
 
 - Prefer TanStack Query as the default server-state/query library for web and mobile projects unless the repo already standardizes on another tool.
+- Treat server data required for a route or screen's initial render as navigation-owned work when the repository's router or framework provides a loader, server-data, or route-prefetch mechanism. Use that mechanism instead of initiating the fetch from a component or flow effect.
+- Integrate navigation-owned loading with the repository's existing query or cache layer through its supported dependency boundary, such as typed router context. Reuse the same query definition and cache identity in the loader or prefetch boundary and the consuming hook. Await route-critical data; start optional prefetching without blocking navigation when the framework supports it.
+- If no suitable navigation-owned data-loading API exists, preserve the repository's established query-hook or flow boundary rather than introducing a new router architecture or a hand-rolled prefetch effect merely to imitate loader behavior.
 - Hooks call API adapters and expose the adapter result without reclassifying expected domain failures as thrown exceptions.
 - Hooks and flows receive the adapter's exact result type; do not widen it to a convenient global error union.
 - When a query or mutation awaits a `ResultAsync`, the resolved value is a `Result`; domain failures land in query/mutation `data`, not in Query's `error` state. Branch on `data.isOk()` / `data.isErr()` for domain outcomes.
@@ -253,11 +259,12 @@ For web or mobile features:
 ## Review
 
 - Routes/pages/screens are thin and render flow/container components.
-- Flows own orchestration; views stay presentational.
+- Flows own UI orchestration; views stay presentational.
 - API calls go through the adapter boundary. No direct `fetch`, `axios`, SDK, or raw client calls leak into components, screens, routes, flows, views, or stores.
 - Requests, success responses, and error responses are validated at the adapter boundary with `.safeParse()`.
 - Endpoint error parsing and mapping use the exact operation contract, remain exhaustive, and do not hide new variants behind a broad domain schema or status-first fallback.
 - Hooks branch on `Result` values for domain outcomes instead of treating TanStack Query `isError` as the domain failure path.
+- Routes and screens use the repository's router or framework data-loading boundary for initial-render server data when one exists; the loader or prefetch boundary and consuming hook share the query definition and cache identity, critical data is awaited, optional prefetching does not block navigation, and component or flow effects do not initiate route-critical fetches.
 - Hooks consumed by flows or layouts expose an application-owned exhaustive server-state union rather than independent query flags; background refresh and refresh failure preserve usable data, and every real lifecycle state has an explicit variant.
 - Forms render plain user-facing strings and preserve all field and general error messages.
 - Web unit/component tests prefer `@testing-library/react`.
