@@ -11,9 +11,13 @@ Use this compact state only when a grilling effort must span sessions or context
 
 - **{Decision name}**: {Accepted answer and short reason}
 
-## Current frontier
+## Current focus
 
-- **{Decision name}**: {What must be decided and why it is now eligible}
+- **{Decision name}**: {The one decision being discussed, why it is now eligible, and its current state}
+
+## Queued frontier
+
+- **{Decision name}**: {Why it is eligible and any dependency that may reorder or remove it}
 
 ## Investigations
 

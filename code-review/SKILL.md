@@ -54,7 +54,7 @@ Run the review as six distinct phases:
 2. Find candidate issues through independent review angles.
 3. Normalize and deduplicate candidates by root cause.
 4. Verify every survivor and run targeted validation where useful.
-5. Rank and report confirmed findings, then residual risks and open questions.
+5. Rank confirmed findings into one review queue and work through one finding at a time, then report residual risks and open questions.
 6. After the user verifies the reported findings, analyze whether the governing issue or handoff could have prevented them and propose targeted `issue-review` skill improvements.
 
 ## Phase 0: Gather the Review Scope
@@ -264,16 +264,20 @@ Put actionable findings first. For each finding include:
 - Explicit assumption when applicable.
 - Missing regression test when relevant.
 
-Present confirmed findings in Review Batches of at most ten, ranked by severity and impact. There is no total finding cap. State whether more verified findings remain, obtain feedback on the current batch when the workflow requires adjudication, and continue until every confirmed finding has been presented. Never treat a batch boundary as permission to omit Critical or High findings; rank them into the earliest batch.
+Investigate, verify, deduplicate, and rank the complete finding set before presenting the first result. This broad analysis prevents the current finding from being framed without a later-known dependency or shared root cause.
 
-Then provide:
+Present one confirmed finding at a time in severity and impact order. Give it a stable ID, state how many verified findings remain, and keep discussing the current finding until the user accepts it as valid, rejects it, requests a revision, defers it, or asks for named evidence. Only then present the next finding, after recomputing the queue for dependencies, duplicates, or invalidated claims. A generic request to review code is not a request for batching.
+
+Batch at most ten findings only when the user explicitly requests a batch or complete report. Preserve the same evidence for every item, allow adjudication by stable ID, and never treat a batch boundary as permission to omit Critical or High findings. There is no total finding cap.
+
+When the review queue is empty, provide this closeout:
 
 1. Brief understanding of the change.
 2. Scope, effort, doctrine skills applied, and the checks each activated companion added.
 3. Validation performed and results.
 4. Conditional residual risks, `NEEDS_CONTEXT` questions, and remaining coverage gaps.
 
-Before delivering each batch, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them through a composing workflow.
+Before delivering each finding or an explicitly requested batch, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them through a composing workflow.
 
 Also verify that every directly affected companion area was identified and its
 skill loaded, and that doctrine observations passed the same materiality,

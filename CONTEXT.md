@@ -50,13 +50,13 @@ _Avoid_: Workflow status, permission to resolve review threads
 A pull request whose branch and review diff depend on an earlier pull-request branch in an explicitly ordered issue pack.
 _Avoid_: Parallel PR, unrelated dependent branch
 
-**Review Batch**:
-A group of at most ten verified findings presented together for user adjudication, with no limit on later batches.
-_Avoid_: Review cap, finding limit
+**Review Queue**:
+The complete ranked set of verified findings awaiting user disposition, with one current finding discussed at a time unless the user explicitly requests a batch.
+_Avoid_: Review batch, finding cap, report-only list
 
-**Interview Round**:
-A dependency-aware group of at most ten user-owned decision questions asked by a grilling workflow.
-_Avoid_: Review batch
+**Decision Queue**:
+The dependency-aware set of unresolved user-owned decisions, with one current decision discussed to an explicit disposition before the queue is recomputed.
+_Avoid_: Interview round, questionnaire, review queue
 
 **Migration Proof Harness**:
 An isolated disposable local database container that proves a database migration against prior-state fixtures using the production migration mechanism.
@@ -122,12 +122,12 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - **Pull Request Creation** derives draft or ready status from **Pull Request Readiness**; verified completed work is ready for review.
 - A **Responsible Engineer** applies **Pending Review** and notifies the reviewer after pushing requested corrections and regression evidence; the label does not transfer thread-resolution ownership.
 - A **Stacked Pull Request** depends on exactly one earlier base in an ordered stack; independent slices target the canonical base branch directly.
-- A **Code Review** can produce one or more **Review Batches**.
+- A **Code Review** produces one **Review Queue** after investigating, verifying, deduplicating, and ranking the complete finding landscape.
 - A **Pull Request Review** tags the **Responsible Engineer** only after the user accepts a finding.
 - Independent finder and verifier passes use separate **Clean Review Contexts**.
 - Each **Helper Branch** contributes validated commits to exactly one **Canonical Integration Branch** through the issue's named Git integration strategy, never by copying files between worktrees.
 - A **Canonical Integration Branch** is reviewed and validated as a combined change before **Pull Request Creation**.
-- An **Interview Round** contains decisions, while a **Review Batch** contains verified findings.
+- A grilling workflow maps a **Decision Queue** and discusses one current decision at a time; a **Code Review** discusses one current finding from its **Review Queue** at a time.
 - A database migration requires one **Migration Proof Harness**; a structural code migration does not.
 - **Diagnostic Database Metadata** may include bounded schema, table, column, constraint, and SQLSTATE identifiers from a recognized driver error.
 - Persisted backend logs and audits satisfy typed **Safe Log Event** contracts; metrics use named instruments with bounded attributes; traces use approved tracer, semantic-convention, attribute, propagation, sampling, and export contracts.
@@ -141,7 +141,7 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 ## Example dialogue
 
 > **Engineer:** "Should this feature be one issue and one large PR?"
-> **Reviewer:** "No. Define each **Smallest Coherent Slice** and its **Branch Contract**, then use **Pull Request Review** to adjudicate each **Code Review** batch before publishing comments."
+> **Reviewer:** "No. Define each **Smallest Coherent Slice** and its **Branch Contract**, then use **Pull Request Review** to work through the **Code Review** queue one finding at a time before publishing comments."
 
 ## Flagged ambiguities
 
@@ -156,5 +156,5 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - "Server-owned export" and "OpenTelemetry Collector" were treated as synonyms - resolved: **Server-Owned Trace Export** is the ownership and security rule; a Collector is one optional server-side delivery topology.
 - "Re-review" implied a separately requested workflow - resolved: **Thread Reconciliation** runs during every **Pull Request Review** when existing unresolved threads are present.
 - "Existing threads" did not distinguish workflow and human ownership - resolved: all are inspected, but automatic resolution is limited to workflow-owned threads.
-- "Round" referred to both questions and findings - resolved: **Interview Round** contains decision questions, while **Review Batch** contains verified findings.
+- "Round" and "batch" were the default units for both questions and findings - resolved: use a **Decision Queue** or **Review Queue**, keep one material item current until disposition, and batch only when the user explicitly requests it.
 - "Migration" included both persisted-database changes and structural refactors - resolved: only database schema or data migrations require a **Migration Proof Harness**.

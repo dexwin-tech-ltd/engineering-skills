@@ -30,8 +30,8 @@ Ask for a target path only when those facts cannot be discovered safely.
 2. **Discover repo conventions**: inspect local docs and examples before applying generic rules, including issue filename rules and the next unused issue reference.
 3. **Verify claims against code**: check paths, symbols, line references, tests, schemas, commands, and stated behavior.
 4. **Decompose and name the work**: prove the issue is one Smallest Coherent Slice or create an ordered child pack, then assign every slice its exact Branch Contract and PR base.
-5. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, and batch user-owned decisions into dependency-aware rounds with stable question IDs.
-6. **Accumulate answers**: maintain the decision map across rounds; do not edit the issue during the review.
+5. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, map all user-owned decisions by dependency, and work through one material decision at a time using stable question IDs.
+6. **Accumulate answers**: maintain the decision map across items; do not edit the issue during the review.
 7. **Build traceability and execution**: map each acceptance criterion to its production owner and exact verification, then define safe sequential or parallel implementation ownership.
 8. **Cross-validate**: check the resolved issue, traceability ledger, execution plan, and conditional gates for contradictions and missing dependencies.
 9. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
@@ -346,12 +346,12 @@ If the repo has domain-specific gates, apply them after discovery. Examples incl
 Use `$grilling` as the questioning discipline for unresolved gates and contradictions.
 
 - **Discoverable fact**: inspect the code, docs, tests, history, or configured tools. Do not ask the user to recall repository facts.
-- **User-owned decision**: ask in a dependency-aware round using stable IDs. State the gate or contradiction, concrete risk, options, and recommended answer. Accept bulk replies such as `agree to all`, plus exceptions by ID.
+- **User-owned decision**: map the full dependency-aware queue, then ask one material decision using a stable ID. State the gate or contradiction, concrete risk, options, and recommended answer. Keep the current decision active until it is accepted, rejected, revised, deferred, or blocked on named evidence.
 - **Empirical unknown**: run a bounded reproduction, spike, benchmark, or research pass when safe and authorized. Report the result; do not turn an investigable unknown into a preference question.
 
-After each reply, update the decision map, resolve dependencies, and generate only the newly unblocked questions. Start another round when answers materially change the decision tree. Ask a singleton only when one blocking decision genuinely gates all useful downstream questions.
+After each reply, update the decision map, resolve dependencies, and recompute the queue. Present only the next eligible decision after the current one has an explicit disposition. Batch independent, low-consequence decisions only when the user explicitly asks for faster batch treatment; accept bulk replies such as `agree to all` only for that explicit batch.
 
-Present review findings in Review Batches of at most ten. State whether more verified findings remain and continue through as many batches as necessary; there is no total finding cap. This finding limit is distinct from `$grilling`'s Interview Round limit for user-owned decisions.
+Investigate and deduplicate the complete review landscape before reporting it, then present one confirmed finding at a time with its stable ID and the number remaining. Keep the current finding active until the user accepts, rejects, revises, defers, or requests named evidence. Recompute the remaining queue after every disposition. Batch at most ten only when the user explicitly requests a batch or complete report; there is no total finding cap.
 
 For a long or multi-session review, persist the grilling decision map in a separate working artifact if useful. Never use partial issue content, placeholders, TODOs, or `TBD` sections as interview state.
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Issue Creation and Review"
   short_description: "Create or review implementation-ready issue files."
-  default_prompt: "Create or review this issue for agent handoff readiness: <path or approved problem>"
+  default_prompt: "Use $issue-review to create or review this issue for agent handoff readiness, working through one material decision or finding with me at a time: <path or approved problem>"

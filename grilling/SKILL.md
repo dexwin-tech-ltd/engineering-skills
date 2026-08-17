@@ -5,7 +5,7 @@ description: Stress-test a plan, decision, or idea through thorough, self-contai
 
 # Grilling
 
-Resolve every material branch of the decision tree without making the user confirm obvious facts one at a time. Provide a recommended answer and clear reasoning for every decision.
+Investigate the whole decision tree, but deliberate with the user on one unresolved material decision at a time. Do not make the user confirm obvious or discoverable facts. Provide a recommended answer and clear reasoning for every decision.
 
 ## Classify before asking
 
@@ -15,7 +15,7 @@ Classify each unresolved item before putting it to the user:
 - **User-owned decision**: ask only when at least two plausible answers remain and the choice materially affects the outcome.
 - **Empirical unknown**: identify the evidence needed. Perform safe read-only investigation when it is in scope; otherwise recommend a bounded research task or prototype and keep the dependent decision blocked rather than asking the user to guess.
 
-Recommendations are proposals, not decisions. Do not settle even a safe or reversible default until the user accepts it. Put low-consequence defaults into a round so they can be accepted together.
+Recommendations are proposals, not decisions. Do not settle even a safe or reversible default until the user accepts it. Batch low-consequence defaults only when they are genuinely independent and the user explicitly asks for a faster batch.
 
 ## Make every question self-contained
 
@@ -30,64 +30,53 @@ For every question, explain:
 - **Each genuinely plausible alternative and its concrete trade-off**.
 - **A brief example** when the decision would otherwise remain abstract.
 
-Define unfamiliar terms inline. Put context shared by several questions in the round introduction instead of repeating it. Do not repeat settled context or add detail that does not help the user choose. If a question cannot yet be explained clearly, reclassify it as a discoverable fact or empirical unknown and investigate it instead of asking an unclear question.
+Define unfamiliar terms inline. Put context shared by several questions in the current item or explicit batch introduction instead of repeating it. Do not repeat settled context or add detail that does not help the user choose. If a question cannot yet be explained clearly, reclassify it as a discoverable fact or empirical unknown and investigate it instead of asking an unclear question.
 
-## Work the decision frontier
+## Work one frontier decision at a time
 
 Map unresolved decisions by dependency. The current frontier contains decisions whose prerequisites are already settled.
 
-- Ask only frontier decisions. Never ask hypothetical downstream questions for branches the user has not selected.
-- Ask numbered rounds of at most 10 questions. Aim for 3-10 when enough independent decisions are eligible.
-- If the frontier is larger, split it into coherent sub-rounds and keep the rest queued. Do not imply that one sub-round exhausts the frontier.
-- Use a smaller round when fewer decisions remain or one genuine fork determines which questions exist next.
-- Order by dependency first, then put likely-to-be-accepted defaults first.
+- Investigate and map the full frontier before choosing the current item. This prevents a locally reasonable answer from conflicting with a later-known dependency.
+- Ask one material frontier decision, then keep discussing it until the user accepts, rejects, revises, defers, or requests specific evidence. Do not introduce the next decision merely because the first received a partial answer.
+- Keep all other eligible decisions in a dependency-aware queue. State how many remain without presenting their full arguments unless that context is needed to understand the current item.
+- Recompute and reorder the queue after every disposition. Drop or rewrite items invalidated by the answer.
+- Never ask hypothetical downstream questions for branches the user has not selected.
+- Use a batch of at most 10 only when every item is independent and low consequence and the user explicitly requests batch treatment. A generic request to review, discuss, or be grilled is not a request for batching.
+- Order the queue by dependency first, then consequence and uncertainty.
 - Give every decision a stable reference and readable name, such as `R2.3 - Cleanup trigger`. Retain the reference if the decision is reopened.
 
 Use this format:
 
 ```markdown
-## Round 2 - Persistence boundary
+## Decision R2.1 - Canonical owner
 
-Reply `agree to all`, or list exceptions such as `R2.2: B` or `R2.4: discuss`.
+Reply `A`, `B`, `discuss`, `defer`, or tell me what evidence you need.
 
-1. **R2.1 - Canonical owner**
+**What you are deciding:** Which domain owns an order after checkout begins.
 
-   **What you are deciding:** Which domain owns an order after checkout begins.
+**Why this is needed now:** Retention and cleanup rules depend on one domain owning the complete lifecycle.
 
-   **Why this is needed now:** Retention and cleanup rules depend on one domain owning the complete lifecycle.
+**What changes:** Orders ownership keeps checkout, fulfilment, and cleanup rules together. Cart ownership splits the lifecycle across two domains and requires coordination for every later transition.
 
-   **What changes:** Orders ownership keeps checkout, fulfilment, and cleanup rules together. Cart ownership splits the lifecycle across two domains and requires coordination for every later transition.
+**Recommend: A - Orders context.** It already owns the lifecycle invariant, so it can enforce every transition without a cross-domain handoff.
 
-   **Recommend: A - Orders context.** It already owns the lifecycle invariant, so it can enforce every transition without a cross-domain handoff.
+- **A. Orders context (recommended):** One owner for the complete lifecycle; requires the cart to hand off at checkout.
+- **B. Cart context:** Keeps early checkout state near the cart; introduces shared ownership after checkout.
 
-   - **A. Orders context (recommended):** One owner for the complete lifecycle; requires the cart to hand off at checkout.
-   - **B. Cart context:** Keeps early checkout state near the cart; introduces shared ownership after checkout.
-
-2. **R2.2 - Retention**
-
-   **What you are deciding:** How long completed orders remain in the operational store before archival.
-
-   **Why this is needed now:** The owner cannot implement cleanup until the retention period is fixed.
-
-   **What changes:** A shorter period reduces storage and exposure of operational data. A longer period makes recent support investigations easier but retains more data.
-
-   **Recommend: A - 30 days.** This matches the existing cleanup policy and covers the normal support window.
-
-   - **A. 30 days (recommended):** Consistent with current policy; older investigations use the archive.
-   - **B. 90 days:** More operational history; higher storage and data-retention cost.
+**Queue:** 4 later decisions remain. They will be recomputed after this answer.
 ```
 
-Keep each item decision-shaped: one choice, its recommendation, and only genuinely plausible alternatives. The labels above are semantic requirements, not rigid wording; combine or rename them when the same understanding is clearer with less repetition. Do not turn observations into questions or pad a round.
+Keep each item decision-shaped: one choice, its recommendation, and only genuinely plausible alternatives. The labels above are semantic requirements, not rigid wording; combine or rename them when the same understanding is clearer with less repetition. Do not turn observations into questions or pad an item or explicit batch.
 
 ## Process responses
 
-- Treat `agree to all`, `yes to all`, and equivalent wording as acceptance of every item in the current round only.
-- Let stable-reference answers override a batch response.
+- Give the current item an explicit disposition: accepted, rejected, revised, deferred, or blocked on named evidence.
+- Treat `agree to all`, `yes to all`, and equivalent wording as acceptance of every item only when the user explicitly requested a batch. Let stable-reference answers override a batch response.
 - Resolve accepted items without asking for confirmation again.
-- Discuss only the named exceptions. Use one-at-a-time follow-up when an exception opens a new branch or the user asks to focus on it.
+- Keep follow-up on the current item when an answer opens a new branch. Do not mix that branch with the next queued item.
 - Keep unaddressed items pending when the response is partial and does not include batch acceptance.
 - Recompute the frontier after every response. Drop or rewrite downstream questions invalidated by an answer.
-- Briefly state the newly fixed decisions by name, then present the next round. Do not repeat the full history.
+- Briefly state the current disposition by name, then present the next eligible item. Do not repeat the full history.
 - Periodically test accumulated decisions with a concrete scenario. Reopen only the affected decision and its dependants when a contradiction appears.
 
 ## Preserve state only when needed

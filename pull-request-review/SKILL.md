@@ -63,13 +63,15 @@ Load and follow `$code-review`, or `code-review-dexwin` on the Dexwin engineerin
 
 Keep finder and verifier contexts logically independent. Never convert an existing comment, reviewer opinion, or subagent claim directly into a finding without verification.
 
-### 4. Present Review Batches
+### 4. Work Through The Review Queue
 
-Present at most ten confirmed, deduplicated findings per Review Batch, ranked by the `code-review` severity rules. State whether more verified findings remain and continue through as many batches as needed; there is no total finding cap.
+Receive the complete confirmed, deduplicated, ranked finding queue from `code-review` before presenting its first item. Do not limit broad investigation to the current conversation item.
 
-Give every finding a stable ID. For each one include the full normal review evidence and a preview of the proposed GitHub comment. Ask the user to accept, reject, or discuss findings by ID. Treat `agree to all` as acceptance of the current batch only.
+Present one finding at a time. Include its stable ID, the full normal review evidence, a preview of the proposed GitHub comment, and the number of verified findings still queued. Ask the user to accept, reject, revise, defer, discuss, or request named evidence for the current finding. Do not present the next finding until the current one has an explicit disposition, then recompute the queue for dependencies or duplicates.
 
-Do not publish a batch until the user has adjudicated its findings. Preserve accepted and rejected state across later batches and never re-propose a rejected finding unless new evidence materially changes the claim.
+Use a batch of at most ten only when the user explicitly requests batch adjudication or a complete report. A generic request to review a pull request is not a request for batching. Treat `agree to all` as acceptance of the current explicit batch only.
+
+Do not publish unadjudicated findings. Preserve accepted, rejected, revised, and deferred state across the queue, and never re-propose a rejected finding unless new evidence materially changes the claim.
 
 ### 5. Publish Accepted Findings
 
