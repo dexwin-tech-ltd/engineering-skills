@@ -9,8 +9,17 @@ The smallest issue that is independently implementable, testable, and reviewable
 _Avoid_: Micro-task, smallest possible task
 
 **Branch Contract**:
-The exact implementation branch name recorded by an issue before implementation begins.
-_Avoid_: Suggested branch, branch hint
+The exact implementation branch name, declared pull-request base ref, and
+worktree isolation mode recorded by an issue before implementation begins.
+Machine-specific worktree paths are execution evidence, not part of the
+portable issue contract.
+_Avoid_: Suggested branch, branch hint, implied base, absolute worktree path
+
+**Implementation Worktree**:
+A dedicated linked git worktree for one Branch Contract. Its runtime path and
+resolved base SHA are recorded in the pre-work execution handoff, never in the
+canonical issue.
+_Avoid_: Shared checkout, canonical issue path
 
 **Issue Completion Record**:
 The durable evidence written to the canonical issue by the implementation or integration agent after final review and before the issue is marked done. It records the final status, completion date, affected surfaces, reconciled traceability evidence, validation results, review outcome, deviations, residual risks, deferred checks, and available branch, commit, or pull-request references.
@@ -100,7 +109,12 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 ## Relationships
 
 - A parent issue contains one or more ordered **Smallest Coherent Slices** when the work cannot remain one coherent issue.
-- Each **Smallest Coherent Slice** owns one **Branch Contract**.
+- Each **Smallest Coherent Slice** owns one **Branch Contract** and one pull
+  request. A parent issue pack does not collapse its child slices into one
+  feature-wide pull request.
+- A **Branch Contract** defaults to one **Implementation Worktree**. Independent
+  slices use the verified canonical branch as their pull-request base; a
+  **Stacked Pull Request** uses its preceding pull-request branch.
 - Every completed issue owns one **Issue Completion Record** in its canonical issue file; the implementation or integration agent writes it, and the final reviewer verifies it before the issue is marked done.
 - An issue remains `Needs Verification` while any issue-owned acceptance, review, or highest-risk verification gate lacks evidence. An explicitly out-of-scope downstream or release gate does not block issue completion when the issue links it and names its owner or trigger.
 - A **Pull Request Review** uses **Code Review** as its analysis engine.
@@ -134,7 +148,7 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - "PR review" and "code review" were used interchangeably - resolved: **Code Review** owns analysis, while **Pull Request Review** owns GitHub adjudication and publication.
 - `code-review-dexwin` appeared to name a separate skill - resolved: it is the engineering server alias for **Code Review**, not an independent review contract.
 - "Stacked" was used as a synonym for parallel issue work - resolved: a **Stacked Pull Request** has an explicit dependency, while independent pull requests share the canonical base.
-- "Clean subagent" was used as a worktree requirement - resolved: a reviewer needs a **Clean Review Context**; separate worktrees are required only for concurrent writes that need filesystem isolation.
+- "Clean subagent" was used as a worktree requirement - resolved: a reviewer needs a **Clean Review Context**, which does not itself require a worktree; implementation still defaults to one **Implementation Worktree** per **Branch Contract**.
 - "Final worktree" was used as though worktrees themselves are merged - resolved: commits from **Helper Branches** are integrated into the **Canonical Integration Branch**; files are never copied between worktrees as the integration mechanism.
 - "Draft PR" was treated as the default publication result - resolved: **Pull Request Readiness** determines the state, and verified completed work produces a pull request ready for review.
 - `pending-review` was treated as a formal workflow-status category - resolved: **Pending Review** is a reviewer-attention signal applied after corrections and evidence are ready for another look.

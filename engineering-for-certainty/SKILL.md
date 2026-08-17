@@ -109,6 +109,24 @@ Use explicit version-control semantics so project history communicates intent an
 - For new repos or repos without a stated convention, prefer Conventional Commits, conventional branch names, and SemVer.
 - Treat commit messages, branch names, and version bumps as part of the engineering contract. They should help future maintainers understand what changed, why it changed, and whether consumers must react.
 
+### Pull Request Scope
+
+- Prefer one pull request per Smallest Coherent Slice: one coherent observable
+  outcome that is independently implementable, testable, and reviewable.
+- Do not put an entire feature into one pull request when it contains multiple
+  coherent slices. Treat the feature as a parent issue pack and give each slice
+  its own issue, branch, acceptance criteria, evidence, and pull request.
+- Judge coherence by behavior, ownership, dependencies, and proof, not by a
+  line-count limit. Do not split one meaningful behavior into technical
+  micro-pull-requests that cannot be reviewed or left green independently.
+- Base independent slices directly on the canonical branch. Use stacked pull
+  requests only when a later slice genuinely depends on an earlier slice;
+  record the base, head, preceding pull request, merge order, and retarget or
+  rebase procedure.
+- Keep every slice green and reviewable against its declared base. After all
+  slices are integrated, validate and review the combined feature state so
+  cross-slice defects are not hidden by individually green pull requests.
+
 ### Conventional Commits
 
 - Use Conventional Commits for human-authored commits by default:
@@ -129,6 +147,23 @@ Use explicit version-control semantics so project history communicates intent an
 - Keep branch names short, lowercase, and kebab-case. Include a ticket or issue key only when the repo uses one, such as `fix/pm-123-token-expiry`.
 - When a change mixes unrelated intents, split the work instead of using a vague branch such as `misc` or `updates`.
 - For Codex-created branches, preserve the platform-required prefix when present, then apply the conventional name after it, such as `codex/fix/token-expiry`.
+
+### Worktree Isolation
+
+- Default each planned issue implementation to its own dedicated linked git
+  worktree, including single-threaded work. Preserve a different repository
+  convention or the user's explicit direction to use the shared checkout.
+- Create the worktree from the Branch Contract's declared pull-request base:
+  the verified canonical branch for an independent slice, or the preceding
+  pull-request branch for a stacked slice. Do not replace a stacked base with
+  the default branch.
+- Verify the base ref and resolved SHA before implementation. Do not call a
+  remote-tracking ref such as `origin/main` current unless it was fetched or
+  otherwise verified when that network action is necessary and authorized.
+- Record the portable base ref and worktree isolation mode in the canonical
+  issue. Record the machine-specific worktree path and resolved base SHA in the
+  pre-work execution handoff; never store an absolute local path in the
+  canonical issue.
 
 ### Semantic Versioning
 
@@ -421,6 +456,12 @@ Before declaring work complete, verify:
 - Formatter and linter expectations are satisfied for the changed scope; ESLint owns code-quality rules and Prettier owns formatting.
 - Hook-driven local validation matches repo policy for the changed scope: pre-commit runs staged format/lint plus unit tests, and pre-push runs unit, integration, and E2E tests when the repo defines those commands.
 - Commit messages, branch names, and version bumps follow the repo's convention, or Conventional Commits, conventional branching, and SemVer when no local convention exists.
+- The change is one Smallest Coherent Slice with one pull request, or the
+  feature is an explicit issue pack whose independent slices target the
+  canonical branch and whose genuinely dependent slices use a recorded stack.
+- Planned issue implementation used its dedicated worktree and declared,
+  verified base, or the repository convention or user-approved exception is
+  recorded.
 - Any skipped doctrine rule has a concrete, documented reason.
 - Relevant unit and integration tests pass for the changed scope.
 - Every database schema or data migration passed its isolated local Migration Proof Harness, or the work remains unverified.

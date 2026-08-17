@@ -1,4 +1,4 @@
 interface:
-  display_name: "Issue Review"
-  short_description: "Review issue files for agent handoff readiness."
-  default_prompt: "Review this issue file for agent handoff readiness: <path>"
+  display_name: "Issue Creation and Review"
+  short_description: "Create or review implementation-ready issue files."
+  default_prompt: "Create or review this issue for agent handoff readiness: <path or approved problem>"

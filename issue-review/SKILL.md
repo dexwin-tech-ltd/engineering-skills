@@ -1,11 +1,11 @@
 ---
 name: issue-review
-description: Review an existing issue, ticket, feature file, bug report, roadmap item, or implementation handoff for agent readiness. Use when Codex is asked to tighten, validate, rewrite, prepare, or assess an issue so another agent or engineer can implement it with zero clarifying questions, including validating or assigning a stable numbered Conventional Commit-style filename.
+description: Create or review an issue, ticket, feature file, bug report, roadmap item, or implementation handoff for agent readiness. Use when Codex is asked to draft, create, tighten, validate, rewrite, prepare, or assess an issue so another agent or engineer can implement it with zero clarifying questions, including decomposing feature-sized work into Smallest Coherent Slices and validating or assigning stable numbered Conventional Commit-style filenames.
 ---
 
-# Issue Review
+# Issue Creation And Review
 
-Review the issue file against the bar: a competent implementation agent should be able to complete it with zero clarifying questions and produce a robust, validated change. If ambiguity remains, the issue is not ready.
+Create or review the issue against the bar: a competent implementation agent should be able to complete it with zero clarifying questions and produce a robust, validated change. If ambiguity remains, the issue is not ready.
 
 Use plain language at a Grade 10 reading level in the rewritten issue, review findings, decision summaries, and clarification questions so they are quick and easy to understand. Prefer short sentences and familiar words. Preserve exact domain terms, code identifiers, and contract language, and explain necessary jargon when it first appears. Never simplify away technical precision.
 
@@ -20,11 +20,13 @@ Require companion engineering doctrine when the issue touches its area:
 
 If the companion skill is available in the Codex session, use it. If it is not available, apply the local repo's equivalent docs or explicitly record the gap in the issue review.
 
-If no issue path is provided, ask for one before proceeding.
+For an existing issue, require its path. When the user asks to create an issue,
+discover the canonical issue directory, format, index, and next stable number.
+Ask for a target path only when those facts cannot be discovered safely.
 
 ## Workflow
 
-1. **Read the issue**: identify the requested change, claimed files, dependencies, and current structure.
+1. **Establish the issue input**: read the existing issue, or gather the approved problem and decisions for a new issue; identify the requested change, claimed files, dependencies, and current structure.
 2. **Discover repo conventions**: inspect local docs and examples before applying generic rules, including issue filename rules and the next unused issue reference.
 3. **Verify claims against code**: check paths, symbols, line references, tests, schemas, commands, and stated behavior.
 4. **Decompose and name the work**: prove the issue is one Smallest Coherent Slice or create an ordered child pack, then assign every slice its exact Branch Contract and PR base.
@@ -75,7 +77,9 @@ If the issue uses a domain term that conflicts with the local glossary or produc
 
 ## Decomposition And Branch Contract
 
-Every review must make one explicit decomposition decision: either the issue is already one Smallest Coherent Slice, or it must become a parent pack of smaller child issues. Do not use line count alone.
+Every creation or review must make one explicit decomposition decision: either
+the issue is already one Smallest Coherent Slice, or it must become a parent
+pack of smaller child issues. Do not use line count alone.
 
 A Smallest Coherent Slice must:
 
@@ -87,6 +91,13 @@ A Smallest Coherent Slice must:
 
 The slice need not be independently deployed when the product intentionally releases only after the full pack is complete. When splitting, record the parent, ordered children, cross-slice contracts, and release boundary. Preserve existing pack-local numbering when it is already stable.
 
+Do not create or approve one feature-sized implementation issue or pull request
+when the feature contains multiple Smallest Coherent Slices. Keep the feature as
+a parent issue pack, and require each child slice to own exactly one branch and
+one pull request. A single feature-wide pull request fails readiness unless the
+issue proves that the work is one indivisible coherent outcome rather than
+several outcomes grouped for convenience.
+
 Require each slice to record its exact conventional Branch Contract before implementation:
 
 ```text
@@ -94,6 +105,18 @@ Require each slice to record its exact conventional Branch Contract before imple
 ```
 
 Preserve a platform-required prefix such as `codex/`. The type and stable issue number must agree with the issue filename. A branch suggestion or pattern without the resolved name does not pass.
+
+Record the exact pull-request base ref and worktree isolation mode with the
+Branch Contract. Default to a dedicated linked worktree. Independent slices use
+the verified canonical branch as their base; stacked slices use the preceding
+pull-request branch. Do not substitute the default branch for a real stack
+dependency or assume that a remote-tracking ref is current without verification.
+
+Keep the issue portable: never store an absolute machine-specific worktree path
+in the canonical issue. Require the pre-work execution handoff to record the
+runtime path and resolved base SHA before work begins. Record a repository
+convention or the user's explicit direction when the slice will use the shared
+checkout instead.
 
 Use Stacked Pull Requests only for real dependencies. Record each PR's head, base, preceding PR, merge order, and rebase or retarget procedure. Independent slices must share the canonical base branch and remain parallel rather than being forced into a stack.
 
@@ -303,7 +326,11 @@ Apply only when the issue scope triggers them. Use repo-specific docs and existi
 For non-trivial issues, include an Execution Plan that identifies which workstreams are independent and which are ordered. Use subagents in parallel only when their production ownership and traceability rows do not overlap materially.
 
 - Give each implementation subagent bounded files or symbols, acceptance criteria, and validation responsibility.
-- Use a Helper Branch in a separate worktree for concurrent writes that require filesystem isolation. A clean review context does not itself require a worktree.
+- Give every Branch Contract its own dedicated linked worktree by default,
+  including the Canonical Integration Branch and each Helper Branch. Concurrent
+  writes require that filesystem isolation. Record the repository convention or
+  user's explicit direction when implementation will use the shared checkout.
+  A clean review context does not itself require a worktree.
 - Name one Canonical Integration Branch from the issue's Branch Contract. The Execution Plan must name how each Helper Branch enters it: cherry-pick coherent commits, merge the branch, or rebase and fast-forward according to repository history conventions. Never copy files between worktrees as the integration mechanism.
 - Validate each helper branch, then integrate in dependency order. Resolve conflicts only on the canonical branch and re-run every affected traceability row.
 - Run the complete triggered validation and issue-against-diff audit on the combined canonical branch.
@@ -336,7 +363,7 @@ Before editing, verify:
 
 - **Consistency**: acceptance criteria, scope, dependencies, implementation guardrails, and affected production owners agree; paths, symbols, and line references still exist.
 - **Issue identity**: pending issue filenames follow the discovered convention, use a stable number and valid Conventional Commit type, and all roadmap/index and sibling references resolve after any rename.
-- **Decomposition and branches**: the issue is one proven Smallest Coherent Slice or an ordered child pack; every slice has an exact Branch Contract, and only genuinely dependent PRs are stacked.
+- **Decomposition and branches**: the issue is one proven Smallest Coherent Slice or an ordered child pack; every slice owns exactly one Branch Contract and pull request, no feature-wide pull request spans multiple slices, only genuinely dependent pull requests are stacked, and every contract records its exact base ref and worktree isolation mode without a machine-specific path.
 - **Traceability**: every independently observable criterion has one or more ledger rows with an exact production owner and exact test or justified manual verification; the post-implementation audit is named.
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
@@ -362,6 +389,8 @@ Status: open
 Type: Bug | Feature | Chore | Exploration
 Severity: High | Medium | Low | Very Low
 Branch: <exact conventional branch>
+Base: <exact canonical branch or preceding stacked-PR branch>
+Worktree: dedicated | shared checkout - <repository convention or explicit user direction>
 Parent: <parent issue, when this is a child slice>
 
 ## Problem / Motivation

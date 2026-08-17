@@ -14,9 +14,11 @@ Do not implement missing work, perform code review, repair CI, invent evidence, 
 Resolve and read:
 
 - the canonical issue or implementation handoff;
-- its stable issue number and exact Branch Contract;
+- its stable issue number and exact Branch Contract, including the declared
+  pull-request base ref and worktree isolation mode;
 - the repository's branch, commit, PR-title, PR-template, and release conventions;
 - the intended base branch or preceding stacked-PR branch;
+- the pre-work execution handoff's runtime worktree path and resolved base SHA;
 - the complete local diff, commits, untracked files, and validation evidence;
 - the traceability ledger and final independent review evidence.
 
@@ -26,7 +28,10 @@ If no canonical issue exists, ask for the issue identity before publishing. Dist
 
 ### 1. Verify Scope And Branch
 
-Inspect repository status before staging or creating a branch. Resolve the default branch and upstream without fetching, pulling, switching, or rewriting history unless that operation is necessary for the requested publication and authorized.
+Inspect repository status and `git worktree list --porcelain` before staging or
+creating a branch. Resolve the default branch and upstream without fetching,
+pulling, switching, or rewriting history unless that operation is necessary for
+the requested publication and authorized.
 
 Require the issue's exact conventional branch name:
 
@@ -41,6 +46,22 @@ codex/<type>/<NN>-<short-kebab-description>
 ```
 
 If completed changes are still on the default branch, create the recorded branch before committing when that safely preserves the current work. If the current non-default branch conflicts with the Branch Contract, stop rather than silently publishing under another identity.
+
+Verify that the branch descends from the Branch Contract's declared base and
+that the recorded resolved base SHA was truthful when implementation began.
+Independent slices use the verified canonical branch; stacked slices use the
+preceding pull-request branch. Do not substitute `origin/main` or another
+default branch for a stacked base, and do not call a remote-tracking ref current
+without fetching or otherwise verifying it when that action is necessary and
+authorized.
+
+When the Branch Contract requires a dedicated worktree, verify the pre-work
+execution handoff's runtime path and confirm the implementation branch belongs
+to a linked worktree rather than the shared checkout. Treat implementation in
+the shared checkout without a recorded repository convention or explicit user
+direction as a Branch Contract deviation and stop to reconcile it before
+publication. The runtime path may differ across machines; never store it in the
+canonical issue.
 
 Inspect every changed and untracked file. Reject unrelated work, unexplained generated artifacts, accidental binaries, stale planning changes, or ambiguous ownership. Never default to staging an entire mixed worktree.
 
