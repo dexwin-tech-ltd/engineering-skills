@@ -58,6 +58,10 @@ _Avoid_: Review batch, finding cap, report-only list
 The dependency-aware set of unresolved user-owned decisions, with one current decision discussed to an explicit disposition before the queue is recomputed.
 _Avoid_: Interview round, questionnaire, review queue
 
+**Queue Progress**:
+The visible current-item position, current known total, and count remaining after the current item across prior dispositions and the active queue.
+_Avoid_: Remaining count alone, immutable total, percentage-only progress
+
 **Migration Proof Harness**:
 An isolated disposable local database container that proves a database migration against prior-state fixtures using the production migration mechanism.
 _Avoid_: Migration test, structural-migration container
@@ -123,6 +127,8 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - A **Responsible Engineer** applies **Pending Review** and notifies the reviewer after pushing requested corrections and regression evidence; the label does not transfer thread-resolution ownership.
 - A **Stacked Pull Request** depends on exactly one earlier base in an ordered stack; independent slices target the canonical base branch directly.
 - A **Code Review** produces one **Review Queue** after investigating, verifying, deduplicating, and ranking the complete finding landscape.
+- Every current item from a **Review Queue** or **Decision Queue** displays **Queue Progress** as `Finding 11 of 30 - 19 remain after this` or `Decision 11 of 30 - 19 remain after this`.
+- When recomputation changes the known total, **Queue Progress** states the previous total, new total, and reason before presenting the next item; stable item IDs do not change.
 - A **Pull Request Review** tags the **Responsible Engineer** only after the user accepts a finding.
 - Independent finder and verifier passes use separate **Clean Review Contexts**.
 - Each **Helper Branch** contributes validated commits to exactly one **Canonical Integration Branch** through the issue's named Git integration strategy, never by copying files between worktrees.
@@ -142,6 +148,9 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 
 > **Engineer:** "Should this feature be one issue and one large PR?"
 > **Reviewer:** "No. Define each **Smallest Coherent Slice** and its **Branch Contract**, then use **Pull Request Review** to work through the **Code Review** queue one finding at a time before publishing comments."
+>
+> **Engineer:** "How far through the findings are we?"
+> **Reviewer:** "**Queue Progress** is Finding 11 of 30, with 19 remaining after this one."
 
 ## Flagged ambiguities
 
@@ -157,4 +166,5 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - "Re-review" implied a separately requested workflow - resolved: **Thread Reconciliation** runs during every **Pull Request Review** when existing unresolved threads are present.
 - "Existing threads" did not distinguish workflow and human ownership - resolved: all are inspected, but automatic resolution is limited to workflow-owned threads.
 - "Round" and "batch" were the default units for both questions and findings - resolved: use a **Decision Queue** or **Review Queue**, keep one material item current until disposition, and batch only when the user explicitly requests it.
+- A remaining count such as "20 findings" hid the endpoint - resolved: show **Queue Progress** with current position, current total, and remaining-after-current, and explain every total change.
 - "Migration" included both persisted-database changes and structural refactors - resolved: only database schema or data migrations require a **Migration Proof Harness**.

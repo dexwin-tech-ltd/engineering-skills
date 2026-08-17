@@ -67,7 +67,7 @@ Keep finder and verifier contexts logically independent. Never convert an existi
 
 Receive the complete confirmed, deduplicated, ranked finding queue from `code-review` before presenting its first item. Do not limit broad investigation to the current conversation item.
 
-Present one finding at a time. Include its stable ID, the full normal review evidence, a preview of the proposed GitHub comment, and the number of verified findings still queued. Ask the user to accept, reject, revise, defer, discuss, or request named evidence for the current finding. Do not present the next finding until the current one has an explicit disposition, then recompute the queue for dependencies or duplicates.
+Present one finding at a time. Include its stable ID, the full normal review evidence, a preview of the proposed GitHub comment, and `**Progress: Finding <position> of <total> - <remaining> remain after this**` on every response that presents or continues it. Calculate position and total using prior dispositions plus the active queue; do not show a remaining count alone. Ask the user to accept, reject, revise, defer, discuss, or request named evidence for the current finding. Do not present the next finding until the current one has an explicit disposition, then recompute the queue for dependencies or duplicates. If the total changes, state `**Queue revised: <old> -> <new>.** <reason>` before the next finding; never silently change the denominator or stable finding IDs.
 
 Use a batch of at most ten only when the user explicitly requests batch adjudication or a complete report. A generic request to review a pull request is not a request for batching. Treat `agree to all` as acceptance of the current explicit batch only.
 

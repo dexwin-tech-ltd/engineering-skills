@@ -38,8 +38,8 @@ Map unresolved decisions by dependency. The current frontier contains decisions 
 
 - Investigate and map the full frontier before choosing the current item. This prevents a locally reasonable answer from conflicting with a later-known dependency.
 - Ask one material frontier decision, then keep discussing it until the user accepts, rejects, revises, defers, or requests specific evidence. Do not introduce the next decision merely because the first received a partial answer.
-- Keep all other eligible decisions in a dependency-aware queue. State how many remain without presenting their full arguments unless that context is needed to understand the current item.
-- Recompute and reorder the queue after every disposition. Drop or rewrite items invalidated by the answer.
+- Keep all other eligible decisions in a dependency-aware queue. On every response that presents or continues the current item, show `**Progress: Decision <position> of <total> - <remaining> remain after this**`. Calculate position as prior dispositions plus the current item; calculate total as prior dispositions plus the current and queued items. Do not show a remaining count alone. A percentage may appear only as secondary information.
+- Recompute and reorder the queue after every disposition. Drop or rewrite items invalidated by the answer. If recomputation changes the total, state `**Queue revised: <old> -> <new>.** <reason>` before presenting the next item. Never silently change the denominator or stable decision IDs.
 - Never ask hypothetical downstream questions for branches the user has not selected.
 - Use a batch of at most 10 only when every item is independent and low consequence and the user explicitly requests batch treatment. A generic request to review, discuss, or be grilled is not a request for batching.
 - Order the queue by dependency first, then consequence and uncertainty.
@@ -63,7 +63,7 @@ Reply `A`, `B`, `discuss`, `defer`, or tell me what evidence you need.
 - **A. Orders context (recommended):** One owner for the complete lifecycle; requires the cart to hand off at checkout.
 - **B. Cart context:** Keeps early checkout state near the cart; introduces shared ownership after checkout.
 
-**Queue:** 4 later decisions remain. They will be recomputed after this answer.
+**Progress: Decision 1 of 5 - 4 remain after this**
 ```
 
 Keep each item decision-shaped: one choice, its recommendation, and only genuinely plausible alternatives. The labels above are semantic requirements, not rigid wording; combine or rename them when the same understanding is clearer with less repetition. Do not turn observations into questions or pad an item or explicit batch.

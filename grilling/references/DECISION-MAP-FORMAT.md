@@ -11,6 +11,11 @@ Use this compact state only when a grilling effort must span sessions or context
 
 - **{Decision name}**: {Accepted answer and short reason}
 
+## Queue progress
+
+- **Position**: Decision {current position} of {current total}; {remaining count} remain after the current item
+- **Last total change**: {previous total} -> {current total} because {reason}; omit when the total has not changed
+
 ## Current focus
 
 - **{Decision name}**: {The one decision being discussed, why it is now eligible, and its current state}
