@@ -9,7 +9,13 @@ description: Perform evidence-verified, staff-level code reviews for diffs, pull
 
 Find material engineering risks with high recall, then independently refute or verify every candidate before reporting it. Prioritize correctness, security, data integrity, reliability, and operational safety over style. Keep ordinary reviews read-only.
 
-Use logical independence between finder passes. Use subagents when available and worthwhile for broad changes, security-sensitive code, concurrency or data-integrity work, or independent verification. Do not create one subagent per angle mechanically. Give subagents raw artifacts or bounded review areas without leaking expected conclusions.
+Treat review assurance and execution mechanism as separate concerns. Low, Medium, High, and Max describe the required depth and assurance. Workflow orchestration, parallel subagents, sequential clean contexts, and separated coordinator passes describe how that assurance is pursued.
+
+Treat parallelism as an execution technique, not as a review angle. Use logically independent finder and verifier contexts when the runtime supports them and the review surface provides useful independent work packets. Scale finder count by effective diff size, risk, and change topology rather than creating one worker per review angle.
+
+Keep finder prompts independent. Give each finder raw artifacts, governing contracts, and a bounded review surface without other finders' conclusions. Give verifiers a normalized candidate claim and raw evidence without the finder's preferred verdict.
+
+Use the most suitable permitted execution mechanism for the specific review. Do not require Workflow when ordinary subagents or clean sequential contexts can satisfy the review obligations. Degrade gracefully when an execution mechanism is unavailable while preserving the requested review depth as far as the runtime reasonably permits. Record any limitation that materially reduces context independence, coverage, or verification confidence.
 
 ## Required Engineering Doctrine
 
@@ -103,9 +109,101 @@ Increase effort for privilege boundaries, irreversible writes, migrations, publi
 
 At High or Max effort on a multi-file change, enumerate every changed file that is not generated, vendored, or a binary asset, and confirm each received at least an Angle A and Angle B pass before candidate-gathering is called complete. Do not let a large new module absorb review depth at the expense of smaller adjacent files in the same diff — a five-line configuration or deployment change fails exactly as often as a five-hundred-line new module, and gets less scrutiny by default.
 
+### Plan review depth and execution separately
+
+Make review-planning decisions first:
+
+- What review depth does the requested effort and change risk require?
+- Which changed surfaces require coverage?
+- How many genuinely independent finder work packets exist?
+- Which candidates would require additional independent verification?
+- Which targeted validation could materially change confidence?
+
+Then make execution-planning decisions:
+
+- Can ordinary parallel subagents execute the work packets effectively?
+- Would scripted Workflow orchestration materially improve coordination, isolation, latency, or context containment?
+- Is Workflow available and already permitted?
+- If permission or enablement is required, is the expected benefit large enough to justify involving the user?
+- Which fallback will preserve the review obligations if Workflow is not used?
+
+### Choose the execution mechanism
+
+Support these execution mechanisms:
+
+1. Workflow-based orchestration when available, permitted, and materially useful.
+2. Parallel independent subagents.
+3. Sequential clean or isolated review contexts.
+4. Deliberately separated passes in the coordinator context.
+
+Do not assume Workflow is better merely because it is available. Prefer ordinary subagents when the review requires only a small number of independent workers and the coordinator can manage their results without material context pressure or latency.
+
+Workflow is materially useful when one or more of these apply:
+
+- the plan requires more independent workers than the coordinator can comfortably manage turn by turn;
+- the review has several coherent surfaces plus a second-stage verifier fan-out;
+- finder and verifier stages can be productively pipelined;
+- intermediate candidate and verification records would materially crowd the coordinator context;
+- the same branching, deduplication, or retry pattern must run repeatedly;
+- the expected latency reduction or context isolation is substantial.
+
+A high-risk change alone does not require Workflow. A small high-risk change may be better served by two carefully scoped ordinary subagents.
+
+When running in Claude Code and considering Workflow or Agent orchestration, read [Claude Code Review Orchestration](references/claude-code-orchestration.md) and follow its permission, safety, and fallback rules.
+
+### Preserve requested assurance
+
+A fallback execution mechanism may increase latency or reduce context independence without changing the requested review obligations. Preserve the requested effort as far as reasonably possible.
+
+Do not claim that the requested assurance was fully achieved when runtime limitations prevented required coverage or independence. Complete the supportable review and record:
+
+- the requested review effort;
+- the actual execution mechanism;
+- the coverage and verification completed;
+- the specific assurance property that could not be achieved;
+- the strongest available alternative used.
+
+### Size the finder budget
+
+Estimate effective diff size from additions plus deletions in reviewed text files. Exclude generated, vendored, lockfile, and binary changes from the line calculation, but still inspect them when they affect contracts, dependencies, deployment, or runtime behavior.
+
+Use these finder ranges:
+
+- **Low**: 1 finder.
+- **Medium**: 1-3 finders.
+- **High**: 2-6 finders.
+- **Max**: 3-8 finders.
+
+Within the selected range, target approximately one finder per 200 effective changed lines, then adjust for the number of genuinely independent work packets.
+
+Raise the target for:
+
+- authentication, authorization, tenant isolation, money, sensitive data, migrations, destructive persistence, concurrency, or irreversible writes;
+- changed public contracts, environment schemas, deployment configuration, or cross-layer behavior;
+- weak integration coverage or unusually broad architectural reach.
+
+Lower the target when the diff is mechanically repetitive or cannot be divided without separating code from the contracts needed to understand it. Never spawn empty or substantially duplicate finders merely to reach a numeric target.
+
+Diff size controls review capacity, not risk. A small high-risk change may require more independent review than a large routine change.
+
 ## Phase 1: Find Candidate Issues
 
 Treat every observation as a candidate, not a finding. Run each relevant angle independently so one framing does not suppress another.
+
+### Plan finder work packets
+
+Treat Angles A-L as coverage obligations, not worker identities. Build a work packet map before starting finders.
+
+Prefer these packet types:
+
+- **Coverage shards**: coherent changed modules, domains, or file groups. Every shard receives line-by-line correctness, removed-behavior, and testing-quality coverage.
+- **Contract tracing**: changed exports, endpoints, schemas, errors, database shapes, environment variables, consumers, tests, and deployment manifests.
+- **Triggered specialist passes**: security, data integrity, resilience, observability, frontend, or performance when the changed surface activates that doctrine.
+- **Global consistency pass**: reuse, simplification, sibling behavior, architectural ownership, and cross-shard invariants.
+
+A work packet may cover several related angles, and an important angle may appear in several packets. Do not isolate a deletion from the old behavior it provided or isolate a contract from its callers and deployment consumers.
+
+At High and Max effort, start independent packets concurrently when the selected execution mechanism permits. Require every non-generated changed file to receive Angle A and Angle B coverage regardless of how packets are divided.
 
 ### A. Line-by-line correctness
 
@@ -202,6 +300,16 @@ Collapse candidates that share one root cause. Prefer one finding that names all
 
 Re-evaluate provisional severity after deduplication; broad impact may raise severity, while duplicated symptoms must not inflate it.
 
+Maintain one coordinator-owned candidate ledger. Normalize incoming candidates to the Candidate Standard and attach their finder packet and evidence source.
+
+Finders may return their strongest candidates before completing their whole packet. At High or Max effort, verification may begin while other finders are still working only after the coordinator has normalized the candidate and established a sufficiently stable root-cause claim.
+
+Do not begin early verification for a candidate likely to merge with findings from another active packet. If later evidence changes, broadens, or merges the root-cause claim, discard the stale verification result and verify the final normalized claim again.
+
+The coordinator may reconsider Workflow once after candidate normalization when the discovered verifier fan-out is materially larger or more complex than the initial plan. Do not reconsider it after the user has declined it during the same review.
+
+Do not finalize the finding queue until every finder has completed, every changed surface has received its required coverage, and global deduplication is complete.
+
 ## Phase 3: Verify Every Survivor
 
 For each candidate:
@@ -232,7 +340,20 @@ Only `CONFIRMED` candidates become normal findings. Place `CONDITIONAL` candidat
 
 Prefer two independent evidence points for Critical or High findings when practical. One direct point is enough for mechanically provable failures such as a type error, missing export, failing command, unreachable path, or reproduced defect.
 
-For independent verification, give the verifier the candidate, diff, relevant files, and raw context without the finder's preferred verdict. Ask it to seek both confirming and refuting evidence. If subagents are unavailable or unjustified, perform a separate skeptical pass with the same standard.
+### Independent skeptical verification
+
+Give every normalized survivor at least one skeptical verification pass that is logically independent from its finder. Ask the verifier to seek both confirming and refuting evidence and to cite the exact guard, call path, contract, runtime constraint, test, or reproduction supporting its assessment.
+
+For Critical or High candidates, or candidates with material uncertainty, use a second independent verifier when available. Give the verifiers different mandates where useful:
+
+- one attempts to prove the claimed path unreachable, guarded, or immaterial;
+- one reconstructs reachability and material impact from the entrypoint.
+
+Use a third verifier only when the first two materially disagree, rely on incompatible assumptions, or leave an important evidentiary gap.
+
+Do not determine verdicts by majority vote. Evidence outranks vote count. One direct reproduction may establish a defect; one cited guard may refute several unsupported confirmations. The coordinator must reconcile the evidence and assign the final verdict under the normal CONFIRMED, CONDITIONAL, REFUTED, and NEEDS_CONTEXT definitions.
+
+When subagents are unavailable, perform the same verifier roles as deliberately separate skeptical passes. Record the lack of clean-context independence as a review limitation.
 
 ### Targeted validation
 
@@ -273,9 +394,17 @@ Batch at most ten findings only when the user explicitly requests a batch or com
 When the review queue is empty, provide this closeout:
 
 1. Brief understanding of the change.
-2. Scope, effort, doctrine skills applied, and the checks each activated companion added.
+2. Scope, requested effort, actual execution mechanism, effective diff size, planned and actual finder count, finder work packets, verifier count, doctrine skills applied, and the checks each activated companion added.
 3. Validation performed and results.
 4. Conditional residual risks, `NEEDS_CONTEXT` questions, and remaining coverage gaps.
+
+Before presenting the first finding, confirm that:
+
+- every planned finder packet completed or has a recorded fallback;
+- every candidate has exactly one final verdict;
+- no verifier result refers to a superseded pre-deduplication claim;
+- any Workflow decline or execution limitation is recorded once without weakening the evidence standard;
+- the reported review effort distinguishes requested assurance from assurance actually achieved.
 
 Before delivering each finding or an explicitly requested batch, verify that the selected scope and effort are recorded, every candidate has exactly one verdict, every changed surface in scope was inspected, and all limitations and residual risks are classified. Keep the review read-only and perform no external writes unless the user explicitly requested them through a composing workflow.
 
