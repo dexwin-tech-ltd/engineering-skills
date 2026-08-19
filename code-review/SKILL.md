@@ -60,8 +60,24 @@ Run the review as six distinct phases:
 2. Find candidate issues through independent review angles.
 3. Normalize and deduplicate candidates by root cause.
 4. Verify every survivor and run targeted validation where useful.
-5. Rank confirmed findings into one review queue and work through one finding at a time, then report residual risks and open questions.
+5. Rank confirmed findings into one review queue and work through one finding at a time, or return the routed queue to an authorized composing delivery workflow, then report residual risks and open questions.
 6. After the user verifies the reported findings, analyze whether the governing issue or handoff could have prevented them and propose targeted `issue-review` skill improvements.
+
+### Composing Delivery Mode
+
+When `$code-review` is invoked as the read-only analysis engine inside
+`$deliver-issue` or another explicitly authorized delivery workflow, read and
+follow [Review Loop Contract](references/review-loop-contract.md) before Phase
+0. The composing workflow must supply a governing issue with correction and
+escalation authority.
+
+Keep every finder and verifier read-only. After completing the normal full
+discovery and verification pipeline, attach `AUTO_CORRECT`, `USER_DECISION`,
+`BLOCKED`, or `RESIDUAL_RISK` routing to every non-refuted result and return the
+complete record to the composing workflow. This mode overrides the ordinary
+one-at-a-time presentation only for findings the issue authorizes for automatic
+correction; it does not weaken evidence, review independence, or user ownership
+of material decisions.
 
 ## Phase 0: Gather the Review Scope
 
@@ -389,6 +405,11 @@ Investigate, verify, deduplicate, and rank the complete finding set before prese
 
 Present one confirmed finding at a time in severity and impact order. Give it a stable ID and show `**Progress: Finding <position> of <total> - <remaining> remain after this**` on every response that presents or continues it. Calculate position as prior dispositions plus the current finding; calculate total as prior dispositions plus the current and queued findings. Do not show a remaining count alone; a percentage may appear only as secondary information. Keep discussing the current finding until the user accepts it as valid, rejects it, requests a revision, defers it, or asks for named evidence. Only then present the next finding, after recomputing the queue for dependencies, duplicates, or invalidated claims. If recomputation changes the total, state `**Queue revised: <old> -> <new>.** <reason>` before the next finding; never silently change the denominator or stable finding IDs. A generic request to review code is not a request for batching.
 
+In Composing Delivery Mode, use the reference contract's delivery return record
+instead. Complete the full queue before returning it, batch only
+`AUTO_CORRECT` findings for the operator, and route material decisions back to
+the user without treating delivery authorization as adjudication.
+
 Batch at most ten findings only when the user explicitly requests a batch or complete report. Preserve the same evidence for every item, allow adjudication by stable ID, and never treat a batch boundary as permission to omit Critical or High findings. There is no total finding cap.
 
 When the review queue is empty, provide this closeout:
@@ -419,6 +440,10 @@ Use human-readable output by default. Provide structured JSON when the user requ
 ## Phase 4: Feed Verified Findings Back Into Issue Review
 
 Run this phase only after the user has reviewed the reported issues and explicitly confirmed which findings are valid, or when the user explicitly requests the retrospective. Do not delay the initial code-review report while waiting for this feedback.
+
+Do not run this retrospective automatically during Composing Delivery Mode.
+Finishing delivery does not authorize editing review doctrine; wait for the
+user's separate confirmation or request.
 
 For each user-confirmed finding:
 
@@ -457,6 +482,7 @@ Keep a normal review read-only.
 
 - For GitHub inline publication, use `$pull-request-review` as the composing workflow. This skill supplies verified findings and evidence; the composing workflow owns existing-thread reconciliation, user adjudication, responsible-engineer tagging, fix snippets, GitHub writes, and post-write verification.
 - When this skill is already running inside `$pull-request-review`, return stable finding IDs and complete candidate records to that workflow after verification. Do not load the composing skill from inside this skill or post comments directly.
+- When this skill is running inside `$deliver-issue`, follow the Review Loop Contract, return routed finding records, and leave every correction, commit, push, PR, and CI action to that composing workflow.
 - A direct request to review a GitHub PR and publish comments should select `$pull-request-review` before analysis. If it is unavailable, keep the review read-only and name the missing workflow instead of reconstructing GitHub mutation behavior here.
 - With an explicit fix request or `--fix`, present the review first, then begin a separate implementation phase. Do not auto-fix `CONDITIONAL` or `NEEDS_CONTEXT` candidates. Validate applied fixes and summarize the resulting changes.
 

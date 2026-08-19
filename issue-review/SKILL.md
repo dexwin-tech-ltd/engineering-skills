@@ -32,7 +32,7 @@ Ask for a target path only when those facts cannot be discovered safely.
 4. **Decompose and name the work**: prove the issue is one Smallest Coherent Slice or create an ordered child pack, then assign every slice its exact Branch Contract and PR base.
 5. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, map all user-owned decisions by dependency, and work through one material decision at a time using stable question IDs.
 6. **Accumulate answers**: maintain the decision map across items; do not edit the issue during the review.
-7. **Build traceability and execution**: map each acceptance criterion to its production owner and exact verification, then define safe sequential or parallel implementation ownership.
+7. **Build traceability and execution**: map each acceptance criterion to its production owner and exact verification, define safe sequential or parallel implementation ownership, and set the Review Loop Contract for correction and escalation.
 8. **Cross-validate**: check the resolved issue, traceability ledger, execution plan, and conditional gates for contradictions and missing dependencies.
 9. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
 
@@ -300,6 +300,47 @@ out-of-scope downstream or release gate does not block `Done` only when the
 issue links it and names its owner or trigger. Never use `Done` with a caveat to
 hide missing issue-owned evidence.
 
+### 13. Review Loop Contract
+
+Every rewritten issue must state how implementation hands off to review and how
+verified findings are routed. Do not rely on a long chat prompt, an implied
+agent workflow, or the existence of a durable goal. If automatic delivery is
+not intended, state that the workflow is human-gated and disable automatic
+correction explicitly.
+
+For an issue intended for `$deliver-issue`, include:
+
+```md
+## Review Loop Contract
+
+- Delivery mode: `$deliver-issue` to a ready-to-merge handoff.
+- Automatic transitions: implementation -> issue-owned validation ->
+  independent code review -> authorized corrections -> revalidation and
+  re-review -> pull request -> CI follow-through.
+- Auto-correction authority: `AUTO_CORRECT` only for confirmed, deterministic,
+  in-scope corrections that preserve approved intent, architecture, contracts,
+  security posture, dependencies, and test strategy.
+- User decision triggers: `USER_DECISION` for product or domain meaning,
+  acceptance or scope changes, architecture, public contracts, schemas,
+  migrations, auth or permissions, security policy, dependencies, test
+  strategy, material verifier disagreement, or missing product context.
+- Blocked triggers: `BLOCKED` for missing authority, credentials, access,
+  external state, required skills, or out-of-scope prerequisites.
+- Re-review rule: after every correction batch, re-run invalidated proof and a
+  clean review of the resulting head; preserve finding IDs and dispositions.
+- Churn threshold: escalate when the same root cause survives two correction
+  attempts or the fix oscillates. Use a stricter issue-specific limit when risk
+  warrants it.
+- Completion target: current-head acceptance evidence, clean independent
+  review, green required automated CI, current Issue Completion Record, and a
+  truthful pull request with only human approval and merge remaining.
+```
+
+Tighten the default contract for the issue's risk, but never broaden automatic
+authority. A durable goal supplies persistence, not permission to resolve a
+material ambiguity. Reviewer contexts remain read-only; the delivery operator
+owns authorized edits, validation, publication, and CI follow-through.
+
 ## Conditional Gates
 
 Apply only when the issue scope triggers them. Use repo-specific docs and existing patterns to decide whether each gate applies.
@@ -368,6 +409,7 @@ Before editing, verify:
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
 - **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
+- **Review loop**: the issue explicitly selects automatic or human-gated delivery, routes mechanical corrections separately from user-owned decisions and blockers, requires current-head revalidation and re-review, and defines its churn threshold and ready-to-merge stopping condition.
 - **Completion record**: the issue defines who writes and verifies its Issue Completion Record, which status-tracking surfaces must change with it, and which issue-owned or explicitly downstream gates control `Needs Verification` versus `Done`.
 - **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
 - **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; rounded displays agree with derived status indicators; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
@@ -412,6 +454,8 @@ Parent: <parent issue, when this is a child slice>
 ## Test Approach
 
 ### Traceability Ledger
+
+## Review Loop Contract
 
 ## Completion Requirements
 

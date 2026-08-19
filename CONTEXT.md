@@ -25,6 +25,28 @@ _Avoid_: Shared checkout, canonical issue path
 The durable evidence written to the canonical issue by the implementation or integration agent after final review and before the issue is marked done. It records the final status, completion date, affected surfaces, reconciled traceability evidence, validation results, review outcome, deviations, residual risks, deferred checks, and available branch, commit, or pull-request references.
 _Avoid_: Completion summary, PR-only evidence, chat-only handoff
 
+**Delivery Operator**:
+The composing workflow implemented by `$deliver-issue` that carries one
+approved issue through implementation, issue-owned validation, independent code
+review, authorized correction loops, pull-request creation, and CI follow-up.
+It coordinates the owning skills without turning reviewer contexts into editors
+or choosing user-owned product and architectural decisions.
+_Avoid_: Autonomous product owner, code reviewer, merge bot
+
+**Review Loop Contract**:
+The issue-owned authority and stopping contract that separates automatic
+mechanical corrections from user decisions and blockers, then requires
+revalidation and independent re-review of every corrected head.
+_Avoid_: Fix everything, reviewer edits, implied goal authority
+
+**Ready-to-Merge Handoff**:
+The delivery state in which the current pull-request head satisfies the issue,
+has current validation and independent review evidence, has green required
+automated CI, and has no unresolved confirmed finding or blocker. Only human
+approval and the merge action remain; the term does not claim that required
+human approval has already happened.
+_Avoid_: PR opened, ready for review, merged, deployed
+
 **Code Review**:
 Platform-neutral analysis that verifies candidate defects and reports confirmed findings without external writes by default.
 _Alias_: `code-review-dexwin` on the engineering server
@@ -120,6 +142,14 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   slices use the verified canonical branch as their pull-request base; a
   **Stacked Pull Request** uses its preceding pull-request branch.
 - Every completed issue owns one **Issue Completion Record** in its canonical issue file; the implementation or integration agent writes it, and the final reviewer verifies it before the issue is marked done.
+- Every implementation-ready issue states a **Review Loop Contract**. A durable
+  goal supplies persistence but does not expand correction authority.
+- A **Delivery Operator** consumes the issue, preserves the ownership boundaries
+  of **Code Review** and **Pull Request Creation**, and finishes at a
+  **Ready-to-Merge Handoff**.
+- **Code Review** finder and verifier contexts remain read-only during delivery;
+  the **Delivery Operator** applies only issue-authorized corrections and
+  returns material ambiguity to the user.
 - An issue remains `Needs Verification` while any issue-owned acceptance, review, or highest-risk verification gate lacks evidence. An explicitly out-of-scope downstream or release gate does not block issue completion when the issue links it and names its owner or trigger.
 - A **Pull Request Review** uses **Code Review** as its analysis engine.
 - **Pull Request Creation** consumes completed local work and produces a GitHub pull request; it does not implement or review the change.
@@ -155,6 +185,13 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 ## Flagged ambiguities
 
 - "PR review" and "code review" were used interchangeably - resolved: **Code Review** owns analysis, while **Pull Request Review** owns GitHub adjudication and publication.
+- "Delivery operator" implied authority to make every decision - resolved: the
+  **Delivery Operator** automates transitions and mechanical correction loops,
+  while the issue's **Review Loop Contract** preserves user-owned product,
+  scope, architecture, contract, migration, security, and dependency decisions.
+- "Ready to merge" implied that human approval had already happened - resolved:
+  a **Ready-to-Merge Handoff** ends immediately before human approval and the
+  merge action.
 - `code-review-dexwin` appeared to name a separate skill - resolved: it is the engineering server alias for **Code Review**, not an independent review contract.
 - "Stacked" was used as a synonym for parallel issue work - resolved: a **Stacked Pull Request** has an explicit dependency, while independent pull requests share the canonical base.
 - "Clean subagent" was used as a worktree requirement - resolved: a reviewer needs a **Clean Review Context**, which does not itself require a worktree; implementation still defaults to one **Implementation Worktree** per **Branch Contract**.

@@ -1,0 +1,218 @@
+---
+name: deliver-issue
+description: Deliver an approved, implementation-ready issue through implementation, issue-owned validation, independent code review, authorized correction loops, pull-request creation, and CI to a ready-to-merge handoff. Use when the user asks Codex to act as the delivery operator for a canonical issue, carry an issue through the complete build-review-PR-CI flow, or continue until only human approval and merge remain.
+---
+
+# Deliver Issue
+
+Act as the delivery operator for one approved Smallest Coherent Slice. Coordinate
+the engineering skills and repository tools that own each stage. Do not absorb
+their doctrine, weaken their gates, or let an implementation context serve as
+its own independent reviewer.
+
+## Required Input And Skills
+
+Require the canonical issue path or stable issue identifier. Resolve the path
+from the repository only when the identity is unambiguous.
+
+Load and follow:
+
+- `$engineering-for-certainty` for implementation and change control;
+- every companion it triggers for observability, resilience, auth/security, or
+  frontend work;
+- `$code-review` for independent, evidence-verified review; and
+- `$pull-request-creation` for branch publication and pull-request creation or
+  update.
+
+If a required skill is unavailable, stop and name it. Do not reconstruct its
+contract from memory.
+
+Treat an explicit durable goal invocation as the persistence contract for the
+delivery. Do not create a durable goal merely because this skill was invoked.
+When a goal is active, never mark it complete at an intermediate milestone.
+
+## Preconditions
+
+Before changing code, verify that the canonical issue:
+
+- is approved and implementation-ready;
+- is one Smallest Coherent Slice;
+- names its exact Branch Contract, pull-request base, and worktree mode;
+- contains testable acceptance criteria and a complete traceability ledger;
+- states implementation change-control boundaries;
+- contains a Review Loop Contract; and
+- defines its Issue Completion Record and status-propagation requirements.
+
+Also inspect the current repository instructions, status, worktrees, default
+branch, relevant source and tests, and the issue's claimed dependencies. Record
+the runtime worktree path and resolved base SHA in the execution handoff, not in
+the portable issue.
+
+If the issue is not ready, stop before implementation and report the exact
+missing or contradictory contract. Use `$issue-review` only when the user also
+asks to revise the issue; do not silently respec approved work.
+
+## Authority Boundary
+
+The user's invocation authorizes the in-scope implementation, validation,
+review coordination, mechanical correction loop, branch publication,
+pull-request creation or update, and CI repair needed to reach the completion
+condition.
+
+It does not authorize changing product intent, acceptance criteria,
+architecture, public contracts, schemas, migrations, permissions, security
+policy, dependencies, or scope without the decision required by the issue's
+Review Loop Contract. It also does not authorize merge, auto-merge, deployment,
+reviewer assignment, or unrelated cleanup.
+
+## Delivery Workflow
+
+### 1. Establish The Implementation Context
+
+Create or verify the issue's declared implementation branch and dedicated
+linked worktree. Confirm its base ref and resolved SHA before editing. Preserve
+unrelated user work and stop on an ambiguous mixed worktree.
+
+Publish a short pre-work handoff containing the issue, branch, base ref, base
+SHA, runtime worktree path, selected validation, and triggered doctrine.
+
+### 2. Implement The Approved Issue
+
+Follow the issue's affected surface, guardrails, execution plan, and
+traceability ledger. Use TDD where required by `$engineering-for-certainty`.
+
+Classify discoveries before acting:
+
+- Apply **mechanical** changes that preserve approved intent and scope.
+- Pause for **material** discoveries that require a product, contract,
+  architectural, security, dependency, migration, or scope decision.
+- Stop for **blocking** contradictions, missing prerequisites, or unsafe
+  operations.
+
+Reflect every approved material change in the canonical issue before resuming
+implementation.
+
+### 3. Complete Issue-Owned Validation
+
+Run every applicable traceability row against the combined canonical branch.
+Run formatting, linting, unit, integration, E2E, migration, mutation, security,
+accessibility, or manual proof required by the issue and triggered doctrine.
+
+Distinguish commands actually run from recommended or remote-only checks. Keep
+the issue at `Needs Verification` while issue-owned proof is missing.
+
+### 4. Run Independent Code Review
+
+Invoke `$code-review` against the current complete diff and canonical issue.
+Use the issue's requested review effort, or let `$code-review` derive it from
+risk. Keep every finder and verifier read-only.
+
+Let the review finish discovery, verification, deduplication, and ranking
+before changing code. Do not create a noisy one-finding, one-fix cycle while
+other independent findings are still being discovered.
+
+### 5. Route Findings And Correct The Change
+
+Route every verified review result through the issue's Review Loop Contract:
+
+- **AUTO_CORRECT**: apply the smallest correction when the finding is
+  confirmed, fully inside approved scope, has one clear interpretation, and
+  does not choose new product or architectural meaning.
+- **USER_DECISION**: pause when the correction could change approved behavior,
+  scope, architecture, public contracts, schemas, migrations, permissions,
+  security posture, dependency choice, or test strategy; when product context
+  is missing; or when reviewers materially disagree.
+- **BLOCKED**: stop when safe correction requires missing authority, access,
+  credentials, external state, or a prerequisite outside the issue.
+
+Apply all independent `AUTO_CORRECT` findings as one coherent correction batch
+where practical. Preserve the original finding IDs and record each disposition.
+For a user decision, present the evidence, impact, concrete options, and a
+recommendation. Do not reinterpret a pause as permission to choose silently.
+
+### 6. Revalidate And Re-Review
+
+After a correction batch:
+
+1. Re-run the tests and proof invalidated by the corrections.
+2. Run a clean `$code-review` pass against the new head.
+3. Re-verify prior findings and inspect the complete resulting diff for
+   regressions or new issues.
+4. Reconcile the new queue with prior finding IDs and dispositions.
+
+Continue while corrections are authorized and each cycle makes measurable
+progress. Escalate to `USER_DECISION` when the same root cause survives two
+attempted correction cycles, the fix oscillates between alternatives, or a new
+finding exposes ambiguity in the approved issue. An issue-specific Review Loop
+Contract may set a stricter threshold.
+
+Do not treat a clean review of an earlier commit as evidence for the current
+head.
+
+### 7. Write The Local Completion Evidence
+
+Update the canonical issue's Issue Completion Record with the actual diff,
+traceability outcomes, validation, review results, finding dispositions,
+deviations, residual risks, branch, and commit references. Keep the status
+truthful when remote evidence is still pending.
+
+### 8. Create Or Update The Pull Request
+
+Invoke `$pull-request-creation`. Let it verify the Branch Contract, evidence,
+intentional commits, push, PR body, stack position, and remote state. Do not
+bypass a publication stop condition from inside this composing skill.
+
+### 9. Follow CI To A Terminal State
+
+Monitor every required automated check for the current PR head.
+
+- For an attributable in-scope failure, diagnose it, apply the smallest
+  authorized correction, run affected local proof, commit and push, then return
+  to independent review before trusting the new head.
+- For a known flaky check, retry only when repository policy permits it and the
+  retry cannot hide a deterministic defect.
+- For an unrelated failure, service outage, missing secret, permission problem,
+  or externally owned gate, record the evidence and pause instead of editing
+  unrelated code or claiming success.
+
+Any code, configuration, test, or documentation change made after review makes
+the previous final-review claim stale. Re-run risk-proportionate review and
+refresh the Issue Completion Record and PR evidence for the resulting head.
+
+### 10. Reconcile The Ready-To-Merge Handoff
+
+Re-read the PR and verify its base, head, head SHA, commits, body, issue links,
+stack position, automated checks, and unresolved review state. Update the Issue
+Completion Record and every repository status surface required by the issue so
+they describe the same head and evidence.
+
+## Completion Condition
+
+Declare delivery complete only when:
+
+- the current PR head satisfies every approved acceptance criterion;
+- every issue-owned validation and highest-risk verification gate has evidence;
+- the current head has passed independent `$code-review`;
+- every confirmed finding has a recorded disposition and no unresolved blocker
+  remains;
+- the pull request truthfully describes and points to the current head;
+- every required automated CI check for that head is green;
+- the Issue Completion Record and linked status surfaces are current; and
+- only human approval and the merge action remain.
+
+Branch creation, implementation completion, a green local test run, one review
+pass, PR creation, a push, or CI start is progress, not completion.
+
+## Pause Handoff
+
+When progress requires the user or an external owner, keep the delivery and any
+active durable goal incomplete. Report:
+
+- the exact stage and current head;
+- the blocking evidence;
+- work completed and validation still current;
+- the smallest decision, authority, credential, or external state needed;
+- options and a recommendation when it is a user-owned decision; and
+- the exact next action after the blocker clears.
+
+Never hide an unresolved issue behind a caveated `Done` or a completed goal.
