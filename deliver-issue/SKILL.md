@@ -40,6 +40,8 @@ Before changing code, verify that the canonical issue:
 - names its exact Branch Contract, pull-request base, and worktree mode;
 - contains testable acceptance criteria and a complete traceability ledger;
 - states implementation change-control boundaries;
+- defines semantic review checkpoints when the slice is substantial, or
+  explicitly states that the issue is small enough to use one delivery unit;
 - contains a Review Loop Contract; and
 - defines its Issue Completion Record and status-propagation requirements.
 
@@ -65,6 +67,27 @@ policy, dependencies, or scope without the decision required by the issue's
 Review Loop Contract. It also does not authorize merge, auto-merge, deployment,
 reviewer assignment, or unrelated cleanup.
 
+## Goal And Gate Interaction
+
+A durable goal is a persistence mechanism, not transition authority.
+
+When a goal is active:
+
+- continue only while the current delivery state has an authorized next action;
+- never change a review verdict or finding route to preserve momentum;
+- never treat the goal's stopping condition as permission to change product
+  meaning, scope, architecture, contracts, security posture, dependencies, or
+  test strategy;
+- keep `AUTO_CORRECT` work inside the current checkpoint until its corrected
+  head is revalidated and re-reviewed;
+- pause and yield on `USER_DECISION` or `BLOCKED`, leaving the goal incomplete;
+- do not cross a checkpoint with an unresolved confirmed finding; and
+- mark the goal complete only at the ready-to-merge completion condition.
+
+An active but incomplete goal may be waiting for the user or an external owner.
+It does not require the operator to keep acting when no authorized transition
+exists.
+
 ## Delivery Workflow
 
 ### 1. Establish The Implementation Context
@@ -76,10 +99,19 @@ unrelated user work and stop on an ambiguous mixed worktree.
 Publish a short pre-work handoff containing the issue, branch, base ref, base
 SHA, runtime worktree path, selected validation, and triggered doctrine.
 
-### 2. Implement The Approved Issue
+### 2. Deliver Review Checkpoints
 
-Follow the issue's affected surface, guardrails, execution plan, and
-traceability ledger. Use TDD where required by `$engineering-for-certainty`.
+If the issue defines multiple review checkpoints, read
+[Checkpoint Delivery](references/checkpoint-delivery.md) and execute its loop
+for each checkpoint in order.
+
+If the issue defines no separate checkpoints, treat the full implementation as
+one delivery unit and continue with the normal issue-wide validation and review
+steps.
+
+Follow only the current checkpoint's affected surface, guardrails, acceptance
+criteria, traceability rows, and required reading. Use TDD where required by
+`$engineering-for-certainty`.
 
 Classify discoveries before acting:
 
@@ -92,7 +124,7 @@ Classify discoveries before acting:
 Reflect every approved material change in the canonical issue before resuming
 implementation.
 
-### 3. Complete Issue-Owned Validation
+### 3. Complete Full Issue-Owned Validation
 
 Run every applicable traceability row against the combined canonical branch.
 Run formatting, linting, unit, integration, E2E, migration, mutation, security,
@@ -101,11 +133,16 @@ accessibility, or manual proof required by the issue and triggered doctrine.
 Distinguish commands actually run from recommended or remote-only checks. Keep
 the issue at `Needs Verification` while issue-owned proof is missing.
 
-### 4. Run Independent Code Review
+### 4. Run Final Full Integration Review
 
-Invoke `$code-review` against the current complete diff and canonical issue.
-Use the issue's requested review effort, or let `$code-review` derive it from
-risk. Keep every finder and verifier read-only.
+Invoke `$code-review` against the complete issue-base-to-current-head diff and
+the canonical issue. Use the issue's requested review effort, or let
+`$code-review` derive it from risk. Keep every finder and verifier read-only.
+
+Review all changed surfaces and interactions across checkpoint boundaries,
+including shared contracts, configuration, deleted behavior, and integration
+seams. Checkpoint review evidence is an input, not a substitute for this final
+review.
 
 Let the review finish discovery, verification, deduplication, and ranking
 before changing code. Do not create a noisy one-finding, one-fix cycle while
@@ -152,9 +189,10 @@ head.
 ### 7. Write The Local Completion Evidence
 
 Update the canonical issue's Issue Completion Record with the actual diff,
-traceability outcomes, validation, review results, finding dispositions,
-deviations, residual risks, branch, and commit references. Keep the status
-truthful when remote evidence is still pending.
+traceability outcomes, validation, checkpoint IDs and accepted head SHAs,
+checkpoint and final-review results, finding dispositions, deviations, residual
+risks, branch, and commit references. Keep the record concise and keep the
+status truthful when remote evidence is still pending.
 
 ### 8. Create Or Update The Pull Request
 
@@ -190,6 +228,8 @@ they describe the same head and evidence.
 
 Declare delivery complete only when:
 
+- every defined checkpoint has a recorded accepted head and clean advance
+  decision;
 - the current PR head satisfies every approved acceptance criterion;
 - every issue-owned validation and highest-risk verification gate has evidence;
 - the current head has passed independent `$code-review`;
@@ -209,6 +249,7 @@ When progress requires the user or an external owner, keep the delivery and any
 active durable goal incomplete. Report:
 
 - the exact stage and current head;
+- the current checkpoint ID and its last frozen or accepted head;
 - the blocking evidence;
 - work completed and validation still current;
 - the smallest decision, authority, credential, or external state needed;

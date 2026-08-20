@@ -33,8 +33,9 @@ Ask for a target path only when those facts cannot be discovered safely.
 5. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, map all user-owned decisions by dependency, and work through one material decision at a time using stable question IDs.
 6. **Accumulate answers**: maintain the decision map across items; do not edit the issue during the review.
 7. **Build traceability and execution**: map each acceptance criterion to its production owner and exact verification, define safe sequential or parallel implementation ownership, and set the Review Loop Contract for correction and escalation.
-8. **Cross-validate**: check the resolved issue, traceability ledger, execution plan, and conditional gates for contradictions and missing dependencies.
-9. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
+8. **Control issue attention**: keep the implementation contract concise, separate reusable doctrine and raw evidence, and define semantic review checkpoints when the slice is substantial.
+9. **Cross-validate**: check the resolved issue, traceability ledger, checkpoint plan, execution plan, and conditional gates for contradictions and missing dependencies.
+10. **Write once**: rewrite the issue only after every gate passes and the full picture is consistent.
 
 Never write placeholders, TODOs, partial decisions, or "TBD" sections to the issue. The file is either unchanged while review is in progress or fully resolved when review is complete.
 
@@ -119,6 +120,52 @@ convention or the user's explicit direction when the slice will use the shared
 checkout instead.
 
 Use Stacked Pull Requests only for real dependencies. Record each PR's head, base, preceding PR, merge order, and rebase or retarget procedure. Independent slices must share the canonical base branch and remain parallel rather than being forced into a stack.
+
+## Issue Attention And Reading Contract
+
+An issue must be complete without becoming a transcript, raw evidence store, or
+copy of reusable engineering doctrine. Optimize for instruction salience: the
+implementation agent must be able to distinguish approved intent, acceptance
+criteria, change authority, and stop conditions from supporting detail.
+
+For every non-trivial child issue, add a concise `Agent Start Here` section near
+the top. Keep it to roughly fifteen lines or fewer and include:
+
+- the one observable outcome;
+- the exact Branch Contract and pull-request base;
+- the acceptance-criterion IDs;
+- the allowed-change and pause boundaries;
+- the review-checkpoint sequence, when present; and
+- every linked appendix that must be read before a named checkpoint.
+
+Keep reusable rules in the governing skills and repository documentation. The
+issue should name the activated doctrine and record only issue-specific
+decisions, contracts, risks, and deviations. Do not copy full engineering
+manuals, generic review procedures, or raw test output into each issue.
+
+Use linked appendices only for dense issue-specific material such as large
+state-transition tables, error matrices, migration fixtures, or verified
+baseline evidence. Critical product decisions, acceptance criteria, authority
+boundaries, and pause conditions must remain in the core issue. Every appendix
+required for a checkpoint must be named in that checkpoint's reading set.
+
+Keep the Issue Completion Record concise. Record exact commands, outcomes,
+finding dispositions, and durable references, but do not paste raw logs,
+complete review transcripts, or repeated doctrine into the canonical issue.
+
+Use issue length only as a review signal:
+
+- At roughly 300 lines, run an explicit compression and decomposition check.
+- At roughly 500 lines, require the issue-review handoff to explain why the
+  child remains one Smallest Coherent Slice and why the remaining material
+  cannot be compressed or moved to a linked appendix.
+- Do not split an issue solely to satisfy a line count.
+- Parent issue packs may be longer, but they must not become the direct
+  implementation target for `$deliver-issue`.
+
+For a substantial Smallest Coherent Slice, read
+[Review Checkpoint Planning](references/review-checkpoint-planning.md) and
+define semantic review checkpoints before approving the issue.
 
 ## Claim Verification
 
@@ -283,10 +330,16 @@ The record must contain:
   commands and outcomes;
 - the final `$code-review` outcome and the disposition of every confirmed
   finding;
+- when checkpoint reviews were used, the checkpoint ID, accepted head SHA,
+  review range, review outcome, correction dispositions, and invalidated proof
+  re-run for each checkpoint;
 - deviations from the issue and any unplanned changes;
 - residual risks and every unverified or deferred check, with a linked owner or
   trigger for downstream work; and
 - branch, commit, and pull-request references when available.
+
+The record is an evidence index, not an evidence dump. Prefer compact tables and
+durable links to raw CI, pull-request, test, or review evidence.
 
 The implementation or integration agent owns the write-back. The final reviewer
 must verify the completed record against the raw diff, test output, and review
@@ -314,9 +367,16 @@ For an issue intended for `$deliver-issue`, include:
 ## Review Loop Contract
 
 - Delivery mode: `$deliver-issue` to a ready-to-merge handoff.
-- Automatic transitions: implementation -> issue-owned validation ->
-  independent code review -> authorized corrections -> revalidation and
-  re-review -> pull request -> CI follow-through.
+- Review checkpoints: `<none; treat the issue as one delivery unit>` or
+  `<ordered checkpoint IDs and outcomes>`.
+- Automatic transitions: implementation -> checkpoint validation ->
+  checkpoint review -> authorized corrections -> checkpoint revalidation and
+  re-review -> next checkpoint -> final full validation and integration review
+  -> pull request -> CI follow-through.
+- Checkpoint advance rule: advance only from a clean accepted checkpoint head.
+  `AUTO_CORRECT` returns to correction and re-review of the same checkpoint.
+  `USER_DECISION` and `BLOCKED` pause delivery. An unresolved confirmed finding
+  never advances.
 - Auto-correction authority: `AUTO_CORRECT` only for confirmed, deterministic,
   in-scope corrections that preserve approved intent, architecture, contracts,
   security posture, dependencies, and test strategy.
@@ -326,11 +386,20 @@ For an issue intended for `$deliver-issue`, include:
   strategy, material verifier disagreement, or missing product context.
 - Blocked triggers: `BLOCKED` for missing authority, credentials, access,
   external state, required skills, or out-of-scope prerequisites.
+- Residual-risk rule: a checkpoint may advance with `RESIDUAL_RISK` only when
+  the issue explicitly classifies the stated assumption as non-blocking and it
+  does not weaken an acceptance criterion or highest-risk verification gate.
+  Otherwise route it to `USER_DECISION`.
 - Re-review rule: after every correction batch, re-run invalidated proof and a
   clean review of the resulting head; preserve finding IDs and dispositions.
 - Churn threshold: escalate when the same root cause survives two correction
   attempts or the fix oscillates. Use a stricter issue-specific limit when risk
   warrants it.
+- Final integration review: checkpoint reviews do not replace a final
+  `$code-review` of the complete issue-base-to-current-head diff.
+- Goal behavior: a durable goal supplies persistence only while an authorized
+  transition exists. It never changes a finding verdict or route, expands
+  correction authority, or permits crossing a non-clean checkpoint.
 - Completion target: current-head acceptance evidence, clean independent
   review, green required automated CI, current Issue Completion Record, and a
   truthful pull request with only human approval and merge remaining.
@@ -362,9 +431,15 @@ Apply only when the issue scope triggers them. Use repo-specific docs and existi
 - **Security or privacy**: state secret handling, PII exposure, data retention, and permission implications.
 - **Pinned third-party tool or version-dependent defaults**: when the design relies on a tool, image, framework, or library default, verify the assumption against the exact pinned version using its source, release notes, or changelog rather than current-version knowledge. If the behavior can change silently on upgrade, require the controlling flag, environment variable, or config value to be set explicitly.
 
-### Parallel Execution And Final Review
+### Execution, Checkpoint Reviews, And Final Review
 
 For non-trivial issues, include an Execution Plan that identifies which workstreams are independent and which are ordered. Use subagents in parallel only when their production ownership and traceability rows do not overlap materially.
+
+When the issue defines review checkpoints, every checkpoint must be a coherent,
+green, behavior-complete state with owned acceptance criteria, exact validation,
+a frozen review head, and an explicit advance condition. Checkpoint reviews
+reduce the amount of new code assessed at once; they do not create separate
+issues, branches, or pull requests.
 
 - Give each implementation subagent bounded files or symbols, acceptance criteria, and validation responsibility.
 - Give every Branch Contract its own dedicated linked worktree by default,
@@ -375,6 +450,12 @@ For non-trivial issues, include an Execution Plan that identifies which workstre
 - Name one Canonical Integration Branch from the issue's Branch Contract. The Execution Plan must name how each Helper Branch enters it: cherry-pick coherent commits, merge the branch, or rebase and fast-forward according to repository history conventions. Never copy files between worktrees as the integration mechanism.
 - Validate each helper branch, then integrate in dependency order. Resolve conflicts only on the canonical branch and re-run every affected traceability row.
 - Run the complete triggered validation and issue-against-diff audit on the combined canonical branch.
+
+After all checkpoints are accepted, run the complete triggered validation,
+issue-against-diff audit, and final `$code-review` against the combined
+issue-base-to-current-head diff. Revisit interactions across checkpoints,
+shared contracts, configuration, deleted behavior, and integration seams.
+Checkpoint evidence supports this review but cannot replace it.
 
 Make final code review the last implementation gate. For multi-slice, medium-risk, or high-risk changes, require multiple fresh review subagents when available: independent finder passes using `$code-review` and a separate skeptical verifier that receives raw evidence without the finder's expected verdict. On the Dexwin engineering server, `code-review-dexwin` is the execution alias for the same canonical skill, not separate doctrine. For tiny low-risk changes, allow one clean reviewer plus a separate skeptical pass. If subagents are unavailable, require equivalent logically independent passes and record the limitation.
 
@@ -406,6 +487,17 @@ Before editing, verify:
 - **Issue identity**: pending issue filenames follow the discovered convention, use a stable number and valid Conventional Commit type, and all roadmap/index and sibling references resolve after any rename.
 - **Decomposition and branches**: the issue is one proven Smallest Coherent Slice or an ordered child pack; every slice owns exactly one Branch Contract and pull request, no feature-wide pull request spans multiple slices, only genuinely dependent pull requests are stacked, and every contract records its exact base ref and worktree isolation mode without a machine-specific path.
 - **Traceability**: every independently observable criterion has one or more ledger rows with an exact production owner and exact test or justified manual verification; the post-implementation audit is named.
+- **Attention budget**: the core child issue keeps approved intent, acceptance,
+  authority, pause conditions, and checkpoint routing prominent; reusable
+  doctrine and raw evidence are not copied into it; length signals triggered
+  the required compression or decomposition check.
+- **Review checkpoints**: substantial slices use a small ordered set of
+  semantic, green, behavior-complete checkpoints; every checkpoint owns
+  criteria, validation, reading inputs, and an advance condition; the final
+  full integration review remains required.
+- **Goal safety**: a durable goal cannot change a finding route, expand
+  correction authority, suppress an adverse finding, or cross a non-clean
+  checkpoint.
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
 - **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
@@ -435,6 +527,8 @@ Base: <exact canonical branch or preceding stacked-PR branch>
 Worktree: dedicated | shared checkout - <repository convention or explicit user direction>
 Parent: <parent issue, when this is a child slice>
 
+## Agent Start Here
+
 ## Problem / Motivation
 
 ## Root Cause / Background
@@ -450,6 +544,8 @@ Parent: <parent issue, when this is a child slice>
 ## Dependencies
 
 ## Execution Plan
+
+### Review Checkpoints
 
 ## Test Approach
 

@@ -39,6 +39,24 @@ mechanical corrections from user decisions and blockers, then requires
 revalidation and independent re-review of every corrected head.
 _Avoid_: Fix everything, reviewer edits, implied goal authority
 
+**Review Checkpoint**:
+A semantic, behavior-complete review boundary inside one Smallest Coherent
+Slice. It owns acceptance and traceability rows, exact validation, a frozen
+candidate head, and an explicit advance condition.
+_Avoid_: Arbitrary commit, line-count slice, separate issue, separate PR
+
+**Accepted Checkpoint Head**:
+The immutable commit SHA that passed checkpoint-owned validation and independent
+review after every authorized correction. The next checkpoint begins from this
+head.
+_Avoid_: Latest local state, originally reviewed SHA, moving review target
+
+**Final Integration Review**:
+The independent code review of the complete issue-base-to-current-head diff
+after all review checkpoints pass. It checks cross-checkpoint interactions and
+remains required even when every checkpoint was reviewed separately.
+_Avoid_: Last checkpoint review, cumulative assumption
+
 **Ready-to-Merge Handoff**:
 The delivery state in which the current pull-request head satisfies the issue,
 has current validation and independent review evidence, has green required
@@ -147,6 +165,16 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - A **Delivery Operator** consumes the issue, preserves the ownership boundaries
   of **Code Review** and **Pull Request Creation**, and finishes at a
   **Ready-to-Merge Handoff**.
+- A substantial **Smallest Coherent Slice** may contain a small ordered set of
+  **Review Checkpoints** without creating extra branches or pull requests.
+- Every **Review Checkpoint** advances only from a reviewed candidate to an
+  **Accepted Checkpoint Head** with no unresolved confirmed finding.
+- `AUTO_CORRECT` returns to the current checkpoint; `USER_DECISION` and
+  `BLOCKED` pause delivery and leave any durable goal incomplete.
+- A durable goal supplies persistence only while an authorized transition
+  exists. It cannot change a finding route or cross a non-clean checkpoint.
+- After the last checkpoint, **Final Integration Review** remains required
+  before pull-request publication and the **Ready-to-Merge Handoff**.
 - **Code Review** finder and verifier contexts remain read-only during delivery;
   the **Delivery Operator** applies only issue-authorized corrections and
   returns material ambiguity to the user.
@@ -189,6 +217,12 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   **Delivery Operator** automates transitions and mechanical correction loops,
   while the issue's **Review Loop Contract** preserves user-owned product,
   scope, architecture, contract, migration, security, and dependency decisions.
+- "Checkpoint passed" implied that the whole issue was reviewed - resolved: a
+  **Review Checkpoint** proves its declared range and integration seams; the
+  **Final Integration Review** still proves the combined issue diff.
+- "Keep going until done" implied permission to push through adverse findings -
+  resolved: a durable goal preserves persistence but cannot change review
+  routes, correction authority, or checkpoint advance conditions.
 - "Ready to merge" implied that human approval had already happened - resolved:
   a **Ready-to-Merge Handoff** ends immediately before human approval and the
   merge action.

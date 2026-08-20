@@ -9,6 +9,7 @@ review keeps the ordinary interactive Review Queue behavior from `SKILL.md`.
 - Required Issue Contract
 - Review Ownership
 - Finding Routes
+- Checkpoint Advancement
 - Delivery Return Record
 - Re-Review
 
@@ -89,6 +90,25 @@ Use for a normal `CONDITIONAL` result whose assumption remains genuinely
 unresolved but does not justify changing the implementation. Preserve the
 assumption and the evidence that would promote, refute, or close it.
 
+## Checkpoint Advancement
+
+When the review targets a delivery checkpoint:
+
+- `CLEAN` permits the operator to record the accepted head and begin the next
+  checkpoint.
+- `AUTO_CORRECT` returns to correction, invalidated proof, and re-review of the
+  same checkpoint.
+- `USER_DECISION` pauses for user adjudication.
+- `BLOCKED` pauses for the named authority, access, credential, skill, external
+  state, or prerequisite.
+- `RESIDUAL_RISK` permits advancement only when the governing issue explicitly
+  classifies the assumption as non-blocking and it does not weaken acceptance
+  or highest-risk proof.
+
+Do not advance with an unresolved confirmed finding. Do not infer advancement
+authority from a durable goal, completion target, deadline, or general request
+to finish.
+
 ## Delivery Return Record
 
 Return the complete verified queue to the composing workflow only after normal
@@ -98,6 +118,10 @@ discovery, deduplication, and verification finish. For every result include:
 finding_id
 verdict
 route
+checkpoint_id_when_applicable
+review_base_sha
+candidate_head_sha
+checkpoint_result_when_applicable
 file_and_line
 failure_scenario
 evidence
@@ -118,6 +142,12 @@ After any correction, review the resulting head rather than relying on the old
 verdict. Re-run affected proof, re-verify previous findings, inspect the full
 resulting diff for regressions, and preserve finding IDs across cycles. Assign
 new IDs only to genuinely new root causes.
+
+For checkpoint reviews, the re-reviewed candidate head must become the recorded
+accepted head before the next checkpoint begins. A review of an earlier
+candidate does not validate a corrected checkpoint.
+
+Checkpoint reviews do not replace the final full integration review.
 
 Do not declare the review loop clean until the current head has no unresolved
 `CONFIRMED` finding, every prior finding has a disposition, and every declared

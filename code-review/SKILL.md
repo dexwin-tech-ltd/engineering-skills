@@ -79,6 +79,21 @@ one-at-a-time presentation only for findings the issue authorizes for automatic
 correction; it does not weaken evidence, review independence, or user ownership
 of material decisions.
 
+### Checkpoint Review Mode
+
+When the composing delivery workflow identifies a review checkpoint, read and
+follow [Checkpoint Review](references/checkpoint-review.md) before Phase 0.
+
+Checkpoint Review Mode keeps the normal discovery, verification, deduplication,
+severity, independence, and routing standards. It changes only the declared
+review range and the checkpoint-specific return record.
+
+A checkpoint review must finish the complete candidate landscape for that
+checkpoint before returning findings. Do not alternate between discovering one
+finding and correcting it while other checkpoint findings remain undiscovered.
+
+Checkpoint Review Mode never replaces the final full integration review.
+
 ## Phase 0: Gather the Review Scope
 
 ### Resolve the target
@@ -105,6 +120,11 @@ Read the smallest sufficient set of artifacts that define the intended behavior:
 - Feature files, plans, ADRs, and relevant documentation.
 - Schemas, API contracts, migrations, configuration, and public types.
 - Existing tests and nearby implementation examples.
+
+For a checkpoint review, also read the checkpoint row, its owned acceptance and
+traceability rows, its required appendices, the previous accepted checkpoint
+head, and the frozen candidate head. Do not load unrelated issue history or raw
+evidence unless a candidate requires it.
 
 Compare the diff with the stated intent. Treat an incomplete or contradictory change as a candidate even when the edited code is internally consistent.
 
@@ -409,6 +429,11 @@ In Composing Delivery Mode, use the reference contract's delivery return record
 instead. Complete the full queue before returning it, batch only
 `AUTO_CORRECT` findings for the operator, and route material decisions back to
 the user without treating delivery authorization as adjudication.
+
+In Checkpoint Review Mode, return the checkpoint result to the composing
+workflow using the checkpoint reference contract. A clean checkpoint result
+means only that the declared checkpoint range and integration seams satisfy the
+checkpoint gate. It is not a clean final review of the complete issue.
 
 Batch at most ten findings only when the user explicitly requests a batch or complete report. Preserve the same evidence for every item, allow adjudication by stable ID, and never treat a batch boundary as permission to omit Critical or High findings. There is no total finding cap.
 
