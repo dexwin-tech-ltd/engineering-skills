@@ -38,7 +38,9 @@ Always follow priority 1. When priorities conflict, preserve correctness and acc
 - Keep routes/pages/screens thin. They render one flow/container component and avoid branching orchestration logic.
 - Flows own UI orchestration: consuming server state, coordinating transitions, reducer dispatch, refresh behavior, mutations, navigation side effects, and exhaustive state matching.
 - When the router or framework provides a suitable data-loading boundary, it owns navigation-timed loading and prefetching for route- or screen-critical data.
-- Views are presentational: explicit props in, callbacks out, minimal local logic.
+- Reserve `views/` for full-screen presentational surfaces that represent one complete navigable screen. Views receive explicit props, communicate through callbacks, and keep local logic minimal.
+- Put presentational UI that does not represent one complete navigable screen in `components/`.
+- Put a component used only by one domain or feature module in that module's `components/` folder. Put a shared component at the narrowest module, domain, or application boundary that owns all of its uses; use application-level `components/` only when its uses span unrelated domains, and preserve an existing shared UI or design-system package for generic primitives.
 - Prefer reducers over multiple related `useState` calls, especially for transition-heavy flows or two or more related state values.
 - Put non-trivial reducers in a `reducers/` folder inside the relevant domain module, flow, or feature module instead of colocating reducer transition logic inside route, screen, or view files.
 - Cross-domain UI or app workflows should live in explicit flow or process modules rather than being buried inside a single domain component or screen.
@@ -259,7 +261,7 @@ For web or mobile features:
 ## Review
 
 - Routes/pages/screens are thin and render flow/container components.
-- Flows own UI orchestration; views stay presentational.
+- Flows own UI orchestration; `views/` contains only full-screen presentational surfaces for complete navigable screens, while smaller presentational UI lives in `components/` at its narrowest owning boundary.
 - API calls go through the adapter boundary. No direct `fetch`, `axios`, SDK, or raw client calls leak into components, screens, routes, flows, views, or stores.
 - Requests, success responses, and error responses are validated at the adapter boundary with `.safeParse()`.
 - Endpoint error parsing and mapping use the exact operation contract, remain exhaustive, and do not hide new variants behind a broad domain schema or status-first fallback.
