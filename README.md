@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `d4bbff73dec6b9565f23f3d933b7a80e87d99f4f`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `9e2e682b010a107b6d8024e78f3e6acff8a5d9ce`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -23,38 +23,44 @@ See [CONTEXT.md](CONTEXT.md) for the shared workflow vocabulary and ownership bo
 - `grill-me`
 - `grill-with-docs`
 
-## Recommended issue delivery workflow
+## Automated issue delivery
 
-1. Use `issue-review` to turn the idea or feature into an approved
-   parent pack and one or more Smallest Coherent Slices.
-2. Give every child slice one exact Branch Contract, one pull request,
-   testable acceptance criteria, traceability, change-control
-   boundaries, and a Review Loop Contract.
-3. For a substantial child slice, define two to five semantic review
-   checkpoints. Each checkpoint must be behavior-complete, green,
-   independently reviewable, and tied to owned acceptance and
-   validation evidence.
-4. Start delivery with a durable goal when the work should continue
-   across turns:
+### 1. Prepare and approve the issue
 
-   `/goal Use $deliver-issue to deliver <issue path> to a ready-to-merge handoff.`
+Invoke `issue-review` with the idea, feature, or existing issue. It
+prepares the parent pack and Smallest Coherent Slices, including each
+slice's Branch Contract, acceptance criteria, traceability,
+change-control boundaries, Review Loop Contract, and any semantic
+review checkpoints.
 
-5. `deliver-issue` implements, validates, and independently reviews
-   each checkpoint. Confirmed deterministic in-scope findings may be
-   corrected and re-reviewed automatically.
-6. Product meaning, scope, architecture, contracts, schemas,
-   migrations, permissions, security policy, dependencies, test
-   strategy, material reviewer disagreement, and missing context
-   return to the user.
-7. After all checkpoints pass, run complete issue-owned validation and
-   a final full integration review.
-8. Create or update the pull request, follow required CI to a terminal
-   state, and stop when only human approval and merge remain.
+Review and approve the resulting issue before delivery begins.
 
-A durable goal supplies persistence, not authority. It never permits
-the delivery operator to suppress an adverse finding, change its
-route, broaden automatic correction authority, or advance through a
-non-clean checkpoint.
+### 2. Let the delivery operator run
+
+Invoke `deliver-issue` with the approved issue. Use a durable goal
+when delivery should continue across turns:
+
+`/goal Use $deliver-issue to deliver <issue path> to a ready-to-merge handoff.`
+
+`deliver-issue` coordinates implementation, checkpoint validation,
+independent review, authorized corrections, revalidation, final
+integration review, pull-request creation or update, and CI
+follow-through.
+
+Confirmed deterministic in-scope findings may be corrected and
+re-reviewed automatically. The operator stops when only human
+approval and merge remain.
+
+### 3. Handle human decision gates
+
+Human input is required when delivery encounters product or domain
+meaning, scope, architecture, public contracts, schemas, migrations,
+permissions, security policy, dependencies, test strategy, material
+reviewer disagreement, missing context, or an external blocker.
+
+A durable goal supplies persistence, not authority. It cannot broaden
+automatic correction authority or cross an unresolved decision,
+blocker, or confirmed finding.
 
 ## Install
 
