@@ -109,6 +109,42 @@ Platform-neutral analysis that verifies candidate defects and reports confirmed 
 _Alias_: `code-review-dexwin` on the engineering server
 _Avoid_: PR review, separate Dexwin review doctrine
 
+**Style and Clarity Pass**:
+A required **Code Review** finder angle that evaluates whether changed code communicates its purpose and safe change path clearly enough to prevent credible maintenance or misuse risk.
+_Avoid_: Formatting-only preference, subjective code taste
+
+**Schema Validation**:
+The declarative validation of a cohesive value contract before its typed values enter business-policy and side-effecting steps.
+_Avoid_: Scattered manual value checks, live-state policy enforcement
+
+**Functional Core**:
+The pure, named transformations and decisions that turn validated values into a result without performing external effects.
+_Avoid_: Hidden I/O, cross-stage mutation, imperative orchestration
+
+**Imperative Shell**:
+The explicit boundary that performs external effects after or around a **Functional Core**, such as persistence, network calls, logging, or framework lifecycle work.
+_Avoid_: Hidden side effect, policy mixed into I/O
+
+**Fluent Pipeline**:
+A top-to-bottom chain of named transformations that keeps the current value and its next operation visible at every stage.
+_Avoid_: Detached function list, hidden effect chain, generic failure semantics
+
+**Explicit State Model**:
+A closed set of named, mutually exclusive state variants that makes every meaningful control-flow outcome visible and exhaustively handled.
+_Avoid_: Contradictory Boolean flags, hidden lifecycle state
+
+**Semantic Name**:
+A variable or function name that identifies the domain meaning of its value or observable operation without requiring the reader to decode local shorthand.
+_Avoid_: Generic containers, unexplained abbreviation, type-only name
+
+**Rationale Comment**:
+A short comment that preserves a non-obvious reason, constraint, trade-off, or external-system fact that clear code and names cannot communicate.
+_Avoid_: Narration of a well-named operation, stale explanation
+
+**Changed Concern**:
+The bounded set of code in a review that owns one behaviour, contract, or implementation pattern and can be made consistent without unrelated refactoring.
+_Avoid_: Entire repository, nearest legacy line alone
+
 **Pull Request Review**:
 A GitHub-specific workflow that uses **Code Review**, obtains a comment or fix
 disposition for each confirmed finding, publishes only comment dispositions,
@@ -431,6 +467,14 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - Invoking **Pull Request Review** authorizes automatic pull-request and eligible private Slack delivery of qualifying **Learning Feedback** after the review settles. The workflow publishes no empty summary, verifies each attempted delivery, reports every skipped or failed destination, and never blocks review or merge solely because Slack delivery is unavailable.
 - A **Stacked Pull Request** depends on exactly one earlier base in an ordered stack; independent slices target the canonical base branch directly.
 - A **Code Review** produces one **Review Queue** after investigating, verifying, deduplicating, and ranking the complete finding landscape.
+- A **Code Review** includes a **Style and Clarity Pass**; it reports only a cited convention violation or an evidence-backed clarity risk with a concrete maintenance, misuse, or defect consequence. Broader style advice appears only in an explicitly requested style-focused review.
+- A **Style and Clarity Pass** prefers **Schema Validation** for an untrusted input or cohesive internal value contract when it makes the contract clearer; it prefers Zod when the repository uses or selects it, while live-state business policy remains outside the schema.
+- A **Style and Clarity Pass** prefers a **Functional Core** with a named **Imperative Shell** when that separation makes the change path clearer; it does not replace a naturally imperative resource, transaction, streaming, or framework operation with a less readable abstraction.
+- A **Style and Clarity Pass** may use a generic **Fluent Pipeline** for ordinary transformations; fallible work retains the native `Result` or `ResultAsync` `.andThen(...)` semantics from neverthrow.
+- A **Style and Clarity Pass** prefers guard clauses for exceptional exits and an **Explicit State Model** for multiple mutually exclusive domain states, while retaining a short local conditional when it is clearer than an abstraction.
+- A **Style and Clarity Pass** requires a **Semantic Name** for a value or operation unless a short form is already conventional and clearer in the repository's domain, language, framework, unit, or tiny obvious local scope.
+- A **Style and Clarity Pass** preserves or requires a **Rationale Comment** only when code cannot express the relevant reason, constraint, trade-off, or external fact; frontend review retains the required what-and-why comment above each React or React Native `useEffect`.
+- A **Style and Clarity Pass** applies one clear pattern within a **Changed Concern**, following an established local convention or an accepted in-scope improvement; it does not require unrelated legacy cleanup.
 - Every finding presented to a person by **Code Review**, **Pull Request Review**,
   or a composing delivery workflow stands on its own for a reader who understands
   software development but has not traced the affected code. It explains the

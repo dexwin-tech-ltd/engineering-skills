@@ -7,7 +7,7 @@ description: Perform evidence-verified, staff-level code reviews for diffs, pull
 
 ## Objective
 
-Find material engineering risks with high recall, then independently refute or verify every candidate before reporting it. Prioritize correctness, security, data integrity, reliability, and operational safety over style. Keep ordinary reviews read-only.
+Find material engineering risks with high recall, then independently refute or verify every candidate before reporting it. Prioritize correctness, security, data integrity, reliability, and operational safety; treat material style and clarity risks as a required review angle, not aesthetic feedback. Keep ordinary reviews read-only.
 
 Treat review assurance and execution mechanism as separate concerns. Low, Medium, High, and Max describe the required depth and assurance. Workflow orchestration, parallel subagents, sequential clean contexts, and separated coordinator passes describe how that assurance is pursued.
 
@@ -57,7 +57,7 @@ checks they added in the final review scope.
 Run the review as six distinct phases:
 
 1. Gather the target, intent, governing rules, and validation context.
-2. Find candidate issues through independent review angles.
+2. Find candidate issues through independent review angles, including style and clarity.
 3. Normalize and deduplicate candidates by root cause.
 4. Verify every survivor and run targeted validation where useful.
 5. Rank confirmed findings into one review queue and work through one finding at a time, or return the routed queue to an authorized composing delivery workflow, then report residual risks and open questions.
@@ -241,6 +241,7 @@ Prefer these packet types:
 - **Coverage shards**: coherent changed modules, domains, or file groups. Every shard receives line-by-line correctness, removed-behavior, and testing-quality coverage.
 - **Contract tracing**: changed exports, endpoints, schemas, errors, database shapes, environment variables, consumers, tests, and deployment manifests.
 - **Triggered specialist passes**: security, data integrity, resilience, observability, frontend, or performance when the changed surface activates that doctrine.
+- **Style and clarity pass**: validation contracts, named and visible data flow, control flow, comments, and consistency within the changed concern.
 - **Global consistency pass**: reuse, simplification, sibling behavior, architectural ownership, and cross-shard invariants.
 
 A work packet may cover several related angles, and an important angle may appear in several packets. Do not isolate a deletion from the old behavior it provided or isolate a contract from its callers and deployment consumers.
@@ -321,6 +322,10 @@ Use the required companions for their specialist finder and verification
 passes. Also increase review depth automatically for migrations, destructive
 persistence, public APIs, caching, hot paths, and other high-impact surfaces
 that do not belong to a companion skill.
+
+### M. Style and clarity
+
+Run this angle for every review. Read and follow [Style and Clarity Pass](references/style-and-clarity.md). It is a required finder and verification obligation, not a formatting pass and not a source of subjective suggestions.
 
 ## Candidate Standard
 
