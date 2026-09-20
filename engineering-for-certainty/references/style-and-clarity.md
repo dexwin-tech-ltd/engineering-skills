@@ -1,35 +1,22 @@
-# Style and Clarity Pass
+# Style and Clarity
 
-Use this required finder and verification pass on every review. It asks whether
-changed code communicates its purpose and safe change path clearly enough to
-avoid a credible maintenance, misuse, or defect risk.
+Use these principles when writing new or materially changed code. Style and
+clarity concern whether code communicates its purpose and safe change path,
+not formatting preference or aesthetic uniformity.
 
-## Reporting threshold
+## Apply to the changed concern
 
-Create a candidate only for either:
+Identify the **changed concern**: the bounded behavior, contract, or
+implementation pattern that the code owns. Inspect the enclosing callable, its
+direct consumers, nearby equivalent code, applicable `CONTEXT.md`, and
+activated doctrine. Follow an established local convention unless an accepted
+user or repository rule deliberately improves it in scope.
 
-- a violation of an applicable repository, user, or activated-doctrine
-  convention; or
-- a concrete clarity failure that creates a credible maintenance, misuse, or
-  defect consequence.
+Do not turn a scoped change into unrelated legacy cleanup. Do not introduce a
+competing pattern for the same concern unless it makes that concern clearer or
+safer to change.
 
-Do not report formatting preference, personal taste, or a merely possible
-rewrite. Verify every survivor through the normal candidate pipeline. A
-style-focused review may return broader, clearly labelled advice only when the
-user explicitly requests it.
-
-## Inspect the changed concern
-
-First identify the **changed concern**: the bounded behavior, contract, or
-implementation pattern that the changed code owns. Inspect the enclosing
-callable, its direct consumers, nearby equivalent code, applicable
-`CONTEXT.md`, and activated doctrine. Follow an established local convention
-unless an accepted user or repository rule deliberately improves it in scope.
-
-Do not demand unrelated legacy cleanup. Report a new competing pattern only
-when it makes the same concern harder to understand or change safely.
-
-## Check the code shape
+## Authoring principles
 
 ### Value contracts
 
@@ -60,8 +47,8 @@ return pipe(rawInput)
   .andThen(approveOrder)
 ```
 
-Do not require a new pipe package during review. A generic fluent pipeline is
-for ordinary transformations; fallible work retains native `Result` or
+Do not require a new pipe package. A generic fluent pipeline is for ordinary
+transformations; fallible work retains native `Result` or
 `ResultAsync` `.andThen(...)` semantics. Do not hide transaction ownership,
 resource lifetime, retries, or meaningful I/O in a chain when an explicit
 imperative form is clearer.
@@ -81,13 +68,13 @@ tiny obvious local scope. Names such as `data`, `result`, `context`, `process`,
 or `handle` need a meaningful qualifier when their role is not otherwise
 obvious.
 
-Let names and structure explain what the code does. Require or preserve a
-short rationale comment only when it captures a non-obvious invariant,
+Let names and structure explain what the code does. Add or preserve a short
+rationale comment only when it captures a non-obvious invariant,
 ordering, compatibility or security constraint, trade-off, workaround removal
-condition, or external-system fact that code cannot communicate. Flag stale or
-contradictory comments, and comments that merely narrate a well-named
-operation. When `$engineering-frontend` applies, preserve its requirement for
-a brief what-and-why comment above every React or React Native `useEffect`.
+condition, or external-system fact that code cannot communicate. Remove or
+avoid stale, contradictory, or narrating comments. When `$engineering-frontend`
+applies, its requirement for a brief what-and-why comment above every React or
+React Native `useEffect` remains in force.
 
 ### Control flow and state
 

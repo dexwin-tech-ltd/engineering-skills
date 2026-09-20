@@ -325,7 +325,14 @@ that do not belong to a companion skill.
 
 ### M. Style and clarity
 
-Run this angle for every review. Read and follow [Style and Clarity Pass](references/style-and-clarity.md). It is a required finder and verification obligation, not a formatting pass and not a source of subjective suggestions.
+Run this angle for every review. Read and follow [Style and
+Clarity](../engineering-for-certainty/references/style-and-clarity.md). It is a
+required finder and verification obligation, not a formatting pass or source of
+subjective suggestions. Create a candidate only for an applicable convention
+violation or a concrete clarity failure with a credible maintenance, misuse, or
+defect consequence. Verify every survivor through the normal candidate
+pipeline; broader advice is allowed only when the user explicitly asks for a
+style-focused review.
 
 ## Candidate Standard
 

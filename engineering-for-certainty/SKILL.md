@@ -20,6 +20,15 @@ Resolve instruction conflicts in this order, top to bottom.
 7. Write tests for critical paths and expected failures first.
 8. If a case is still unclear, prefer the most conservative interpretation that preserves existing behavior and ask for clarification before changing architecture or stack.
 
+## Style and Clarity
+
+For new or materially changed code, read and follow [Style and
+Clarity](references/style-and-clarity.md). Its principles are required defaults:
+apply them when they make the code's purpose and safe change path clearer,
+while preserving a stronger established local convention. They do not require
+uniform abstractions, schemas, pipelines, or comments when a direct form is
+clearer.
+
 ## Companion Skills
 
 Apply these only when relevant:
