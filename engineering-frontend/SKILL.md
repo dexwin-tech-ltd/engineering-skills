@@ -38,6 +38,7 @@ Always follow priority 1. When priorities conflict, preserve correctness and acc
 - Organize frontend code by domain modules, not broad file-type buckets, where the repo structure allows it.
 - Keep routes/pages/screens thin. They render one flow/container component and avoid branching orchestration logic.
 - Flows own UI orchestration: consuming server state, coordinating transitions, reducer dispatch, refresh behavior, mutations, navigation side effects, and exhaustive state matching.
+- In React and React Native flows, views, components, routes, and screens, prefer named local handlers immediately before the JSX `return` when a callback prop branches, has multiple statements, awaits or coordinates work, dispatches state, navigates, invokes a mutation, or makes another meaningful transition. Pass it by identifier on one line, such as `onConfirmLeave={handleConfirmLeave}`; keep direct references unchanged, such as `onRefresh={detail.refresh}`. A short, single-expression callback may stay inline when it only forwards, binds, or makes a minor UI event/value adaptation. Do not add `useCallback` solely for readability; use it only when a documented consumer or dependency contract independently requires referential stability. Naming a handler does not transfer orchestration ownership: flows retain it, and presentational views keep local logic minimal.
 - When the router or framework provides a suitable data-loading boundary, it owns navigation-timed loading and prefetching for route- or screen-critical data.
 - Reserve `views/` for full-screen presentational surfaces that represent one complete navigable screen. Views receive explicit props, communicate through callbacks, and keep local logic minimal.
 - Put presentational UI that does not represent one complete navigable screen in `components/`.
@@ -482,6 +483,7 @@ remain afterward for development and testing.
 
 - Routes/pages/screens are thin and render flow/container components.
 - Flows own UI orchestration; `views/` contains only full-screen presentational surfaces for complete navigable screens, while smaller presentational UI lives in `components/` at its narrowest owning boundary.
+- React and React Native JSX passes meaningful callbacks through named handlers close to `return`; only short, single-expression forwarding, binding, or minor UI event/value adaptation stays inline. Direct references remain unchanged, `useCallback` follows an independent stability contract, and flows retain orchestration ownership.
 - API calls go through the adapter boundary. No direct `fetch`, `axios`, SDK, or raw client calls leak into components, screens, routes, flows, views, or stores.
 - Requests, success responses, and error responses are validated at the adapter boundary with `.safeParse()`.
 - Endpoint error parsing and mapping use the exact operation contract, remain exhaustive, and do not hide new variants behind a broad domain schema or status-first fallback.
