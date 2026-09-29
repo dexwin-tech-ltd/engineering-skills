@@ -8,6 +8,14 @@ This context defines the boundaries between issue preparation, code analysis, Gi
 The smallest issue that is independently implementable, testable, and reviewable while leaving the repository green.
 _Avoid_: Micro-task, smallest possible task
 
+**Engineering Rigor**:
+The Quick, Standard, or Critical verification path selected from the behavior
+and invariants a change can affect. Standard is the default; uncertainty or
+new coupling can raise the level. A formal issue's approved gates remain
+binding. The active harness records actual usage and cost when available;
+model estimates are not measurement evidence.
+_Avoid_: File-type label, line-count threshold, waiver of required proof
+
 **Branch Contract**:
 The exact implementation branch name, declared pull-request base ref, and
 worktree isolation mode recorded by an issue before implementation begins.
@@ -43,10 +51,11 @@ attempts to name the commit that contains itself.
 _Avoid_: Completion summary, PR-only evidence, chat-only handoff
 
 **Runtime Acceptance Pass**:
-An agent-operated check that exercises a running system through its real
-external boundary to verify an issue's observable behaviour after automated
-tests pass.
-_Avoid_: Automated test suite, in-process handler invocation, code inspection
+Issue-owned proof that exercises a running system through its real external
+boundary. A current automated integration or end-to-end result may prove a
+specific scenario when it exercises the exact candidate and asserts the
+outcome; the agent verifies coverage and runs uncovered scenarios.
+_Avoid_: Generic green suite, in-process handler invocation, code inspection
 
 **Test Identity Plan**:
 The issue-specific contract for obtaining, using, resetting, and cleaning up
@@ -374,6 +383,18 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 
 ## Relationships
 
+- A task-level Quick change can finish with direct targeted proof and final
+  diff inspection without a canonical issue or routine independent model
+  review. Standard uses one meaningful independent review; each correction
+  batch receives a fresh review of the full resulting change. Critical protects
+  affected high-impact invariants with specialist proof and deeper review.
+- Context crosses an agent, session, or publication boundary as a compact
+  handoff. Reuse an approved issue and current check results when they exist;
+  verify the raw diff and evidence rather than accepting a summary as proof.
+- `$pull-request-creation` may publish completed task-level Quick or Standard
+  work without a canonical issue under its separate task-level contract.
+  Critical and issue-driven publication retain the formal issue gates.
+
 - `$issue-review`'s active governing agent is the **Planning Agent**. Bounded
   non-interactive investigation may be delegated when the active harness
   supports it, but interactive decisions stay in the user-facing context.
@@ -445,8 +466,10 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   release gate instead of an issue-completion gate.
 - A **Runtime Acceptance Pass** exercises every accepted externally observable
   outcome, one complete primary journey, and a targeted exploratory check of the
-  changed area and its integration seams. Automated tests retain exhaustive
-  value combinations and low-level boundary coverage.
+  changed area and its integration seams. Current automated real-boundary
+  evidence may satisfy the scenarios it directly asserts; the agent runs
+  uncovered scenarios. Automated tests retain exhaustive value combinations
+  and low-level boundary coverage.
 - A **Runtime Acceptance Pass** uses the real external boundary: network requests
   to a running API, browser control for a running web interface, computer or
   device control for native or operating-system-dependent interfaces, and the
@@ -494,8 +517,8 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   `DESIGN_CONFLICT`, `EVIDENCE_GAP`, `REFERENCE_EXPORT_DEFECT`, or justified
   `NOT_APPLICABLE`. Only a verified, reachable, material implementation
   mismatch becomes a normal review finding.
-- `$engineering-for-certainty` owns the universal **Runtime Acceptance Pass**
-  rule; `$issue-review` authors its issue-specific plan; the **Delivery Operator**
+- `$engineering-for-certainty` owns the risk-scaled **Runtime Acceptance Pass**
+  rule; `$issue-review` authors a formal issue's plan; the **Delivery Operator**
   executes it; **Code Review** audits its coverage and evidence; **Pull Request
   Creation** gates publication on current proof; and the triggered frontend,
   auth/security, and observability doctrines own their specialist constraints.

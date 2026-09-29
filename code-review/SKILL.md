@@ -21,6 +21,15 @@ assurance is pursued.
 
 Treat parallelism as an execution technique, not as a review angle. Use logically independent finder and verifier contexts when the runtime supports them and the review surface provides useful independent work packets. Scale finder count by effective diff size, risk, and change topology rather than creating one worker per review angle.
 
+Use a current issue or task handoff for intent, changed files, prior checks,
+known risks, and review range. Verify its claims against the raw diff and
+governing contracts rather than repeating the implementer's repository survey.
+For Standard work, one meaningful independent review is the default; add
+finder or verifier contexts only when risk, scope, or disputed evidence makes
+their extra cost useful. A task-level Quick change does not invoke this skill
+routinely. Critical work receives the deeper independent scrutiny its affected
+invariants require.
+
 Keep finder prompts independent. Give each finder raw artifacts, governing contracts, and a bounded review surface without other finders' conclusions. Give verifiers a normalized candidate claim and raw evidence without the finder's preferred verdict.
 
 Use the most suitable permitted execution mechanism for the specific review.
@@ -179,6 +188,10 @@ Honor an explicit user effort level. Otherwise scale effort by change risk, not 
 - **Medium**: run all relevant core finder angles, trace changed contracts, inspect tests, and verify every survivor.
 - **High**: run independent focused passes, activate relevant specialist angles, and independently verify material candidates.
 - **Max**: use the widest justified fan-out, trace broader contracts and architecture, and run the strongest safe targeted validation.
+
+These are review-depth levels, not replacements for Quick, Standard, and
+Critical implementation rigor. Choose the review depth that the actual risk
+requires; Standard does not automatically mean Medium, nor Critical Max.
 
 Increase effort for privilege boundaries, irreversible writes, migrations, public contracts, concurrency, financial or sensitive data, core workflows, and weak test coverage. State the chosen effort and reviewed scope in the final response.
 
@@ -354,13 +367,14 @@ Check whether failures can be detected, attributed, and diagnosed. Inspect struc
 
 Check whether tests cover the changed contract, success paths, expected failures, boundaries, and regression scenario. Detect tests that mock away the disputed behavior, assert implementation details, pass vacuously, or omit real wiring. Treat missing tests as supporting evidence for a behavior risk, not automatically as a standalone finding.
 
-For observable runtime changes, independently audit whether the Runtime
-Acceptance scenarios cover every accepted observable outcome, one complete
-primary journey, and targeted exploration through the real external boundary.
-Check that the evidence belongs to the reviewed revision and environment, that
-necessary proxies and design deviations are explicit, and that later changes did
-not make the evidence stale. Do not infer runtime correctness from green tests or
-the implementer's completion summary.
+For observable runtime changes, independently audit the applicable real-boundary
+proof against accepted outcomes and important integration seams. Formal issues
+require their full Runtime Acceptance Plan, including the primary journey and
+targeted exploration. Check that evidence belongs to the reviewed revision and
+environment, that automated scenarios directly assert the claimed outcomes,
+that necessary proxies and design deviations are explicit, and that later
+changes did not make the evidence stale. Do not infer runtime correctness from
+a generic green suite or the implementer's completion summary.
 
 ### L. Architectural altitude and conventions
 

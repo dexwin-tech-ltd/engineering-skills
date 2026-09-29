@@ -363,9 +363,18 @@ Both surfaces retain the same non-throwing `Result` foundation.
 
 ## Runtime Acceptance And Design Conformance
 
+For a task-level Quick change without a formal issue, use the focused direct
+UI check from `$engineering-for-certainty` and inspect the final diff. A local
+copy or styling change does not create a full issue-level scenario or design
+matrix. Escalate if it changes interactions, accessibility behavior, shared
+design tokens, multiple states, or an authoritative design contract whose
+compliance cannot be established with a focused check.
+
 For every frontend issue that changes observable runtime behaviour, follow
 `$engineering-for-certainty`'s
 [Runtime Acceptance Pass](../engineering-for-certainty/references/runtime-acceptance.md).
+Reuse current browser or device automation that proves the exact candidate and
+required state; run uncovered states and exploratory checks directly.
 
 - Use browser control to navigate a running web application through the same
   routes and controls a user uses. Use computer, emulator, or device control for
@@ -385,7 +394,7 @@ For every frontend issue that changes observable runtime behaviour, follow
   records the missing backend integration proof. It does not make the feature
   end-to-end complete.
 
-When implementation is based on an authoritative design, read and follow
+When a formal issue's implementation is based on an authoritative design, read and follow
 [Design Conformance And Audit](references/design-conformance.md). Before the
 issue becomes implementation-ready, it requires an issue-owned Design Reference
 Manifest, stable source signature, frozen design images, validated HTML/Tailwind
@@ -495,9 +504,10 @@ remain afterward for development and testing.
 - Supported-platform flows that cover core business actions, high-traffic journeys, or failure recovery include mandatory E2E coverage.
 - If a platform or E2E tool is unsupported in the repo, document the limitation and prioritize accessibility plus unit/component and flow coverage on supported platforms.
 - A mock-backed frontend slice is not reported as an end-to-end complete feature; production adapter integration and live contract/integration evidence remain explicit until verified.
-- Observable frontend changes have current browser, computer, emulator, or
-  device Runtime Acceptance evidence. When an authoritative design exists, the
-  issue also has a current Design Reference Manifest and Evidence Bundle, a
-  source-drift result, a complete classified Design Audit Matrix, and the
-  required independent Design Audit.
+- Observable frontend issues have current browser, computer, emulator, or
+  device Runtime Acceptance evidence. Task-level Quick changes have focused
+  direct UI evidence. When an issue uses an authoritative design, it also has
+  a current Design Reference Manifest and Evidence Bundle, a source-drift
+  result, a complete classified Design Audit Matrix, and the required
+  independent Design Audit.
 - Before completion, verify every triggered check or record its omission and alternative assurance in the `$engineering-for-certainty` handoff.

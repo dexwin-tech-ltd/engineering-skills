@@ -1,7 +1,7 @@
 # Review Checkpoint Planning
 
-Use this reference when one Smallest Coherent Slice is still substantial enough
-that waiting until the end would create a large, difficult review.
+Use this reference when waiting until the end would create material integration
+or rework risk that targeted checks cannot contain.
 
 ## Contents
 
@@ -13,9 +13,11 @@ that waiting until the end would create a large, difficult review.
 
 ## When To Use Checkpoints
 
-Define review checkpoints when the slice has multiple meaningful implementation
-stages, crosses several layers, changes a high-risk contract, or is likely to
-produce a diff that would be difficult to review confidently in one pass.
+Define review checkpoints when a high-risk contract, irreversible transition,
+or complex integration seam needs independent feedback before later work builds
+on it. Explain the failure the earlier review can catch and why a targeted
+deterministic check is insufficient. Multiple stages or layers alone do not
+require checkpoints.
 
 Do not create checkpoints for a tiny or mechanical change. Checkpoints add
 review cost and should reduce uncertainty, not merely divide work into equal

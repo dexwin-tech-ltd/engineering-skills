@@ -1,8 +1,12 @@
 # Runtime Acceptance Pass
 
-Use this reference for every issue that changes observable runtime behaviour.
-The pass complements automated tests by exercising the assembled running system
-through the boundary a real caller uses.
+Use this reference for every formal issue that changes observable runtime
+behaviour. Prove the assembled running system through the boundary a real caller
+uses. An existing automated integration or end-to-end run may supply a scenario
+when it exercises that exact boundary and candidate; reconcile its assertions
+and revision before reusing it. Run an agent-operated scenario for any outcome
+or integration seam that automation does not prove. Do not duplicate a passing
+real-boundary run merely to repeat the same actions manually.
 
 ## Applicability And Sequence
 
@@ -10,8 +14,9 @@ through the boundary a real caller uses.
   jobs, webhooks, migrations with runtime effects, and external integrations.
 - A documentation-only or other non-runtime issue may record `Not applicable`
   with a concrete reason.
-- Run the applicable automated validation first, then the local Runtime
-  Acceptance Pass against the final combined candidate.
+- Run applicable focused automated validation, then reconcile any current
+  real-boundary scenario evidence and execute the remaining local scenarios
+  against the final combined candidate.
 - Repeat the pass against a preview or staging environment when it safely runs
   the exact candidate before merge and deployment is already automated or
   separately authorized.
@@ -27,10 +32,13 @@ The issue's Runtime Acceptance Plan must include:
 - every materially distinct accepted outcome, such as success, validation
   rejection, expected failure, authorization denial, empty state, and retry;
 - one complete primary user or system journey; and
-- a targeted exploratory check of the changed area and its integration seams.
+- a targeted exploratory check of the changed area and its integration seams,
+  automated when it directly covers the risk or agent-operated otherwise.
 
 Automated tests retain exhaustive value combinations and low-level boundary
-coverage. Do not manually repeat a large parameterized test matrix.
+coverage. Do not manually repeat a large parameterized test matrix. For each
+reused automated scenario, record the exact test, runtime boundary, candidate
+revision, assertion, and observed result; a generic green suite is not enough.
 
 ## Real Boundary
 
@@ -66,9 +74,9 @@ whenever a test message sink or telemetry boundary is involved.
 
 Record a concise evidence index rather than raw dumps:
 
-| Scenario | Criteria | Revision and environment | Action | Expected and observed outcome | Result |
+| Scenario | Criteria | Revision and environment | Action or automated test | Expected and observed outcome | Result |
 |---|---|---|---|---|---|
-| `<stable ID>` | `<criterion IDs>` | `<commit/build + local/preview/staging>` | `<request or user actions>` | `<sanitized outcome>` | `Pass` or `Fail` |
+| `<stable ID>` | `<criterion IDs>` | `<commit/build + local/preview/staging>` | `<request, user actions, or exact test>` | `<sanitized outcome>` | `Pass` or `Fail` |
 
 Add only the applicable supporting facts:
 

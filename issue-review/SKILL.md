@@ -22,6 +22,14 @@ Use plain language at a Grade 10 reading level in the rewritten issue, review fi
 
 Use the user's engineering-for-certainty doctrine as the default engineering standard when reviewing software issues: preserve repo conventions, validate trust boundaries, keep adapters thin and domain logic explicit, prefer explicit expected-failure contracts, and require tests for critical behavior and failure paths.
 
+This skill prepares a **formal issue** when the user requests one or an
+issue-driven delivery workflow requires one. A demonstrably Quick task can use
+the task-level path in `$engineering-for-certainty` without creating an issue.
+For an issue that does exist, record the selected rigor and its short risk
+reason; keep issue-specific plans and checks proportional while preserving the
+issue's explicit acceptance, traceability, and review gates. Do not expand a
+small issue into a broad architecture survey without evidence of coupling.
+
 Require companion engineering doctrine when the issue touches its area:
 
 - Observability: logging, metrics, tracing, audit records, correlation IDs, telemetry, redaction, or frontend log ingestion.
@@ -49,7 +57,7 @@ Ask for a target path only when those facts cannot be discovered safely.
 6. **Resolve gaps with `$grilling`**: inspect discoverable facts, investigate empirical unknowns, map all user-owned decisions by dependency, and work through one material decision at a time using stable question IDs.
 7. **Accumulate answers**: maintain the decision map across items; do not edit the issue during the review.
 8. **Build traceability and execution**: map each acceptance criterion to its production owner and exact verification, resolve the issue-ready design baseline when authoritative designs apply, define safe sequential or parallel implementation ownership, and set the Review Loop Contract for correction and escalation.
-9. **Control issue attention**: keep the implementation contract concise, separate reusable doctrine and raw evidence, and define semantic review checkpoints when the slice is substantial.
+9. **Control issue attention**: keep the implementation contract concise, separate reusable doctrine and raw evidence, and define semantic review checkpoints only when delaying review creates material integration or rework risk.
 10. **Cross-validate**: check the resolved issue, traceability ledger, checkpoint plan, execution plan, and conditional gates for contradictions and missing dependencies.
 11. **Establish immediate-delivery isolation**: after shared understanding is confirmed and every selected slice has its exact Branch Contract, create or verify each selected implementation branch and linked worktree before the final write.
 12. **Write and anchor once**: write the resolved issue and required planning updates in the owning context. For immediate delivery, commit them on the implementation branch before production-code changes begin.
@@ -296,9 +304,10 @@ Use issue length only as a review signal:
 - Parent issue packs may be longer, but they must not become the direct
   implementation target for `$issue-delivery`.
 
-For a substantial Smallest Coherent Slice, read
+For a slice whose risk warrants intermediate independent review, read
 [Review Checkpoint Planning](references/review-checkpoint-planning.md) and
-define semantic review checkpoints before approving the issue.
+define semantic checkpoints. Otherwise name one delivery unit and use targeted
+checks during implementation, followed by the final integration review.
 
 ## Claim Verification
 
@@ -398,7 +407,7 @@ Before implementation, include a traceability ledger with one row per acceptance
 |---|---|---|
 | `<criterion ID and outcome>` | `<file + symbol/module>` | `<test file + case name, or justified manual check>` |
 
-Split criteria that have multiple independently observable outcomes. Every row must name the code that owns the behavior and the exact evidence that will prove it; broad entries such as "frontend," "service layer," or "covered by tests" do not pass. Manual verification may substitute for automated criterion proof only when automation is impractical and the issue explains why. A Runtime Acceptance Pass is complementary proof and remains independently required for observable runtime changes even when automated tests cover the same criteria.
+Split criteria that have multiple independently observable outcomes. Every row must name the code that owns the behavior and the exact evidence that will prove it; broad entries such as "frontend," "service layer," or "covered by tests" do not pass. Manual verification may substitute for automated criterion proof only when automation is impractical and the issue explains why. Runtime Acceptance proof remains required for observable runtime changes; a current automated test may supply a scenario when it exercises the assembled system through the real external boundary and asserts that exact outcome.
 
 Require a post-implementation issue-against-diff audit by an **Independent
 Reviewer** that did not implement the candidate and does not rely on the
@@ -445,8 +454,8 @@ The plan must:
   changed area and its integration seams;
 - name the local runtime, startup command, safe test data, real external
   boundary, exact actions or requests, expected outcomes, cleanup, and evidence;
-- require local proof against the final combined candidate after automated
-  validation;
+- require local proof against the final combined candidate, reusing current
+  automated real-boundary results where they cover the exact scenario;
 - require preview or staging proof when the exact candidate can be safely
   deployed before merge and deployment is automated or separately authorized;
 - record post-merge-only staging proof as a mandatory downstream release gate

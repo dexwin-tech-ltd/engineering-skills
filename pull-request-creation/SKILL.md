@@ -1,18 +1,26 @@
 ---
 name: pull-request-creation
-description: Verify completed issue work, enforce its branch and evidence contracts, publish the intended commits, and create or update a GitHub pull request with correct readiness, issue identity, stack position, validation, and risk details. Use when the user asks to turn completed local work into a reviewable PR.
+description: Verify completed task-level or issue-driven work, publish intended commits, and create or update a truthful GitHub pull request. Use when the user asks to turn completed local work into a reviewable PR.
 ---
 
 # Pull Request Creation
 
 Load and follow `$engineering-for-certainty`. Convert completed, verified local work into a truthful GitHub handoff. Own branch verification, intentional publication, PR creation or update, readiness state, and remote verification.
 
-Accept a publication handoff only from the Delivery Operator named by the
-governing workflow. An Implementation Worker or Independent Reviewer cannot
-bypass that operator or turn its narrower assignment into publication
-authority.
+For a completed Quick or Standard task without a canonical issue, read and
+follow [Task-Level Pull Request](references/task-level-pr.md) instead of the
+issue-specific preconditions and workflow below. Critical or explicitly
+issue-driven work stays on the formal issue path. Do not demand a new issue
+solely to publish an eligible task-level change.
 
-Do not implement missing work, perform code review, repair CI, invent evidence, or broaden the issue. Stop when the work is not ready unless the user explicitly authorizes a work-in-progress PR.
+For the formal issue path, accept a publication handoff only from the Delivery
+Operator named by the governing workflow. An Implementation Worker or
+Independent Reviewer cannot bypass that operator or turn its narrower
+assignment into publication authority.
+
+Do not implement missing work, perform code review, repair CI, invent evidence,
+or broaden scope. Stop when the work is not ready unless the user explicitly
+authorizes a work-in-progress PR.
 
 ## Preconditions
 

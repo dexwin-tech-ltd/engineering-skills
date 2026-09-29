@@ -11,6 +11,13 @@ remain accountable for the final result when work is delegated. Do not absorb
 their doctrine, weaken their gates, or let an implementation context serve as
 its own **Independent Reviewer**.
 
+This is the formal issue path. A task-level Quick change without an approved
+issue follows `$engineering-for-certainty` instead. For an approved issue,
+reuse its risk classification, plan, traceability, and validation commands;
+verify that they still match the code before expanding discovery. Standard is
+the default when the issue does not specify rigor. An issue's explicit proof
+and review gates remain binding even if a lower level might otherwise fit.
+
 ## Required Input And Skills
 
 Require the canonical issue path or stable issue identifier. Resolve the path
@@ -46,8 +53,8 @@ Before changing code, verify that the canonical issue:
   Manifest, resolvable Evidence Bundle, complete Design Audit Matrix, and
   source-drift method required by `$engineering-frontend`;
 - states implementation change-control boundaries;
-- defines semantic review checkpoints when the slice is substantial, or
-  explicitly states that the issue is small enough to use one delivery unit;
+- defines semantic review checkpoints when earlier independent review is
+  justified by integration or rework risk, or states one delivery unit;
 - contains a Review Loop Contract; and
 - defines its Issue Completion Record and status-propagation requirements.
 
@@ -61,9 +68,10 @@ commit before newly authorized correction edits begin; the commit may postdate
 the pull request's existing implementation.
 
 Inspect the current repository instructions, status, worktrees, default
-branch, relevant source and tests, and the issue's claimed dependencies. Record
-the runtime worktree path, resolved base SHA, and Approved Issue Commit SHA in
-the execution handoff, not in the portable issue.
+branch, relevant source and tests, and the issue's claimed dependencies. Start
+with the issue's named surfaces and expand only when evidence shows coupling.
+Record the runtime worktree path, resolved base SHA, and Approved Issue Commit
+SHA in the execution handoff, not in the portable issue.
 
 If the issue is not ready, stop before implementation and report the exact
 missing or contradictory contract. Use `$issue-review` only when the user also
@@ -174,7 +182,8 @@ Follow only the current checkpoint's affected surface, guardrails, acceptance
 criteria, traceability rows, and required reading. Use TDD where required by
 `$engineering-for-certainty`.
 
-When the active harness provides a suitable **Implementation Worker**, give it
+When the active harness provides a suitable **Implementation Worker** whose
+capability matches a bounded assignment, give it
 one complete bounded assignment containing:
 
 - the approved behaviour and checkpoint identity;
@@ -185,11 +194,13 @@ one complete bounded assignment containing:
 - the required return record: changed files, validation evidence, failures,
   deviations, and residual risk.
 
-Inspect the returned diff and evidence before accepting it or advancing. A
-worker does not own checkpoint advancement, finding routing, integration,
-publication, merge, or deployment. If no suitable worker is available, perform
-the checkpoint in the Delivery Operator context while preserving the complete
-Implementation Worker contract.
+Use the least costly capable worker available in the active harness; reserve
+ambiguous architecture, sensitive invariants, difficult failures, and material
+escalation for stronger judgment. Inspect the returned diff and evidence before
+accepting it or advancing. A worker does not own checkpoint advancement,
+finding routing, integration, publication, merge, or deployment. If no suitable
+worker is available, perform the checkpoint in the Delivery Operator context
+while preserving the complete Implementation Worker contract.
 
 Only one Implementation Worker may write to a shared implementation worktree at
 a time. Parallel writers require explicit disjoint ownership, isolated
@@ -207,16 +218,23 @@ Classify discoveries before acting:
 Reflect every approved material change in the canonical issue before resuming
 implementation.
 
-### 3. Complete Full Issue-Owned Validation
+### 3. Complete Issue-Owned Validation
+
+Run the issue's required checks and the smallest additional checks that prove
+the combined changed behavior. Reuse current checkpoint evidence when it still
+covers the final head; rerun only proof invalidated by later changes. Do not
+repeat broad suites merely because another stage ran them. Repository CI and
+issue-mandated gates remain binding.
 
 Run every applicable traceability row against the combined canonical branch.
 Run formatting, linting, unit, integration, E2E, migration, mutation, security,
 accessibility, or manual proof required by the issue and triggered doctrine.
 
-After applicable automated validation passes, execute the issue's Runtime
+After applicable automated validation passes, reconcile the issue's Runtime
 Acceptance Plan using `$engineering-for-certainty`'s Runtime Acceptance Pass
-contract. Run the local scenarios against the final combined candidate through
-the real external boundary, including the primary journey and exploratory check.
+contract. Reuse current automated results that exercise the exact real-boundary
+scenario on the final combined candidate, then run uncovered local scenarios,
+including the primary journey and exploratory check.
 Use the triggered frontend, auth/security, and observability doctrine for design
 comparison, Test Identity Plans, disposable inboxes, Test Message Sinks, and
 secret-free evidence.

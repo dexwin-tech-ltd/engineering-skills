@@ -1,6 +1,6 @@
 ---
 name: engineering-for-certainty
-description: Core certainty-first coding doctrine for software projects. Use by default for implementation, review, debugging, planning, and code generation; pair with companion skills when work touches observability, resilience, auth/security, or frontend engineering.
+description: Core risk-scaled coding doctrine for software projects. Use by default for implementation, review, debugging, planning, and code generation; pair with companion skills when work touches observability, resilience, auth/security, or frontend engineering.
 ---
 
 # Engineering for Certainty
@@ -17,8 +17,18 @@ Resolve instruction conflicts in this order, top to bottom.
 4. Always validate boundaries.
 5. Keep adapters thin and business logic explicit.
 6. Use `Result<T, E>` / `ResultAsync<T, E>` for expected failures.
-7. Write tests for critical paths and expected failures first.
+7. Write tests first for critical paths and material expected failures when a useful test seam exists.
 8. If a case is still unclear, prefer the most conservative interpretation that preserves existing behavior and ask for clarification before changing architecture or stack.
+
+## Risk And Rigor
+
+Before planning or implementation, read and apply [Risk, Rigor, and
+Verification](references/rigor-and-verification.md). Standard is the default;
+Quick is a lightweight task path for demonstrably local, low-risk work; Critical
+protects affected high-impact invariants. Select proof by risk and evidence,
+escalate when the assumed boundary fails, and stop when the selected proof and
+applicable repository gates are complete. Formal issue workflows retain their
+explicit contracts.
 
 ## Style and Clarity
 
@@ -215,9 +225,9 @@ Use explicit version-control semantics so project history communicates intent an
 Before editing code:
 
 1. Classify the request's action mode. Answer, explain, plan, review, and diagnose authorize investigation and recommendations only; change, build, implement, or fix authorize in-scope edits. Do not infer write authority from a companion skill or from discovering a possible improvement.
-2. Read the relevant local instructions, README, docs, ADRs, plan files, and nearby implementation examples.
-3. Identify the repo's equivalents for contracts, adapters/routes/controllers, services/domain logic, repositories/persistence, hooks, flows, views, and tests.
-4. For non-trivial work, perform a gap review before implementation. Resolve missing scope, contracts, errors, persistence behavior, orchestration, UI states, and test strategy.
+2. Start with relevant local instructions, the nearest implementation and tests, and any current approved plan or handoff. Expand to docs, ADRs, and callers when the change or evidence requires them.
+3. Identify only the layers and dependencies the changed behavior crosses.
+4. For non-trivial work, perform a proportionate gap review. Resolve the scope, contracts, failure behavior, and proof needed for this change.
 5. Do not implement from an inconsistent plan. Update the plan or state the unresolved gap first.
 
 ## Mid-Implementation Discoveries
@@ -368,12 +378,15 @@ Keep adapters thin and domain logic explicit.
 
 ## Testing Doctrine
 
-TDD is mandatory by default.
+Use test-first development for Critical invariants and material behavior where a
+failing test can express the requirement. For Standard work, prefer it when it
+clarifies the behavior. Quick work needs direct targeted proof, but not a new
+test for a trivial edit. Follow any stronger repository or approved-issue rule.
 
 Apply testing rules in this order: critical behavior correctness first, then failure and validation coverage, then naming and structural consistency.
 
-- For new features and behavior changes: write the failing test first, implement the minimum to pass, then refactor with tests green.
-- If TDD is intentionally skipped, state the concrete reason before implementation.
+- When test-first work is required or selected and a useful seam exists: write the failing test first, implement the minimum to pass, then refactor with tests green.
+- When test-first work is required but unsuitable, state the concrete reason and alternative proof before implementation.
 - When setting up repo automation, prefer commit-time hooks for fast checks and push-time hooks for broader suites, while keeping CI as the authoritative full-environment validation.
 - Cover success paths, failure paths, validation failures, error variants, and exhaustive mapping.
 - For API endpoints, test status codes, response payloads, and actionable error details.
@@ -390,15 +403,16 @@ Apply testing rules in this order: critical behavior correctness first, then fai
 
 ### Runtime Acceptance
 
-Every change with observable runtime behaviour requires a Runtime Acceptance
-Pass after automated validation. Read and follow
+Every formal issue with observable runtime behavior requires Runtime Acceptance
+proof from current real-boundary evidence. Read and follow
 [Runtime Acceptance Pass](references/runtime-acceptance.md) when this applies.
-The pass must exercise the assembled running system through its real external
-boundary, cover every accepted observable outcome plus one complete primary
-journey and targeted exploration, and leave revision-specific evidence. A
-non-runtime issue may record `Not applicable` only with a concrete reason.
+Outside the formal issue workflow, Standard and Critical work should exercise
+the assembled system through its real boundary when local checks cannot prove
+the changed integration; Critical work must prove the affected high-impact
+invariant. Quick may use the focused direct check from the rigor contract.
+Record what each check proves and any remaining integration gap.
 
-Run the pass locally before pull-request readiness. Repeat it against preview or
+Complete the applicable scenarios locally before pull-request readiness. Repeat them against preview or
 staging when that environment safely exposes the exact pre-merge candidate and
 deployment is authorized. Treat post-merge-only staging proof as an explicit
 downstream release gate. Re-run every scenario invalidated by a later change and
@@ -535,7 +549,8 @@ Before declaring work complete, verify:
 
 ## Completion Evidence and Handoff
 
-Before declaring work complete, record the smallest useful evidence packet:
+Before declaring work complete, report the smallest useful evidence packet for
+the selected rigor level. Include only applicable items:
 
 - changed behavior, contracts, and affected surfaces
 - user-owned decisions accepted during the work
