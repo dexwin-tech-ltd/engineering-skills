@@ -10,9 +10,10 @@ competent **Implementation Worker** should be able to complete its bounded
 assignment with zero clarifying questions and produce a robust, validated
 change. If ambiguity remains, the issue is not ready.
 
-The user-facing agent retains interactive planning. Delegate only bounded,
-non-interactive investigation to a Planning Agent that has the required context
-and permissions. If delegated work discovers a user-owned decision, it returns
+The user-facing agent retains interactive planning. Delegate bounded,
+non-interactive investigation only when its expected time or model saving
+exceeds handoff and integration effort, and the Planning Agent has the required
+context and permissions. If delegated work discovers a user-owned decision, it returns
 the decision and evidence to the user-facing agent instead of guessing or
 attempting indirect user interaction. When delegation is unavailable, continue
 in the primary agent without weakening this skill's discovery, decision, or
@@ -64,147 +65,21 @@ Ask for a target path only when those facts cannot be discovered safely.
 
 Never write placeholders, TODOs, partial decisions, or "TBD" sections to the issue. The file is either unchanged while review is in progress or fully resolved when review is complete.
 
-## Delivery Intent And Issue Ownership
+## Delivery Intent
 
-Classify the review before the final write:
-
-- **Immediate delivery**: the initial request clearly asks to review or prepare
-  the issue and then implement, deliver, build, fix, or carry it through.
-- **Backlog only**: the initial request explicitly says review only, planning
-  only, backlog capture, or not to implement.
-- **Unresolved intent**: neither outcome is explicit. A request such as "review
-  this issue" or "create this issue" does not settle what follows. Ask whether
-  implementation will follow immediately. Do not silently choose a default.
-
-When immediate delivery could refer to more than one resulting slice and the
-initial request does not select them, ask which slices will begin now. Do not
-create worktrees for every child merely because the parent pack is ready.
-
-Do not infer immediate delivery from `Ready` status, priority, a roadmap
-position, a complete Branch Contract, or the issue appearing implementation-
-ready. A composing workflow that already declares its branch and delivery mode,
-such as review-to-merge correction or deferred-follow-up capture, supplies this
-intent explicitly; do not ask again.
-
-For every Smallest Coherent Slice selected for immediate delivery:
-
-1. Finish discovery, decomposition, decisions, cross-validation, and shared-
-   understanding confirmation before mutating git state.
-2. Verify the declared base ref and resolve its SHA. Inspect repository status
-   and `git worktree list --porcelain`.
-3. Create or verify the exact Branch Contract branch and its dedicated linked
-   worktree. If the branch belongs to another worktree, contains ambiguous work,
-   or cannot be created from the declared base without changing the contract,
-   stop instead of inventing another branch.
-4. Perform the final issue, roadmap, index, appendix, and required reference
-   writes inside that worktree. Do not finalize them on a planning branch and
-   transfer implementation elsewhere.
-5. Record the runtime worktree path and resolved base SHA in the execution
-   handoff, never in the portable issue.
-6. Stage only the finalized issue and its required planning-surface updates,
-   then create one coherent Approved Issue Commit on the implementation branch.
-   Do not begin production-code changes before that commit exists. Do not push
-   merely because issue review completed; publication remains separately
-   authorized or owned by the composing delivery workflow. Under an Existing PR
-   Correction Contract, create the commit before newly authorized correction
-   edits; it need not predate the pull request's existing implementation.
-
-For backlog-only work, do not create the eventual implementation worktree merely
-because the issue is ready. Write through the repository's authorized planning
-workflow. When implementation is requested later, its branch must start from a
-verified base containing the exact Approved Issue Commit, and every later issue
-update remains with that implementation branch.
+Classify the initial request as immediate delivery, backlog only, or unresolved before the final write. For immediate delivery or ambiguous intent, read [Delivery Intent and Issue Ownership](references/delivery-intent.md); do not create an implementation worktree until the exact slice, branch, base, and shared understanding are settled. Backlog-only work creates no idle worktree.
 
 ## Convention Discovery
 
-Before gate review, inspect only the relevant local sources:
-
-- Repo guidance: `AGENTS.md`, `CONTEXT.md`, `CONTEXT-MAP.md`, `DESIGN.md`, `README.md`, `PRODUCT_DECISIONS.md`.
-- Planning surfaces: `ROADMAP.md`, `ROADMAP.DONE.md`, `TODO.md`, `docs/`, `_features/`, `features/`, `issues/`.
-- Similar completed or active issue files.
-- Existing tests near the affected code.
-- Schema/type files named by the issue or implied by the affected area.
-- Architecture or engineering doctrine docs, including `engineering-for-certainty`-style local guidance when present.
-
-Prefer the repo's current issue format and testing style over this skill's fallback structure. If the repo has multiple contexts, use `CONTEXT-MAP.md` or nearby context docs to select the right context before reviewing terminology.
-
-### Issue File Naming
-
-For pending issue files, require the default filename format
-`NN-<conventional-type>-<kebab-case-name>.md`, for example
-`28-feat-student-progress-dashboard.md` or
-`29-fix-session-report-score-rounding.md`.
-
-- Use a two-digit, zero-padded, stable issue reference (`00`, `01`, ...).
-  Assign the next unused number from the repository's canonical issue index or
-  issue directory. Do not renumber existing issues when priority changes.
-- Use the Conventional Commit type that describes the work: `feat`, `fix`,
-  `refactor`, `test`, `docs`, `chore`, `perf`, `build`, or `ci`.
-- Keep the remaining name concise and kebab-case. Do not repeat the type or a
-  redundant implementation verb in the name.
-- If the repository defines a stricter compatible convention, follow it. If it
-  defines a conflicting convention, report the conflict instead of silently
-  renaming the issue.
-- Completed historical issues may retain their existing names. Numbered
-  sub-issue packs may retain an explicit pack-local numbering scheme.
-- When the final review rewrites or renames an issue, update the canonical
-  roadmap/index and every in-repository reference in the same write pass.
-
-If the issue uses a domain term that conflicts with the local glossary or product docs, stop and ask the user to resolve the term before continuing.
+For issue creation, naming, or repository planning conventions, read [Convention Discovery](references/convention-discovery.md). Preserve the repository's established issue format and stable numbering.
 
 ### Composed Review-to-Merge Authorization
 
-When an explicit review-to-merge workflow invokes this skill, that invocation
-supplies write authorization and shared-understanding confirmation only for a
-coherent issue update derived entirely from verified findings, the existing
-approved issue meaning, and discoverable repository conventions. Do not ask for
-a redundant confirmation before that mechanical write.
-
-If the update would choose or change product meaning, acceptance, scope,
-architecture, public contracts, schemas, migrations, permissions, security
-policy, dependencies, test strategy, planning-system structure, or priority,
-route it to `USER_DECISION`, use `$grilling`, and require explicit confirmation
-of the resolved issue before writing.
-
-Mechanically bounding a new deferred issue to the verified root cause, affected
-surface, and required proof is authorized when those facts have one coherent
-interpretation. Choosing among plausible product outcomes, broadening beyond
-that evidence, combining independent outcomes, or assigning priority remains a
-user-owned scope decision.
+When an explicit review-to-merge workflow supplies verified findings, read [Composed Review-to-Merge Authorization](references/composed-review-to-merge.md) before writing a mechanical issue update. Product or scope decisions still require user confirmation.
 
 ### Deferred Follow-Up Issue Mode
 
-When an explicitly authorized pull-request review supplies findings routed
-`DEFER_FOLLOW_UP`, create durable planning artifacts without changing the
-implementation:
-
-- Re-verify that every supplied finding satisfies the composing workflow's
-  contract-based deferral criteria. Do not infer deferral from Low severity.
-- Search existing issue files, roadmap entries, and completed-work archives.
-  Reuse or update an exact existing issue instead of creating a duplicate.
-- Deduplicate new findings by root cause and create one **Smallest Coherent
-  Slice** per independently implementable outcome, not one file per review
-  comment or one catch-all cleanup issue.
-- Make each issue implementation-ready under this skill. When later
-  implementation depends on product research, create a bounded discovery or
-  decision issue with an exact evidence outcome rather than a vague issue or
-  placeholder.
-- Follow the repository's canonical filename, issue directory, roadmap or
-  index, and backlog status. Do not invent priority or silently create a new
-  planning system.
-- Record the reviewed pull request as a dependency and choose the eventual
-  Branch Contract against the repository's canonical post-merge base unless a
-  verified stack requires another base.
-- Write the complete issue files and roadmap or index update in one coherent
-  pass, then return their paths and stable identities to the composing
-  pull-request workflow for commit, push, PR-description update, and
-  current-head revalidation.
-- When an exact existing issue and roadmap entry already satisfy the finding,
-  verify and return them without manufacturing a no-op file change or commit.
-
-If no canonical planning surface exists or the supplied branch cannot receive
-the planning files, stop and return that exact gap. Do not substitute a chat
-note, pull-request comment, external tracker item, TODO, or invented directory.
+When a composing pull-request workflow explicitly routes verified findings to `DEFER_FOLLOW_UP`, read [Deferred Follow-Up Issue Mode](references/deferred-follow-up.md).
 
 ## Decomposition And Branch Contract
 
@@ -261,53 +136,9 @@ checkout instead.
 
 Use Stacked Pull Requests only for real dependencies. Record each PR's head, base, preceding PR, merge order, and rebase or retarget procedure. Independent slices must share the canonical base branch and remain parallel rather than being forced into a stack.
 
-## Issue Attention And Reading Contract
+## Issue Attention
 
-An issue must be complete without becoming a transcript, raw evidence store, or
-copy of reusable engineering doctrine. Optimize for instruction salience: the
-Implementation Worker must be able to distinguish approved intent, acceptance
-criteria, change authority, and stop conditions from supporting detail.
-
-For every non-trivial child issue, add a concise `Agent Start Here` section near
-the top. Keep it to roughly fifteen lines or fewer and include:
-
-- the one observable outcome;
-- the exact Branch Contract and pull-request base;
-- the acceptance-criterion IDs;
-- the Runtime Acceptance environments and any downstream release gate;
-- the allowed-change and pause boundaries;
-- the review-checkpoint sequence, when present; and
-- every linked appendix that must be read before a named checkpoint.
-
-Keep reusable rules in the governing skills and repository documentation. The
-issue should name the activated doctrine and record only issue-specific
-decisions, contracts, risks, and deviations. Do not copy full engineering
-manuals, generic review procedures, or raw test output into each issue.
-
-Use linked appendices only for dense issue-specific material such as large
-state-transition tables, error matrices, migration fixtures, or verified
-baseline evidence. Critical product decisions, acceptance criteria, authority
-boundaries, and pause conditions must remain in the core issue. Every appendix
-required for a checkpoint must be named in that checkpoint's reading set.
-
-Keep the Issue Completion Record concise. Record exact commands, outcomes,
-finding dispositions, and durable references, but do not paste raw logs,
-complete review transcripts, or repeated doctrine into the canonical issue.
-
-Use issue length only as a review signal:
-
-- At roughly 300 lines, run an explicit compression and decomposition check.
-- At roughly 500 lines, require the issue-review handoff to explain why the
-  child remains one Smallest Coherent Slice and why the remaining material
-  cannot be compressed or moved to a linked appendix.
-- Do not split an issue solely to satisfy a line count.
-- Parent issue packs may be longer, but they must not become the direct
-  implementation target for `$issue-delivery`.
-
-For a slice whose risk warrants intermediate independent review, read
-[Review Checkpoint Planning](references/review-checkpoint-planning.md) and
-define semantic checkpoints. Otherwise name one delivery unit and use targeted
-checks during implementation, followed by the final integration review.
+Keep approved intent, acceptance, authority, and stop conditions prominent. For a non-trivial child issue or a long issue, read [Issue Attention and Reading Contract](references/issue-attention.md) before finalizing its structure.
 
 ## Claim Verification
 
@@ -440,82 +271,11 @@ test(`
 
 #### Runtime Acceptance Plan
 
-Every issue that changes observable runtime behaviour must define a Runtime
-Acceptance Plan using `$engineering-for-certainty`'s
-[Runtime Acceptance Pass](../engineering-for-certainty/references/runtime-acceptance.md).
-A documentation-only or other non-runtime issue may record `Not applicable`
-with a concrete reason.
-
-The plan must:
-
-- map every accepted externally observable criterion and materially distinct
-  outcome to a stable runtime scenario;
-- include one complete primary journey and a targeted exploratory check of the
-  changed area and its integration seams;
-- name the local runtime, startup command, safe test data, real external
-  boundary, exact actions or requests, expected outcomes, cleanup, and evidence;
-- require local proof against the final combined candidate, reusing current
-  automated real-boundary results where they cover the exact scenario;
-- require preview or staging proof when the exact candidate can be safely
-  deployed before merge and deployment is automated or separately authorized;
-- record post-merge-only staging proof as a mandatory downstream release gate
-  with its owner and trigger;
-- identify every necessary proxy, what it proves, its blind spot, and the later
-  literal gate when that blind spot is material;
-- define a secret-free scenario ledger tied to the exact revision and
-  environment, plus which later changes invalidate and require each scenario to
-  run again;
-- include a Test Identity Plan and Test Message Sink or inbox rules from
-  `$engineering-auth-security` when authentication is exercised; and
-- when the frontend is design-backed, read `$engineering-frontend`'s
-  [Design Conformance And
-  Audit](../engineering-frontend/references/design-conformance.md), create its
-  issue-ready Design Reference Manifest and Evidence Bundle, and include the
-  exact source, baseline, states, platforms, viewports, interactions, matrix,
-  source-drift method, and approved deviations in the plan.
+For an issue with observable runtime behavior, read [Runtime Acceptance Planning](references/runtime-acceptance-planning.md). Require real-boundary scenarios and current exact-candidate evidence; keep the issue unverified while required proof is missing or stale. For non-runtime work, record a justified `Not applicable` entry.
 
 #### Design Reference Baseline
 
-For design-backed frontend work, create the approved baseline before declaring
-the issue implementation-ready. Do not leave baseline capture to the
-Implementation Worker or first code reviewer.
-
-During the interview, retrieve and inspect the source read-only and resolve the
-manifest, matrix, artifact set, and limitations without writing partial issue
-state. After shared understanding is confirmed, write the finalized baseline,
-Evidence Bundle, canonical issue, and required planning updates together as the
-one coherent final issue write.
-
-- Discover and preserve the repository's existing evidence convention. When
-  none exists, use `<canonical issue directory>/evidence/<canonical issue
-  stem>/design/`; the full issue stem excludes the `.md` extension.
-- Retrieve the exact authoritative source with the available design tooling and
-  record the file, page, frame, component, and node identities plus the version
-  or strongest approved snapshot and source-signature method.
-- Create frozen images for every issue-owned designed state and viewport.
-- Create and validate the self-contained HTML/Tailwind visual reference,
-  including for native targets, and add only the platform-specific supplements
-  needed for behaviour it cannot express faithfully.
-- Create the Design Audit Matrix covering every accepted state, platform,
-  viewport, variant, interaction, operational state, and affected shared-
-  design seam.
-- Record approved deviations and known source-signature or export limitations.
-- Keep the core issue concise: link the manifest and bundle instead of pasting
-  raw design data or generated markup into the issue.
-
-The finalized manifest and evidence references belong to the approved issue
-revision and its Approved Issue Commit. When repository policy stores large
-artifacts in Git LFS or an external artifact service, keep durable resolvable
-references under the issue evidence path. If the exact source, required nodes,
-stable baseline, frozen images, HTML/Tailwind rendition, or matrix cannot be
-obtained and validated, the issue is not implementation-ready.
-
-Do not treat an in-process handler call, component harness, mock adapter by
-itself, or Implementation Worker summary as runtime proof. A running mock-backed frontend
-may prove only an explicitly frontend-only slice when the plan names the adapter
-as a proxy and defers live backend integration proof. Keep the issue
-`Needs Verification` while required issue-owned runtime evidence is missing,
-failed, or stale.
+When implementation is governed by an authoritative design, read [Design Reference Planning](references/design-reference-planning.md) and `$engineering-frontend`'s design audit guidance. Resolve the approved source, manifest, evidence bundle, and complete audit matrix before marking the issue ready.
 
 ### 9. Operational And Migration Safety
 
@@ -549,185 +309,15 @@ The issue must make the robust implementation path clear:
 
 ### 12. Issue Completion Record
 
-The rewritten issue must define its completion requirements. The issue is not
-complete until the implementation or integration agent writes an **Issue
-Completion Record** to the canonical issue file after final review and before
-reporting the issue as done. A chat summary, pull-request description, commit,
-or CI result may support the record but cannot replace it.
-
-The record must contain:
-
-- the final status and completion date;
-- the last behavior-changing reviewed head to which acceptance, validation, and
-  Runtime Acceptance evidence bind;
-- the production, test, configuration, and documentation surfaces actually
-  changed;
-- the reconciled result of every traceability row, including exact validation
-  commands and outcomes;
-- every Runtime Acceptance scenario result, exact revision and environment,
-  proxy blind spot, invalidated proof re-run, and linked downstream release
-  gate; for design-backed work, include the baseline, source-drift result,
-  Design Audit Matrix outcomes, approved deviations, comparison methods, and
-  independent audit result;
-- the final `$code-review` outcome and the disposition of every confirmed
-  finding;
-- when checkpoint reviews were used, the checkpoint ID, accepted head SHA,
-  review range, review outcome, correction dispositions, and invalidated proof
-  re-run for each checkpoint;
-- deviations from the issue and any unplanned changes;
-- residual risks and every unverified or deferred check, with a linked owner or
-  trigger for downstream work; and
-- branch, commit, and pull-request references when available.
-
-The record is an evidence index, not an evidence dump. Prefer compact tables and
-durable links to raw CI, pull-request, test, or review evidence.
-
-Do not require the record to name the commit that contains the record itself.
-When later commits change only the canonical issue, roadmap or index, deferred
-issue files, or completion evidence, record the last behavior-changing reviewed
-head and require an independent current-head review to verify that every later
-commit is evidence-only and invalidates no recorded proof.
-
-The **Delivery Operator** owns the write-back. The final **Independent
-Reviewer** must verify the completed record against the raw diff, test output,
-and review evidence; the reviewer does not become the canonical issue writer. Update any
-roadmap, index, or completed-work archive that tracks the issue's status in the
-same write pass so those surfaces cannot contradict the issue.
-
-Keep the issue at `Needs Verification` while any issue-owned acceptance,
-review, or highest-risk verification gate lacks evidence. An explicitly
-out-of-scope downstream or release gate does not block `Done` only when the
-issue links it and names its owner or trigger. Never use `Done` with a caveat to
-hide missing issue-owned evidence.
+Every formal issue defines the write-back and status propagation required at completion. Read [Issue Completion Record](references/issue-completion-record.md) when drafting completion requirements or reviewing a completed issue. The Delivery Operator writes the evidence index; the final Independent Reviewer verifies it. Missing issue-owned proof keeps status at `Needs Verification`.
 
 ### 13. Review Loop Contract
 
-Every rewritten issue must state how implementation hands off to review and how
-verified findings are routed. Do not rely on a long chat prompt, an implied
-agent workflow, or the existence of a durable goal. If automatic delivery is
-not intended, state that the workflow is human-gated and disable automatic
-correction explicitly.
+Every rewritten issue states how implementation hands off to review and how verified findings are routed. Read [Review Loop Template](references/review-loop-template.md) when the issue is intended for `$issue-delivery`; otherwise state a human-gated workflow and disable automatic correction explicitly. Every correction batch requires invalidated proof to be rerun and a fresh full resulting-change review.
 
-For an issue intended for `$issue-delivery`, include:
+## Conditional Gates and Execution
 
-```md
-## Review Loop Contract
-
-- Delivery mode: `$issue-delivery` to a ready-to-merge handoff.
-- Review checkpoints: `<none; treat the issue as one delivery unit>` or
-  `<ordered checkpoint IDs and outcomes>`.
-- Automatic transitions: implementation -> checkpoint validation ->
-  checkpoint review -> authorized corrections -> checkpoint revalidation and
-  re-review -> next checkpoint -> final full validation and integration review
-  -> pull request -> CI follow-through.
-- Checkpoint advance rule: advance only from a clean accepted checkpoint head.
-  `AUTO_CORRECT` returns to correction and re-review of the same checkpoint.
-  `USER_DECISION` and `BLOCKED` pause delivery. An unresolved confirmed finding
-  never advances.
-- Auto-correction authority: `AUTO_CORRECT` only for confirmed, deterministic,
-  in-scope corrections that preserve approved intent, architecture, contracts,
-  security posture, dependencies, and test strategy.
-- User decision triggers: `USER_DECISION` for product or domain meaning,
-  acceptance or scope changes, architecture, public contracts, schemas,
-  migrations, auth or permissions, security policy, dependencies, test
-  strategy, material verifier disagreement, or missing product context.
-- Blocked triggers: `BLOCKED` for missing authority, credentials, access,
-  external state, required skills, or out-of-scope prerequisites.
-- Residual-risk rule: `RESIDUAL_RISK` is a finding route, not a checkpoint
-  result. When the issue explicitly classifies the stated assumption as
-  non-blocking and it does not weaken an acceptance criterion or highest-risk
-  verification gate, record the risk and permit a `CLEAN` checkpoint result.
-  Otherwise use `USER_DECISION` as the checkpoint result.
-- Re-review rule: after every correction batch, re-run invalidated proof and a
-  clean review of the resulting head; preserve finding IDs and dispositions.
-- Churn threshold: escalate when the same root cause survives two correction
-  attempts or the fix oscillates. Use a stricter issue-specific limit when risk
-  warrants it.
-- Final integration review: checkpoint reviews do not replace a final
-  `$code-review` of the complete issue-base-to-current-head diff.
-- Goal behavior: a durable goal supplies persistence only while an authorized
-  transition exists. It never changes a finding verdict or route, expands
-  correction authority, or permits crossing a non-clean checkpoint.
-- Completion target: current-head acceptance evidence, clean independent
-  review, green required automated CI, current Issue Completion Record, and a
-  truthful pull request with only human approval and merge remaining.
-```
-
-Tighten the default contract for the issue's risk, but never broaden automatic
-authority. A durable goal supplies persistence, not permission to resolve a
-material ambiguity. Independent Reviewer contexts remain read-only; the
-Delivery Operator owns authorized edits, validation, publication, and CI
-follow-through.
-
-## Conditional Gates
-
-Apply only when the issue scope triggers them. Use repo-specific docs and existing patterns to decide whether each gate applies.
-
-- **Auth and permissions**: identify the server-side authorization boundary; client-only checks never suffice.
-- **Observability**: require typed Safe Log Events, source-specific allowlists, correlation/request context, privacy and log-injection tests, retention and reader access, and verification. Apply `$engineering-resilience` when telemetry uses queues, retries, timeouts, circuit breakers, or an external sink.
-- **Resilience**: require timeout, retry/backoff, idempotency, concurrency, and recovery behavior where relevant.
-- **External data boundary**: name the validator/parser/schema used before raw data reaches domain logic; prefer `.safeParse()` or the repo's equivalent boundary API.
-- **Database writes or concurrent writes**: state uniqueness constraints, idempotency, race handling, and deletion policy.
-- **Destructive test operations against shared-tooling infrastructure**: when the Test Approach includes operations that delete or reset state (volume/database teardown, `down -v`-style resets, bucket/queue purges) against infrastructure whose tooling (compose project name, database name, bucket name, queue name, etc.) could also be used to run a real or production instance, require the issue to name how the test instance is isolated (a distinct project name, prefix, or environment label) so its teardown can never reach a real instance's resources.
-- **Event or audit emission**: name event types and payload constraints; verify schema files if the repo has them.
-- **Shell execution**: state the approved command wrapper or argument-safety pattern.
-- **Outbound HTTP or third-party APIs**: require timeout, retry policy where appropriate, and named error mapping.
-- **Discriminated unions or enums**: name every exhaustive handling site that must change; for coded errors, apply the code-to-details matrix and envelope tests from gate 10.
-- **Result/error contracts**: follow the repo's expected-failure style and do not introduce throw-based expected failures or conflicting patterns silently.
-- **Frontend behavior**: include states, accessibility expectations, responsive behavior, and the user flow that proves the change. Name and verify the literal platform or library mechanism for imperative querying, navigation interception, subscriptions, focus restoration, or similar behavior. For design-backed work, require the issue-ready baseline, Evidence Bundle, Design Audit Matrix, drift check, comparison plan, and typed outcomes from `$engineering-frontend`. When operational logging is present, name where and when each event emits and prove it cannot fire per render, unbounded retry, or expected domain outcome.
-- **Async frontend mutations**: for every in-flight state, require a transition table with rows for each mutable control and for success, failure, retry, discard, and navigation. Each row must state whether the action is allowed, which snapshot owns the pending data, the next state, and the user-visible result. Cover edits made while a request is pending, stale or superseded responses, retry ownership, discard semantics, and navigation away/back. Every allowed transition and prohibited action must map to an exact test in the traceability ledger.
-- **Generated code or fixtures**: state regeneration commands and which generated files should or should not be edited by hand.
-- **Security or privacy**: state secret handling, PII exposure, data retention, and permission implications.
-- **Pinned third-party tool or version-dependent defaults**: when the design relies on a tool, image, framework, or library default, verify the assumption against the exact pinned version using its source, release notes, or changelog rather than current-version knowledge. If the behavior can change silently on upgrade, require the controlling flag, environment variable, or config value to be set explicitly.
-
-### Execution, Checkpoint Reviews, And Final Review
-
-For non-trivial issues, include an Execution Plan that identifies which
-workstreams are independent and which are ordered. Use parallel Implementation
-Workers only when their production ownership and traceability rows do not
-overlap materially and each writer has filesystem isolation plus a named
-integration path. A shared implementation worktree has at most one active
-writer. Independent read-only investigation and review may run in parallel when
-their workstreams are genuinely separate.
-
-When the issue defines review checkpoints, every checkpoint must be a coherent,
-green, behavior-complete state with owned acceptance criteria, exact validation,
-a frozen review head, and an explicit advance condition. Checkpoint reviews
-reduce the amount of new code assessed at once; they do not create separate
-issues, branches, or pull requests.
-
-- Give each Implementation Worker its approved behaviour, bounded files or
-  symbols, acceptance criteria, required validation, allowed-change boundary,
-  escalation conditions, and required return evidence: changed files,
-  validation outcomes, failures, deviations, and residual risk.
-- Give every Branch Contract its own dedicated linked worktree by default,
-  including the Canonical Integration Branch and each Helper Branch. Concurrent
-  writes require that filesystem isolation. Record the repository convention or
-  user's explicit direction when implementation will use the shared checkout.
-  A clean review context does not itself require a worktree.
-- Name one Canonical Integration Branch from the issue's Branch Contract. The Execution Plan must name how each Helper Branch enters it: cherry-pick coherent commits, merge the branch, or rebase and fast-forward according to repository history conventions. Never copy files between worktrees as the integration mechanism.
-- Validate each helper branch, then integrate in dependency order. Resolve conflicts only on the canonical branch and re-run every affected traceability row.
-- Run the complete triggered validation and issue-against-diff audit on the combined canonical branch.
-
-After all checkpoints are accepted, run the complete triggered validation,
-issue-against-diff audit, and final `$code-review` against the combined
-issue-base-to-current-head diff. Revisit interactions across checkpoints,
-shared contracts, configuration, deleted behavior, and integration seams.
-Checkpoint evidence supports this review but cannot replace it.
-
-Make final code review the last implementation gate. For multi-slice,
-medium-risk, or high-risk changes, require multiple fresh Independent Reviewer
-contexts when available: independent finder passes using `$code-review` and a
-separate skeptical verifier that receives raw evidence without the finder's
-expected verdict. For tiny low-risk changes, allow one Independent Reviewer
-with a separate skeptical pass inside that fresh review context. If no fresh
-review context is available, use deliberately separated self-review only as
-supplemental evidence, record the limitation, and keep the independent-review
-gate unsatisfied.
-
-Reconcile and deduplicate every confirmed finding, obtain user adjudication when the workflow requires it, fix accepted blockers, and re-run affected proof. Then complete the Issue Completion Record gate, including reviewer verification of the written record, before declaring the issue complete.
-
-If the repo has domain-specific gates, apply them after discovery. Examples include approved-only content, event schema invariants, tenant boundaries, import provenance, or feature-flag rules.
+For affected auth, telemetry, resilience, persistence, external data, frontend states, version-dependent behavior, or parallel implementation, read the relevant parts of [Conditional Gates and Execution](references/conditional-gates-and-execution.md). Optional parallel work must pass the delegation break-even rule in `$engineering-for-certainty`; distinct ownership and isolation remain required. A final independent full integration review follows all checkpoints and correction batches.
 
 ## Questioning Discipline
 
@@ -747,119 +337,8 @@ Before rewriting, present the resolved understanding and explicitly confirm that
 
 ## Cross-Validation
 
-Before editing, verify:
-
-- **Consistency**: acceptance criteria, scope, dependencies, implementation guardrails, and affected production owners agree; paths, symbols, and line references still exist.
-- **Issue identity**: pending issue filenames follow the discovered convention, use a stable number and valid Conventional Commit type, and all roadmap/index and sibling references resolve after any rename.
-- **Decomposition and branches**: the issue is one proven Smallest Coherent Slice or an ordered child pack; every slice owns exactly one Branch Contract and pull request, no feature-wide pull request spans multiple slices, only genuinely dependent pull requests are stacked, and every contract records its exact base ref and worktree isolation mode without a machine-specific path.
-- **Delivery continuity**: immediate or backlog intent is explicit; ambiguous
-  initial prompts were resolved by asking; every slice selected for immediate
-  delivery owns the worktree used for the final issue write; and its Approved
-  Issue Commit exists on the declared implementation branch before production-
-  code work. Backlog-only issues did not create idle implementation worktrees.
-- **Existing PR correction**: when the normal branch naming rule is bypassed for
-  review-to-merge correction, the Existing PR Correction Contract resolves one
-  exact repository, pull request, head owner and branch, base, expected head
-  SHA, push authority, and dedicated worktree without authorizing a replacement
-  PR or history rewrite.
-- **Traceability**: every independently observable criterion has one or more ledger rows with an exact production owner and exact test or justified manual verification; the post-implementation audit is named.
-- **Runtime acceptance**: every observable runtime change has a complete local
-  plan, applicable exact-candidate preview or staging plan, real-boundary
-  scenarios, secret-free evidence contract, invalidation rules, and specialist
-  auth or design proof; design-backed frontend work already has its accessible
-  approved source, Design Reference Manifest, Evidence Bundle, complete Design
-  Audit Matrix, and drift-detection method; non-runtime work has a justified
-  `Not applicable` entry.
-- **Attention budget**: the core child issue keeps approved intent, acceptance,
-  authority, pause conditions, and checkpoint routing prominent; reusable
-  doctrine and raw evidence are not copied into it; length signals triggered
-  the required compression or decomposition check.
-- **Review checkpoints**: substantial slices use a small ordered set of
-  semantic, green, behavior-complete checkpoints; every checkpoint owns
-  criteria, validation, reading inputs, and an advance condition; the final
-  full integration review remains required.
-- **Goal safety**: a durable goal cannot change a finding route, expand
-  correction authority, suppress an adverse finding, or cross a non-clean
-  checkpoint.
-- **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
-- **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
-- **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
-- **Review loop**: the issue explicitly selects automatic or human-gated delivery, routes mechanical corrections separately from user-owned decisions and blockers, requires current-head revalidation and re-review, and defines its churn threshold and ready-to-merge stopping condition.
-- **Deferred follow-up**: when invoked for `DEFER_FOLLOW_UP`, every finding is
-  still eligible under the contract, deduplicated by root cause, represented by
-  an issue-review-ready coherent issue or bounded discovery issue, and present
-  in the canonical roadmap without invented priority.
-- **Completion record**: the issue defines who writes and verifies its Issue Completion Record, which status-tracking surfaces must change with it, and which issue-owned or explicitly downstream gates control `Needs Verification` versus `Done`.
-- **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
-- **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; rounded displays agree with derived status indicators; literal runtime mechanisms are exercised or use a named proxy with its blind spot.
-- **Configuration delivery**: every new environment variable reaches its exact runtime consumer through named injection points; every version-dependent default is verified against the pinned version and made explicit when it may drift.
-- **Documentation truth**: new instructions do not leave neighboring claims, enumerations, warnings, or runbooks false or incomplete.
-- **Verification status**: work that defers its highest-risk integration scenario remains explicitly unverified rather than being marked done with a caveat.
-- **Migration and telemetry evidence**: database migrations name the isolated Migration Proof Harness; frontend ingestion and other telemetry name Safe Log Event privacy tests and the Telemetry Budget.
-
-Resolve every contradiction with the user before writing.
+Before the final issue write, read [Cross-Validation](references/cross-validation.md) and resolve contradictions in scope, traceability, branches, proof, authority, and linked planning surfaces. Do not write an implementation-ready issue while a required gate is missing.
 
 ## Rewrite
 
-Preserve the repo's established issue format when one exists. If no format exists, use this fallback:
-
-```md
-# <title>
-
-Status: open
-Type: Bug | Feature | Chore | Exploration
-Severity: High | Medium | Low | Very Low
-Branch: <exact conventional branch>
-Base: <exact canonical branch or preceding stacked-PR branch>
-Worktree: dedicated | shared checkout - <repository convention or explicit user direction>
-Parent: <parent issue, when this is a child slice>
-
-## Agent Start Here
-
-## Problem / Motivation
-
-## Root Cause / Background
-
-## Affected Surface
-
-## Acceptance Criteria
-
-## Out of Scope
-
-## Implementation Guardrails
-
-## Dependencies
-
-## Execution Plan
-
-### Review Checkpoints
-
-## Test Approach
-
-### Traceability Ledger
-
-## Runtime Acceptance Plan
-
-## Design Reference Baseline
-
-## Review Loop Contract
-
-## Completion Requirements
-
-## Notes
-```
-
-Omit sections that genuinely do not apply, including `Design Reference
-Baseline` when no authoritative design applies, except keep `Runtime Acceptance
-Plan` with a justified `Not applicable` entry for non-runtime work. Do not add
-empty sections. Populate
-`Completion Requirements` with the issue-specific write-back, evidence, status,
-and propagation rules during readiness review. Add the actual `Issue Completion
-Record` only after implementation evidence exists; never prefill it with
-placeholders or predicted results.
-
-For immediate delivery, return the declared branch, base ref, resolved base SHA,
-runtime worktree path, and Approved Issue Commit SHA to `$issue-delivery`. For
-backlog-only work, state that no implementation worktree was created. Never
-report an issue as ready for immediate implementation from a different branch or
-worktree than the one that contains its Approved Issue Commit.
+After shared-understanding confirmation, read [Issue Rewrite](references/issue-rewrite.md) for the fallback format, final write, and immediate-delivery handoff. Preserve the repository's format when it exists. Do not write placeholders or partial decisions.

@@ -23,6 +23,12 @@ hooks -> stable exported API functions
 
 Only the adapter implementation that would call the backend changes. The API
 operation contracts and every consuming frontend layer remain the same.
+Keep mock controls outside production inputs and return types. Named
+development presets should map exhaustively to deterministic scenarios that
+cover materially different UI outcomes without random defaults. Do not
+reproduce HTTP parsing, status codes, headers, or malformed transport payloads
+inside the mock adapter; test those at the production adapter boundary. Keep
+mock modules out of production bundles when the repository toolchain permits.
 
 ## Operation Contract
 

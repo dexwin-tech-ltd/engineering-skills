@@ -87,6 +87,15 @@ judgment. Parallel writers need disjoint ownership, isolated worktrees, and a
 named integration path; otherwise work sequentially. Delegation never lowers
 the selected verification or review bar.
 
+Before adding an optional Implementation Worker, investigator, finder, or
+verifier, check the break-even case: is there a bounded output that can be
+verified independently, and is the likely elapsed-time or model-cost saving
+greater than the prompt, context transfer, waiting, reconciliation, and
+integration work? Delegate when that case is credible; handle small, tightly
+coupled work directly. Do not invent a numeric threshold or ask the model to
+estimate its own cost. Keep any independent review required by the selected
+rigor level or approved issue even when optional delegation is not worthwhile.
+
 Measure elapsed time, model tokens or actual cost where exposed, check runs,
 review passes, correction cycles, escalations, and later rework from runner,
 tool, and issue or PR records. Do not ask a model to estimate its own time or

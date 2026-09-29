@@ -183,7 +183,8 @@ criteria, traceability rows, and required reading. Use TDD where required by
 `$engineering-for-certainty`.
 
 When the active harness provides a suitable **Implementation Worker** whose
-capability matches a bounded assignment, give it
+capability matches a bounded assignment and whose expected time or model
+saving exceeds handoff and integration effort, give it
 one complete bounded assignment containing:
 
 - the approved behaviour and checkpoint identity;
