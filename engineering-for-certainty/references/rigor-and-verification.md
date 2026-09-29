@@ -63,10 +63,12 @@ proof the new risk requires. Never keep Quick merely because it started Quick.
 
 Stop when the requested outcome and applicable acceptance criteria are met,
 direct proof is current for the final change, the final diff is understood,
-there is no unresolved blocking finding or high-risk uncertainty, and required
-repository gates pass. Standard and Critical also require the independent
-review their level or governing workflow calls for. Do not continue searching
-for hypothetical improvements after these conditions hold.
+there is no unresolved blocking finding or high-risk uncertainty, required
+repository gates pass, and eligible discovered follow-ups have the closeout
+disposition required by [Follow-Up Inbox](follow-up-inbox.md). Standard and
+Critical also require the independent review their level or governing workflow
+calls for. Do not continue searching for hypothetical improvements after these
+conditions hold.
 
 ## Handoffs, Parallel Work, and Measurement
 

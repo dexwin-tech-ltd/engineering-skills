@@ -14,15 +14,15 @@ The explicit invocation authorizes this workflow to:
 - route verified findings under the rules below;
 - update the governing issue when issue review confirms the change;
 - invoke issue-owned delivery for authorized corrections;
-- create and publish eligible deferred follow-up issue files and their canonical
-  roadmap or index entries on the pull-request branch;
+- create and publish eligible deferred follow-up inbox entries in the
+  repository's canonical backlog file on the pull-request branch;
 - update the existing pull-request description with those durable links;
 - monitor required CI and merge the exact verified head when every gate passes;
   and
 - perform the guarded post-merge cleanup defined below.
 
-It does not authorize product or architectural decisions, a new planning system,
-invented roadmap priority, external tracker substitution, approval on another
+It does not authorize product or architectural decisions, invented backlog
+priority, external tracker substitution, approval on another
 person's behalf, branch-protection bypass, administrative override, deployment,
 force-push, or unrelated cleanup.
 
@@ -36,7 +36,7 @@ issue-approved dedicated linked worktree for that published head before
 invoking any skill in write mode. Record its runtime path and resolved SHA in
 the execution handoff, never in the portable issue.
 
-All governing-issue, implementation, deferred-issue, roadmap, and completion-
+All governing-issue, implementation, backlog, and completion-
 record file writes must occur inside that verified worktree. If the branch is
 checked out in an ambiguous or dirty shared checkout, belongs to another active
 worktree, cannot be fetched, or cannot receive pushes, stop before writing. An
@@ -59,8 +59,8 @@ non-refuted result:
   its normal gates.
 - `DEFER_FOLLOW_UP`: use only when every contract condition in the code-review
   Review Loop Contract passes. Route the deduplicated root causes through
-  `$issue-review` Deferred Follow-Up Issue Mode, then publish the resulting
-  issue files and roadmap or index update as described below.
+  `$issue-review` Deferred Follow-Up Inbox Mode, then publish the resulting
+  backlog file as described below.
 - `USER_DECISION`: pause automatic transitions. Use `$grilling` to resolve one
   dependency-aware material decision at a time, then use `$issue-review` to
   update or create the approved issue before `$issue-delivery` resumes. The
@@ -80,46 +80,40 @@ Process all `AUTO_CORRECT` findings first as one coherent correction batch.
 Revalidate and re-review the corrected head, then recompute the remaining
 `DEFER_FOLLOW_UP` set before creating planning artifacts. A correction may
 resolve, narrow, merge, or invalidate a proposed follow-up; never create the
-issue batch from a superseded head. Publish the final deduplicated follow-up
-issues as one later planning batch and perform one more current-head review.
+inbox entries from a superseded head. Publish the final deduplicated follow-up
+entries as one later planning batch and perform one more current-head review.
 
 ## Capture Deferred Follow-Ups
 
 For every `DEFER_FOLLOW_UP` batch:
 
-1. Let `$issue-review` discover the repository's canonical issue directory,
-   filename convention, roadmap or index, backlog status, next stable identity,
-   and existing related issues.
-2. Reuse an exact existing issue when one already owns the root cause. Otherwise
-   deduplicate by root cause and create one implementation-ready **Smallest
-   Coherent Slice** per independent outcome. A product-research dependency may
-   instead become a bounded discovery or decision issue with an exact evidence
-   outcome.
-3. Record the reviewed pull request as a dependency and use the repository's
-   canonical post-merge base for the eventual Branch Contract unless a verified
-   stack requires another base. Do not invent priority.
-4. Update the canonical roadmap or index in the same write pass.
-5. When issue or roadmap content changed, stage only those files, create one
-   coherent commit, and push it to the existing pull-request branch without
-   rewriting history. When an exact existing issue and roadmap entry already
-   contain all required ownership and evidence, make no no-op commit.
-6. Update the pull-request description when needed with each stable issue path or link, the
-   originating finding IDs, and the evidence that made deferral safe.
-7. Re-read the remote pull request and verify that the new head, files, roadmap
+1. Let `$issue-review` discover the repository's canonical backlog or intake
+   file and search existing issues and entries for an exact owner.
+2. Reuse an exact existing owner. Otherwise deduplicate by root cause and write
+   short entries using the canonical intake status; create root `BACKLOG.md`
+   with `Inbox` status if no such file exists. Record the reviewed pull request
+   and why the current change remains releasable. Do not invent priority or a
+   full implementation plan.
+3. When backlog or origin-link content changed, stage only those files, create
+   one coherent commit, and push it to the existing pull-request branch without
+   rewriting history. When an exact existing owner already contains all
+   required evidence, make no no-op commit.
+4. Update the pull-request description when needed with each stable backlog
+   entry or link, the originating finding IDs, and the evidence that made
+   deferral safe.
+5. Re-read the remote pull request and verify that the new head, backlog
    entries, and description links exist.
 
-If the repository has no canonical planning surface, start a focused grilling
-decision rather than inventing one. If the pull-request branch cannot receive
-the files, stop before merge and report the exact permission, fork, or branch
-protection limitation. Do not substitute chat notes, review comments, TODOs, or
-external tracker items.
+If the pull-request branch cannot receive the backlog file, stop before merge
+and report the exact permission, fork, or branch protection limitation. Do not
+substitute chat notes, review comments, TODOs, or external tracker items.
 
 A planning commit changes the reviewed head. Re-run invalidated validation and
 the current-head review only when the Git head changed; a PR-description-only
 update requires remote metadata verification but does not create a new code
 head. Preserve each deferred finding's ID and treat it as a resolved disposition
-only after its issue file, roadmap entry, and PR link are verified; do not
-report the unchanged implementation as a newly unresolved duplicate.
+only after its backlog entry or exact existing owner and PR link are verified;
+do not report the unchanged implementation as a newly unresolved duplicate.
 
 ## Converge On The Current Head
 
@@ -134,9 +128,10 @@ After every correction or planning batch that changes the Git head:
 
 When exact follow-up reuse or a PR-description-only update leaves the Git head
 unchanged, keep the existing current-head review and verify only the durable
-issue and roadmap ownership plus the resulting remote PR metadata.
+backlog ownership plus the resulting remote PR metadata.
 
-When every route is settled and the final current-head review is clean, return
+When every route is settled and the final current-head review verifies that no
+undispositioned confirmed finding remains, return
 to the main skill's **Deliver Learning Feedback** and **Verify Publication**
 steps before evaluating the merge gates. A learning-feedback comment or Slack
 message does not change the Git head. Missing or failed Slack delivery remains
@@ -145,7 +140,7 @@ nonblocking under the main skill's rules.
 Do not merge from an earlier clean review, a mutation response, a stale CI run,
 or an Issue Completion Record whose reviewed change head does not contain the
 validated behavior. The record does not name its own containing commit. Permit
-later issue, roadmap, or completion-evidence commits only after reviewing the
+later issue, backlog, or completion-evidence commits only after reviewing the
 complete current head and verifying that those descendants invalidate no
 acceptance or runtime proof.
 
@@ -157,10 +152,10 @@ Immediately before merge, re-read the pull request and verify:
 - the pull request is open, non-draft, conflict-free, and not superseded;
 - the governing issue and Issue Completion Record name the reviewed
   behavior-changing head, and every later current-head commit is independently
-  verified as issue, roadmap, or completion evidence only;
+  verified as issue, backlog, or completion evidence only;
 - every acceptance criterion and required current-head validation has evidence;
-- every confirmed finding has a verified disposition, including durable issue,
-  roadmap, and PR-link proof for `DEFER_FOLLOW_UP`;
+- every confirmed finding has a verified disposition, including durable backlog
+  and PR-link proof for `DEFER_FOLLOW_UP`;
 - no unresolved blocking workflow-owned or human-owned review thread remains;
 - no unresolved change request, required reviewer approval, stack dependency,
   or repository policy blocks merge; and
@@ -223,6 +218,6 @@ that commit-identity limitation instead of weakening the no-force rule.
 
 Report the merged pull request and exact head, validation and review evidence,
 finding dispositions, learning-comment link and Slack delivery status, created
-or reused follow-up issues and roadmap entries, merge method and resulting
+or reused follow-up inbox entries, merge method and resulting
 commit, deleted branches and worktrees, and every retained cleanup target with
 its reason. Never collapse a failed merge or cleanup verification into success.

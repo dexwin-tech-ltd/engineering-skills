@@ -41,9 +41,10 @@ Before editing, verify:
 - **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
 - **Review loop**: the issue explicitly selects automatic or human-gated delivery, routes mechanical corrections separately from user-owned decisions and blockers, requires current-head revalidation and re-review, and defines its churn threshold and ready-to-merge stopping condition.
 - **Deferred follow-up**: when invoked for `DEFER_FOLLOW_UP`, every finding is
-  still eligible under the contract, deduplicated by root cause, represented by
-  an issue-review-ready coherent issue or bounded discovery issue, and present
-  in the canonical roadmap without invented priority.
+  still eligible under the Follow-Up Inbox contract, deduplicated by root
+  cause, and linked to an existing exact owner or a short entry in the
+  repository's canonical backlog file, creating root `BACKLOG.md` when none
+  exists. No priority or implementation-ready issue is invented at capture.
 - **Completion record**: the issue defines who writes and verifies its Issue Completion Record, which status-tracking surfaces must change with it, and which issue-owned or explicitly downstream gates control `Needs Verification` versus `Done`.
 - **Propagation**: reconcile inheriting issues, glossary/context entries, config consumers, shared invariants, and operational docs, or track an explicit prerequisite follow-up.
 - **Proof strength**: universal, negative, and mutual-exclusivity claims cover every element and direction; rounded displays agree with derived status indicators; literal runtime mechanisms are exercised or use a named proxy with its blind spot.

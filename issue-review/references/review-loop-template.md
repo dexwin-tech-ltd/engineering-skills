@@ -24,6 +24,11 @@ For an issue intended for `$issue-delivery`, include:
   `AUTO_CORRECT` returns to correction and re-review of the same checkpoint.
   `USER_DECISION` and `BLOCKED` pause delivery. An unresolved confirmed finding
   never advances.
+- Follow-up inbox rule: `DEFER_FOLLOW_UP` is a finding route only for confirmed,
+  independently releasable discoveries outside this issue under
+  `$engineering-for-certainty`'s Follow-Up Inbox contract. It may coexist with
+  a `CLEAN` checkpoint result. Retain evidence during delivery and file a
+  deduplicated repository backlog entry before issue completion.
 - Auto-correction authority: `AUTO_CORRECT` only for confirmed, deterministic,
   in-scope corrections that preserve approved intent, architecture, contracts,
   security posture, dependencies, and test strategy.

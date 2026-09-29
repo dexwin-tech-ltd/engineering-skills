@@ -1,35 +1,34 @@
-# Deferred Follow-Up Issue Mode
+# Deferred Follow-Up Inbox Mode
 
-### Deferred Follow-Up Issue Mode
+Use when authorized `$issue-delivery` or review-to-merge supplies confirmed
+findings routed `DEFER_FOLLOW_UP`. This is a focused planning write under
+`$engineering-for-certainty`'s [Follow-Up Inbox](../../engineering-for-certainty/references/follow-up-inbox.md)
+contract, not full issue preparation.
 
-When an explicitly authorized pull-request review supplies findings routed
-`DEFER_FOLLOW_UP`, create durable planning artifacts without changing the
-implementation:
+- Re-verify each finding against the current issue, current head, applicable
+  doctrine, and all deferral criteria. Rarity or Low severity does not suffice.
+- Search the repository's existing issues and backlog for the root cause. Link
+  an exact existing owner rather than creating a duplicate.
+- Group new findings by root cause. Use the repository's canonical backlog or
+  intake file and status convention. If none exists, create `BACKLOG.md` at the
+  repository root with a `Follow-up inbox` section and use `Inbox` status so a
+  human has a predictable place to triage.
+- Give each entry a descriptive title, intake status, trigger, observable
+  effect or credible maintenance consequence, supporting evidence, why the
+  current change remains releasable, and the originating issue or pull request.
+  Do not invent priority, product meaning, or an implementation plan.
+- Write all new entries and origin links in one coherent pass. Return their
+  paths and stable headings to the composing workflow for the completion
+  record, pull-request description when applicable, publication, and current-
+  head revalidation.
+- Make no no-op edit or commit when an existing entry already covers the
+  finding and its origin and evidence are current.
 
-- Re-verify that every supplied finding satisfies the composing workflow's
-  contract-based deferral criteria. Do not infer deferral from Low severity.
-- Search existing issue files, roadmap entries, and completed-work archives.
-  Reuse or update an exact existing issue instead of creating a duplicate.
-- Deduplicate new findings by root cause and create one **Smallest Coherent
-  Slice** per independently implementable outcome, not one file per review
-  comment or one catch-all cleanup issue.
-- Make each issue implementation-ready under this skill. When later
-  implementation depends on product research, create a bounded discovery or
-  decision issue with an exact evidence outcome rather than a vague issue or
-  placeholder.
-- Follow the repository's canonical filename, issue directory, roadmap or
-  index, and backlog status. Do not invent priority or silently create a new
-  planning system.
-- Record the reviewed pull request as a dependency and choose the eventual
-  Branch Contract against the repository's canonical post-merge base unless a
-  verified stack requires another base.
-- Write the complete issue files and roadmap or index update in one coherent
-  pass, then return their paths and stable identities to the composing
-  pull-request workflow for commit, push, PR-description update, and
-  current-head revalidation.
-- When an exact existing issue and roadmap entry already satisfy the finding,
-  verify and return them without manufacturing a no-op file change or commit.
+When a follow-up is selected for work, return to the normal `$issue-review`
+workflow to create or revise one implementation-ready Smallest Coherent Slice
+with acceptance criteria, proof, and a Branch Contract. Inbox status alone
+never authorizes implementation.
 
-If no canonical planning surface exists or the supplied branch cannot receive
-the planning files, stop and return that exact gap. Do not substitute a chat
-note, pull-request comment, external tracker item, TODO, or invented directory.
+If the verified branch cannot receive the repository-local backlog write,
+return that exact gap. A chat note, pull-request comment, external tracker item,
+or TODO does not satisfy the inbox filing requirement.

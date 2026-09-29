@@ -306,7 +306,15 @@ Use severity consistently:
 - **Medium**: Reachable edge-case bug, operational blind spot, material performance issue, maintainability risk likely to cause defects, or meaningful test gap tied to changed behavior.
 - **Low**: Minor but concrete risk worth fixing that is unlikely to cause material harm soon.
 
-Rank by severity and impact, then confidence, breadth, category, and urgency. When otherwise comparable, place correctness, security, data integrity, and reliability before cleanup, altitude, and convention findings. Do not let a trivial correctness issue outrank a materially higher-severity architectural risk.
+Rank by severity and impact, then confidence, breadth, category, and urgency.
+Give substantial weight to what users and stakeholders will see on primary UI
+journeys, including material divergence from an approved design; functioning
+code does not make a conspicuous visual or interaction failure Low severity.
+Within comparable severity, rank a prominent user-visible failure ahead of
+internal cleanup or convention risk. Keep security, data integrity, core
+correctness, and reliability consequences in the impact assessment. Do not let
+a trivial correctness issue outrank a materially higher-severity architectural
+risk.
 
 ## Output
 

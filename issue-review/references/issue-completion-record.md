@@ -29,15 +29,17 @@ The record must contain:
   re-run for each checkpoint;
 - deviations from the issue and any unplanned changes;
 - residual risks and every unverified or deferred check, with a linked owner or
-  trigger for downstream work; and
+  trigger for downstream work;
+- every eligible deferred finding, with a link to its repository backlog entry
+  or exact existing owner and the evidence that made deferral safe; and
 - branch, commit, and pull-request references when available.
 
 The record is an evidence index, not an evidence dump. Prefer compact tables and
 durable links to raw CI, pull-request, test, or review evidence.
 
 Do not require the record to name the commit that contains the record itself.
-When later commits change only the canonical issue, roadmap or index, deferred
-issue files, or completion evidence, record the last behavior-changing reviewed
+When later commits change only the canonical issue, roadmap or index, backlog
+entries, or completion evidence, record the last behavior-changing reviewed
 head and require an independent current-head review to verify that every later
 commit is evidence-only and invalidates no recorded proof.
 

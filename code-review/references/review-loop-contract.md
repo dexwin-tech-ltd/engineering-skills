@@ -11,9 +11,12 @@ ownership of material decisions.
 
 The governing issue must state authorized transitions, the automatic-correction
 boundary, user-owned decisions, required revalidation and re-review, the churn
-threshold, and the completion condition. An outer review-to-merge workflow must
-separately authorize durable follow-up and publication writes. Never infer
-authority from a goal or a general request to finish.
+threshold, and the completion condition. Authorized `$issue-delivery` and
+review-to-merge workflows may make the repository-local follow-up inbox writes
+defined by [Follow-Up Inbox](../../engineering-for-certainty/references/follow-up-inbox.md);
+read-only review may only recommend them. An outer review-to-merge workflow must
+separately authorize publication writes. Never infer authority from a goal or a
+general request to finish.
 
 ## Review Ownership
 
@@ -41,17 +44,15 @@ does not hide, weaken, or replace required proof; and verifier evidence has no
 material disagreement. It authorizes the Delivery Operator—not the Independent
 Reviewer—to apply the smallest correction and focused proof.
 
-Use `DEFER_FOLLOW_UP` only in an explicitly authorized review-to-merge workflow
-when the confirmed finding violates no current acceptance criterion or promised
-behavior; weakens no security, permission, data-integrity, migration-safety,
-operational-reliability, or required-validation obligation; conceals no known
-regression; leaves the pull request independently releasable; and can become a
-bounded coherent implementation, discovery, or decision issue. Severity is
-supporting evidence, not the deferral rule. The reviewer returns root-cause
-evidence, why the current change remains safe, the minimum affected surface,
-and a follow-up seed. The Delivery Operator owns issue creation, prioritization,
-publication, and current-head revalidation. This route is unavailable during
-checkpoint review or standalone `$issue-delivery`.
+Use `DEFER_FOLLOW_UP` during authorized issue delivery or review-to-merge only
+when the confirmed finding meets the [Follow-Up Inbox](../../engineering-for-certainty/references/follow-up-inbox.md)
+eligibility contract. Severity supports ranking but never decides deferral by
+itself. The reviewer returns root-cause evidence, why the current change
+remains safe, the minimum affected surface, and a follow-up seed. The Delivery
+Operator owns deduplication, repository-local inbox capture at closeout,
+publication when authorized, and current-head revalidation. A full
+implementation-ready issue is created only when the follow-up is selected for
+work. `DEFER_FOLLOW_UP` is a finding route, not a checkpoint result.
 
 Use `USER_DECISION` for material intent, scope, architecture, public contract,
 schema, migration, permission, security, dependency, or test-strategy choices;
@@ -65,9 +66,12 @@ justify changing implementation.
 ## Checkpoint Advancement
 
 After routing the review queue, the Delivery Operator assigns `CLEAN`,
-`AUTO_CORRECT`, `USER_DECISION`, or `BLOCKED`. `DEFER_FOLLOW_UP` is not
-permitted. `RESIDUAL_RISK` may coexist with `CLEAN` only when the issue makes
-the assumption non-blocking without weakening acceptance or highest-risk proof.
+`AUTO_CORRECT`, `USER_DECISION`, or `BLOCKED`. An eligible `DEFER_FOLLOW_UP`
+finding may coexist with `CLEAN` when its evidence note is retained for
+closeout inbox filing and it weakens no checkpoint-owned criterion, applicable
+doctrine, or required proof. `RESIDUAL_RISK` may coexist with `CLEAN` only when
+the issue makes the assumption non-blocking without weakening acceptance or
+highest-risk proof.
 
 ## Delivery Return Record
 
@@ -98,6 +102,7 @@ deduplicate authorized follow-ups.
 After correction, review the resulting head, rerun affected proof, reassess
 prior findings, and inspect the full resulting diff. Preserve IDs for existing
 root causes. Checkpoint review never replaces final full integration review.
-Do not declare the loop clean until the current head has no unresolved
-`CONFIRMED` finding, every prior finding has a disposition, and every declared
-coverage or independence limitation is recorded.
+Do not declare the loop clean until every `CONFIRMED` finding on the current
+head has a valid correction, decision, or deferred disposition, every prior
+finding has a disposition, required inbox entries are filed at closeout, and
+every declared coverage or independence limitation is recorded.

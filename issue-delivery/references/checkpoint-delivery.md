@@ -68,7 +68,8 @@ Advance only when:
 - all checkpoint-owned traceability rows have evidence;
 - every triggered specialist pass has current evidence, an outcome, and any
   limitation recorded;
-- no unresolved confirmed finding remains;
+- every confirmed finding has a valid correction, decision, or eligible
+  deferred disposition;
 - every prior checkpoint finding has a disposition;
 - correction-invalidated proof has been re-run; and
 - every residual risk is explicitly permitted by the issue.
@@ -79,10 +80,11 @@ pause delivery and leave any durable goal incomplete.
 `RESIDUAL_RISK` remains a finding route. Record a permitted residual risk and
 return `CLEAN`; return `USER_DECISION` when the issue does not permit it.
 
-`DEFER_FOLLOW_UP` is not permitted inside checkpoint delivery. Return
-`USER_DECISION` when a confirmed checkpoint finding cannot be corrected under
-the approved issue; an outer review-to-merge workflow may consider durable
-follow-up only after pull-request publication.
+`DEFER_FOLLOW_UP` remains a finding route, not a checkpoint result. Retain its
+evidence note, return `CLEAN` only when the Follow-Up Inbox eligibility
+contract passes and all checkpoint-owned proof remains valid, then file the
+deduplicated entry at issue closeout. Return `USER_DECISION` when eligibility
+or the approved issue meaning is unsettled.
 
 The existence of a goal never permits advancement, finding suppression,
 severity reduction, weakened proof, or silent selection of product meaning.

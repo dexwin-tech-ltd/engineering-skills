@@ -283,6 +283,15 @@ material when it changes one or more of:
 - the identity, meaning, or recognizable treatment of an approved asset; or
 - a repeated pattern whose individual error becomes significant across the UI.
 
+Give material mismatches on prominent, stakeholder-visible journeys substantial
+weight even when the underlying code functions. A material mismatch against the
+approved design of the delivered surface remains issue-owned and fails design
+conformance. A conspicuous mismatch on an unrelated existing surface may use
+the Follow-Up Inbox only when the current issue remains independently
+releasable; promptly flag it with a recommendation. Do not use visibility alone
+to override security or data-integrity impact, and do not treat minor rendering
+differences as material merely because they are visible.
+
 Subpixel anti-aliasing, platform font rasterization, minor colour interpolation,
 and rendering-engine differences are normally immaterial when they do not alter
 the accepted design.

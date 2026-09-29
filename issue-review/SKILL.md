@@ -77,9 +77,13 @@ For issue creation, naming, or repository planning conventions, read [Convention
 
 When an explicit review-to-merge workflow supplies verified findings, read [Composed Review-to-Merge Authorization](references/composed-review-to-merge.md) before writing a mechanical issue update. Product or scope decisions still require user confirmation.
 
-### Deferred Follow-Up Issue Mode
+### Deferred Follow-Up Inbox Mode
 
-When a composing pull-request workflow explicitly routes verified findings to `DEFER_FOLLOW_UP`, read [Deferred Follow-Up Issue Mode](references/deferred-follow-up.md).
+When an authorized delivery or composing pull-request workflow routes verified
+findings to `DEFER_FOLLOW_UP`, read [Deferred Follow-Up Inbox Mode](references/deferred-follow-up.md).
+This lightweight capture does not make the finding an implementation-ready
+issue and does not require the normal issue-readiness steps; use the full issue
+workflow when the follow-up is selected for work.
 
 ## Decomposition And Branch Contract
 

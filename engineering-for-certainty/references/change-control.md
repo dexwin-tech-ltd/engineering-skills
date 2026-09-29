@@ -5,12 +5,21 @@ Use when a discovery may alter an approved issue or plan.
 ## Mid-Implementation Discoveries
 
 During implementation, do not silently expand the plan. Classify discoveries as
-mechanical, material, or blocking.
+mechanical, eligible for the [Follow-Up Inbox](follow-up-inbox.md), material, or
+blocking. Verify the discovery and its relationship to the approved issue
+before changing code or selecting a route.
 
 Mechanical discoveries may be handled without user confirmation when they
 preserve the issue's intent, behavior, architecture, and scope. Examples include
 import fixes, local naming alignment, formatting, adapting to an existing
 equivalent helper, or adding a narrowly required test fixture.
+
+An eligible follow-up is a confirmed, independently deferrable finding outside
+the issue's promise. Keep a brief evidence note, continue the approved issue,
+and file the deduplicated finding in the repository backlog at closeout under
+the [Follow-Up Inbox](follow-up-inbox.md) contract. Promptly flag conspicuous
+user-visible findings with a recommendation while continuing independent work.
+Frequency or apparent rarity does not decide whether a finding can be deferred.
 
 Material discoveries require pausing before further implementation. Pause when
 the work would:
@@ -27,7 +36,13 @@ the work would:
 
 Blocking discoveries require stopping until the plan is corrected. Stop when
 the issue contradicts current code, depends on missing prerequisites, violates
-repo doctrine, or cannot satisfy its acceptance criteria as written.
+applicable repository doctrine for the current change, or cannot satisfy its
+acceptance criteria as written. Correct an applicable required doctrine
+violation in changed code when the fix is mechanical and in scope; use the
+material decision path when correction would change approved meaning or scope.
+An unrelated existing violation may be deferred only when the current issue
+remains independently releasable. An optional style preference without a
+concrete consequence is not a finding.
 
 For material or blocking discoveries:
 

@@ -253,12 +253,13 @@ head branch. A generic pull-request review does not enter this mode implicitly.
 _Avoid_: Generic PR review, merge bot, branch-protection bypass
 
 **Deferred Follow-up Finding**:
-A confirmed pull-request finding that is safe to postpone because it does not
-violate the governing issue's acceptance criteria or promised behaviour, weaken
-security, permissions, data integrity, migration safety, operational
-reliability, or required validation, conceal a known regression, or prevent the
-pull request from remaining independently releasable. It must be expressible as
-a bounded coherent issue; severity alone never makes a finding deferrable.
+A confirmed discovery during authorized delivery or pull-request review that
+is safe to postpone because it is outside the current promise, weakens no
+applicable doctrine, acceptance, required proof, security, permissions, data
+integrity, migration safety, or operational reliability, conceals no known
+regression, and leaves the current change independently releasable. It receives
+a durable repository backlog entry at closeout. Severity or rarity alone never
+makes a finding deferrable.
 _Avoid_: Insignificant issue, ignored finding, Low-severity finding
 
 **Merged Branch Cleanup**:
@@ -530,13 +531,15 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - A substantial **Smallest Coherent Slice** may contain a small ordered set of
   **Review Checkpoints** without creating extra branches or pull requests.
 - Every **Review Checkpoint** advances only from a reviewed candidate to an
-  **Accepted Checkpoint Head** with no unresolved confirmed finding.
+  **Accepted Checkpoint Head** with every confirmed finding corrected, deferred
+  under the Follow-Up Inbox contract, or otherwise dispositioned.
 - `AUTO_CORRECT` returns to the current checkpoint; `USER_DECISION` and
   `BLOCKED` pause delivery and leave any durable goal incomplete.
-- `DEFER_FOLLOW_UP` is a confirmed-finding route available only to an explicit
-  **Review-to-Merge Mode** that owns the durable issue, roadmap, pull-request,
-  and revalidation writes. It is not a checkpoint result and severity alone
-  cannot select it.
+- `DEFER_FOLLOW_UP` is a confirmed-finding route in authorized issue delivery
+  and explicit **Review-to-Merge Mode**. It requires a verified out-of-scope,
+  independently releasable finding and a durable repository backlog entry at
+  closeout, creating root `BACKLOG.md` when no canonical backlog exists. It is
+  not a checkpoint result; severity or rarity alone cannot select it.
 - `RESIDUAL_RISK` is a finding route, never a checkpoint result. A checkpoint
   may return `CLEAN` with a recorded residual risk only when the governing issue
   explicitly permits it and acceptance or highest-risk proof is not weakened.
@@ -564,22 +567,18 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - **Review-to-Merge Mode** merges only the exact current head that passed its
   acceptance, validation, review, thread, conflict, approval, and required-CI
   gates. It never bypasses branch protection or uses an administrative override.
-- A **Deferred Follow-up Finding** becomes a canonical issue file and roadmap
-  entry on the pull-request branch before merge. That planning commit changes
-  the reviewed head, so the resulting head requires current validation and
-  review before it may merge.
-- Deferred follow-up findings are deduplicated by root cause and decomposed into
-  **Smallest Coherent Slices**. Each file must pass issue review as an
-  implementation-ready issue, or as a bounded discovery or decision issue with
-  an exact evidence outcome when later implementation still depends on product
-  research. The workflow follows the repository's existing roadmap status and
-  does not invent priority.
+- A **Deferred Follow-up Finding** gets a short entry in the repository's
+  canonical backlog file on the pull-request branch before merge; the workflow
+  creates root `BACKLOG.md` if none exists. That planning commit changes the
+  reviewed head, so the resulting head requires current validation and review.
+- Deferred findings are deduplicated by root cause and use the repository's
+  intake status without invented priority. A full **Smallest Coherent Slice**
+  issue is prepared through issue review only when selected for work.
 - A pull request with a **Deferred Follow-up Finding** does not merge until its
-  issue file and roadmap entry are present on the pull-request branch. When the
-  repository has no canonical planning surface, the workflow pauses for a
-  decision instead of inventing one. When the branch cannot be updated, it
-  reports the exact access limitation and stops before merge instead of
-  substituting chat notes, pull-request comments, or an external tracker.
+  backlog entry or exact existing owner and PR link are verified. When the
+  branch cannot be updated, the workflow reports the access limitation and
+  stops before merge rather than substituting chat notes, pull-request
+  comments, or an external tracker.
 - After a verified merge, **Review-to-Merge Mode** performs **Merged Branch
   Cleanup**. It deletes the exact remote head branch only when it is not the
   default, protected, shared, reused, or still required by an open pull request.

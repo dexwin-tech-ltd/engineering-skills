@@ -28,7 +28,7 @@ Open only the guidance triggered by the affected behavior. If you cannot establi
 - **External input, backend architecture, services, persistence, public contracts, or error semantics:** the relevant parts of [Boundaries, Architecture, and Errors](references/backend-contracts.md).
 - **Endpoint tests, observable runtime behavior, schema/data migrations, or high-impact invariants:** the relevant parts of [Verification Details](references/verification-details.md). Formal observable-runtime issues also require [Runtime Acceptance](references/runtime-acceptance.md); every database schema or data migration requires the isolated Migration Proof Harness described in Verification Details.
 - **New projects, lint/format or hook setup, branches, pull-request decomposition, or release/version changes:** [Project Conventions](references/project-conventions.md).
-- **A discovery that may alter a plan or approved issue:** pause and classify it using [Change Control](references/change-control.md). Mechanical fixes may proceed; material or blocking changes require the issue's decision path before implementation continues.
+- **A discovery that may alter a plan or approved issue:** classify it using [Change Control](references/change-control.md). Mechanical fixes may proceed; eligible out-of-scope findings use the [Follow-Up Inbox](references/follow-up-inbox.md); material or blocking changes require the issue's decision path before implementation continues.
 
 ## Agent Roles and Delegation
 

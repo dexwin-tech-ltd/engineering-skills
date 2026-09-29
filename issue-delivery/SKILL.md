@@ -75,14 +75,16 @@ SHA in the execution handoff, not in the portable issue.
 
 If the issue is not ready, stop before implementation and report the exact
 missing or contradictory contract. Use `$issue-review` only when the user also
-asks to revise the issue; do not silently respec approved work.
+asks to revise the issue; do not silently respec approved work. The separate
+Deferred Follow-Up Inbox Mode may capture eligible findings without revising
+the approved implementation issue.
 
 ## Authority Boundary
 
 The user's invocation authorizes the in-scope implementation, validation,
 review coordination, mechanical correction loop, branch publication,
-pull-request creation or update, and CI repair needed to reach the completion
-condition.
+pull-request creation or update, CI repair, and repository-local Follow-Up Inbox
+capture needed to reach the completion condition.
 
 Honor a narrower explicit publication boundary in the governing issue or user
 request. It may stop delivery after local implementation, validation, and
@@ -103,10 +105,11 @@ reviewer assignment, or unrelated cleanup.
 
 When an outer **Review-to-Merge Mode** invokes this skill, this authority and
 completion boundary do not change. Deliver only the approved issue and return
-the exact ready-to-merge head and evidence to the outer workflow. The outer
-workflow owns `DEFER_FOLLOW_UP` planning artifacts, the final merge decision,
-and guarded post-merge branch cleanup; this skill must not absorb those writes
-or treat the outer workflow's merge authority as implementation authority.
+the exact ready-to-merge head and evidence to the outer workflow. This skill
+owns inbox capture for findings discovered during issue delivery; the outer
+workflow owns follow-ups from its separate pull-request review, the final merge
+decision, and guarded post-merge branch cleanup. Do not treat the outer
+workflow's merge authority as implementation authority.
 
 ## Goal And Gate Interaction
 
@@ -183,6 +186,10 @@ and review may run in parallel when their workstreams are genuinely independent.
 Classify discoveries before acting:
 
 - Apply **mechanical** changes that preserve approved intent and scope.
+- Retain a short evidence note for **eligible follow-ups** under
+  `$engineering-for-certainty`'s [Follow-Up Inbox](../engineering-for-certainty/references/follow-up-inbox.md),
+  continue the approved issue, and file them at closeout. Promptly flag
+  conspicuous user-visible findings with a recommendation.
 - Pause for **material** discoveries that require a product, contract,
   architectural, security, dependency, migration, or scope decision.
 - Stop for **blocking** contradictions, missing prerequisites, or unsafe
@@ -269,6 +276,11 @@ decision under the issue's Review Loop Contract:
 - **AUTO_CORRECT**: apply the smallest correction when the finding is
   confirmed, fully inside approved scope, has one clear interpretation, and
   does not choose new product or architectural meaning.
+- **DEFER_FOLLOW_UP**: retain a confirmed finding outside the approved issue
+  only when the Follow-Up Inbox eligibility contract passes. Recheck it against
+  the final head and file a deduplicated repository backlog entry at closeout.
+  Treat this as a finding disposition, not as a waiver of issue-owned proof or
+  applicable doctrine.
 - **USER_DECISION**: pause when the correction could change approved behavior,
   scope, architecture, public contracts, schemas, migrations, permissions,
   security posture, dependency choice, or test strategy; when product context
@@ -310,6 +322,14 @@ head.
 
 ### 7. Write The Local Completion Evidence
 
+Before marking the issue done, deduplicate all eligible discoveries and
+`DEFER_FOLLOW_UP` findings against existing issues and backlog entries. Add or
+link the short entries in the canonical repository backlog, creating root
+`BACKLOG.md` when none exists, as specified by the Follow-Up Inbox contract.
+Create a full implementation-ready issue only when that follow-up is selected.
+Keep this planning-only write distinguishable from the last behavior-changing
+reviewed head and include it in the current-head evidence review.
+
 Update the canonical issue's Issue Completion Record with the actual diff,
 traceability outcomes, validation, checkpoint IDs and accepted head SHAs,
 checkpoint and final-review results, finding dispositions, deviations, residual
@@ -320,7 +340,8 @@ classified Design Audit Matrix, comparison methods, approved deviations, and
 independent audit result. Identify the last behavior-changing reviewed head
 rather than trying to name the commit that contains the record itself. Keep the
 record concise and keep the status truthful when remote evidence is still
-pending.
+pending. Link each deferred backlog entry or exact existing owner from the
+Issue Completion Record and the delivery handoff.
 
 ### 8. Create Or Update The Pull Request
 
@@ -391,6 +412,8 @@ Declare delivery complete only when:
   the recorded behavior-changing head are verified evidence-only descendants;
 - every confirmed finding has a recorded disposition and no unresolved blocker
   remains;
+- every deferred finding has a verified backlog entry or exact existing owner
+  linked from the Issue Completion Record;
 - the Issue Completion Record and linked status surfaces are current; and
 - one of these publication conditions is satisfied:
   - **Default Ready to Merge:** the pull request truthfully describes and points

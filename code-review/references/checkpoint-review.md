@@ -50,10 +50,13 @@ Reviewer does not select routes or a checkpoint result. The Delivery Operator
 applies the Review Loop Contract and derives `CLEAN`, `AUTO_CORRECT`,
 `USER_DECISION`, or `BLOCKED`.
 
-`CLEAN_EVIDENCE` requires no unresolved confirmed finding, complete prior
+`CLEAN_EVIDENCE` requires no undispositioned confirmed finding, complete prior
 finding dispositions, current checkpoint proof, classified specialist and
 design-audit outcomes, no stale head, and explicit residual-risk evidence. A
-goal cannot change the review outcome, routes, or checkpoint result.
+prior `DEFER_FOLLOW_UP` disposition counts only when the reviewer verifies that
+the current change remains independently releasable under the Follow-Up Inbox
+contract; the reviewer does not select that route. A goal cannot change the
+review outcome, routes, or checkpoint result.
 
 ## Final Integration Boundary
 

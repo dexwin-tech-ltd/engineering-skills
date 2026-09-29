@@ -83,15 +83,16 @@ explicitly permits the stated risk and it does not weaken acceptance or
 highest-risk proof, record it under `residual_risks` and return `CLEAN` for the
 checkpoint. Otherwise return `USER_DECISION`.
 
-`DEFER_FOLLOW_UP` is not a checkpoint route. It is available only to an outer
-review-to-merge workflow after pull-request publication; use `USER_DECISION`
-when a checkpoint finding cannot be corrected under its approved contract.
+`DEFER_FOLLOW_UP` is a finding route, not a checkpoint result. An eligible
+out-of-scope finding may be recorded for the Follow-Up Inbox at issue closeout
+while the checkpoint returns `CLEAN` when all owned proof remains valid. Use
+`USER_DECISION` when eligibility or approved meaning is unsettled.
 
 A durable goal never changes these transitions. It supplies persistence only
 while an authorized transition exists.
 
-Do not advance with an unresolved confirmed finding. Do not downgrade, suppress,
-or reinterpret a finding to preserve momentum.
+Do not advance with an undispositioned confirmed finding. Do not downgrade,
+suppress, or reinterpret a finding to preserve momentum.
 
 `CLEAN` also requires current evidence for every triggered specialist pass. The
 checkpoint record names each pass, its owned proof, outcome, and limitation; it

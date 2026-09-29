@@ -18,8 +18,9 @@ reconstructing their instructions.
 An explicit request to execute this combined workflow authorizes in-scope
 corrections, meaningful regression coverage, local validation, commits and
 pushes to the existing PR branch, PR comments and decision records, repository-
-defined label transitions, re-review requests, and the Slack decision messages
-below. Merely discovering or reading this skill grants no write authority.
+defined label transitions, re-review requests, repository-local Follow-Up
+Inbox entries for eligible findings, and the Slack decision messages below.
+Merely discovering or reading this skill grants no write authority.
 Honor narrower user authorization and runtime permissions.
 
 This workflow replaces ordinary interactive finding adjudication and the
@@ -61,7 +62,9 @@ existing governing issue or handoff, limited to the authorized scope:
 
 - Automatic review, in-scope correction, push, and CI follow-through are allowed.
 - Only the AUTO_CORRECT criteria below permit correction without adjudication.
-- Material choices use USER_DECISION; no automatic follow-up deferral is allowed.
+- Material choices use USER_DECISION; only findings eligible under
+  `$engineering-for-certainty`'s Follow-Up Inbox contract may use
+  DEFER_FOLLOW_UP.
 - Every correction requires affected proof and full resulting-diff re-review.
 - Two unsuccessful correction cycles for the same root cause force escalation.
 - Completion means verified corrections awaiting reviewer approval, never merge.
@@ -93,6 +96,10 @@ Route each result:
   product, dependency, migration, permission, or security-policy choice,
   preserves acceptance criteria and proof, and has no material evidentiary
   disagreement.
+- **DEFER_FOLLOW_UP**: CONFIRMED, outside the approved PR correction scope, and
+  independently releasable under the Follow-Up Inbox contract. Retain the
+  evidence, promptly flag conspicuous user-visible findings, and file a
+  deduplicated repository backlog entry after corrections and re-review.
 - **USER_DECISION**: unresolved material intent or scope, architecture, contract,
   security or other user-owned choice; material disagreement evidence cannot
   settle; oscillating fixes; or the same root cause surviving two correction
@@ -199,6 +206,15 @@ branch; never publish a partial fix dependent on an unresolved decision.
 Check CI for the exact pushed head. Correct failures caused by this work;
 report unrelated, inaccessible, or pending checks accurately.
 
+Reassess proposed `DEFER_FOLLOW_UP` findings against the corrected head. For
+those still eligible, use `$issue-review` Deferred Follow-Up Inbox Mode to
+write or reuse repository backlog entries, creating root `BACKLOG.md` when the
+repository has no canonical backlog. Recheck the remote head, link the entries
+in the PR description, and push any planning-only commit to the existing
+branch. Re-run invalidated proof and independently verify that the new head
+remains releasable; check CI for that exact head. A full issue is prepared only
+when the follow-up is selected for work.
+
 Reply to existing concerns with the change or refutation, commit/code evidence,
 validation, and remaining limitations. Record newly found and corrected defects
 in a durable correction summary; do not publish them as still blocking.
@@ -244,8 +260,10 @@ published next-step instructions. Read back every label change.
 Request reviewer reassessment only when all blocking concerns have evidenced
 dispositions, required corrections are pushed, no USER_DECISION remains,
 required checks and CI pass for the current head, independent full-diff review
-has no unresolved confirmed findings, and repository workflow labels match the
-required state. Verify the request and avoid duplicates for an unchanged head.
+has no undispositioned confirmed findings, every deferred finding has a
+verified backlog entry or exact existing owner linked from the PR, and
+repository workflow labels match the required state. Verify the request and
+avoid duplicates for an unchanged head.
 
 Use accurate, potentially overlapping outcomes:
 
@@ -257,7 +275,7 @@ Use accurate, potentially overlapping outcomes:
 
 Read back external state and report PR link and final SHA, review scope,
 corrections/commits, validation and independent-review/CI results, finding
-and thread dispositions, decision/source links, Slack delivery status,
+and thread dispositions, backlog and decision/source links, Slack delivery status,
 verified labels or rule gaps, re-review status, and remaining clearing actions.
 An escalation is not a resolved finding, a recorded decision is not a verified
 fix, and a push is not passing proof. Never claim merge approval.
