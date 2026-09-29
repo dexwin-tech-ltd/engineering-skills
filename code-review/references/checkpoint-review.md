@@ -24,6 +24,8 @@ changes. Activate any newly triggered companion or specialist pass.
 Run the normal pipeline: recover intent, choose effort from risk, inspect every
 surface, discover candidates, normalize and deduplicate them, skeptically verify
 every survivor, and return route-relevant facts without selecting routes.
+Finish the checkpoint's complete candidate landscape before returning findings;
+do not alternate one finding with one correction while discovery is unfinished.
 
 ## Checkpoint Return Record
 

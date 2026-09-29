@@ -110,28 +110,7 @@ or treat the outer workflow's merge authority as implementation authority.
 
 ## Goal And Gate Interaction
 
-A durable goal is a persistence mechanism, not transition authority.
-
-When a goal is active:
-
-- continue only while the current delivery state has an authorized next action;
-- never change a review verdict or finding route to preserve momentum;
-- never treat the goal's stopping condition as permission to change product
-  meaning, scope, architecture, contracts, security posture, dependencies, or
-  test strategy;
-- keep `AUTO_CORRECT` work inside the current checkpoint until its corrected
-  head is revalidated and re-reviewed;
-- pause and yield on `USER_DECISION` or `BLOCKED`, leaving the goal incomplete;
-- do not cross a checkpoint with an unresolved confirmed finding; and
-- mark the goal complete only at the completion condition declared by the
-  governing issue or explicit user instruction. The default is Ready to Merge;
-  an explicit narrower publication boundary may define a truthful local
-  completion target instead. A publication stop with no local completion target
-  leaves the goal incomplete.
-
-An active but incomplete goal may be waiting for the user or an external owner.
-It does not require the operator to keep acting when no authorized transition
-exists.
+When a durable goal is active, read [Goal Persistence](references/goal-persistence.md). A goal preserves persistence only while the issue has an authorized next transition; it never changes finding routes, review gates, or completion authority.
 
 ## Delivery Workflow
 
@@ -155,14 +134,7 @@ and Branch Contract and introduces no unrelated change. Otherwise pause for
 branch, or create or publish a second implementation branch as a workaround.
 Preserve unrelated user work and stop on an ambiguous mixed worktree.
 
-When an outer review-to-merge workflow supplies an issue-approved **Existing PR
-Correction Contract**, use its exact published head and base as the branch
-identity instead of requiring a conventional replacement branch. Verify the
-current remote head SHA and push authority, then attach a dedicated linked
-worktree to that branch before editing. Do not rename the branch, open a
-replacement pull request, rewrite history, or proceed against a fork head that
-cannot receive the correction. Verify the Approved Issue Commit is present on
-that branch before applying any newly authorized correction.
+When an outer review-to-merge workflow supplies an issue-approved **Existing PR Correction Contract**, read [Existing PR Correction](references/existing-pr-correction.md) and use its exact published head and base without replacing the PR.
 
 Publish a short pre-work handoff containing the issue, branch, base ref, base
 SHA, Approved Issue Commit SHA, runtime worktree path, selected validation, and
@@ -227,6 +199,15 @@ covers the final head; rerun only proof invalidated by later changes. Do not
 repeat broad suites merely because another stage ran them. Repository CI and
 issue-mandated gates remain binding.
 
+When a result will be reused across stages or agents, keep a compact working
+evidence index keyed to its acceptance or traceability row. Record the exact
+command or scenario, outcome, tested revision and environment, evidence link,
+and what later changes would invalidate it. Keep the index in the active task;
+make it a concise handoff only when work crosses a context or session. Do not
+create a per-issue file by default. Before reusing a result, check its raw
+evidence and currency against the candidate. Reconcile final results into the
+Issue Completion Record instead of copying the working index wholesale.
+
 Run every applicable traceability row against the combined canonical branch.
 Run formatting, linting, unit, integration, E2E, migration, mutation, security,
 accessibility, or manual proof required by the issue and triggered doctrine.
@@ -240,23 +221,7 @@ Use the triggered frontend, auth/security, and observability doctrine for design
 comparison, Test Identity Plans, disposable inboxes, Test Message Sinks, and
 secret-free evidence.
 
-For design-backed frontend work, read and follow `$engineering-frontend`'s
-[Design Conformance And
-Audit](../engineering-frontend/references/design-conformance.md). Before judging
-the implementation, re-fetch the authoritative source and compare its relevant
-version or node signature with the approved issue baseline. Do not overwrite the
-baseline merely because the source changed. Route relevant source changes as
-`DESIGN_DRIFT` and pause for the issue revision or user decision required by the
-contract.
-
-Exercise every applicable Design Audit Matrix row against the running exact
-candidate. Capture the implementation, perform the required side-by-side and
-overlay or image-diff comparisons, exercise designed interactions and
-accessibility, and record one typed outcome per row. Regenerate a defective
-image or HTML/Tailwind reference only when the approved design proves that the
-artifact is wrong; never change production code to match a defective export.
-Keep the issue `Needs Verification` while any required source check, artifact,
-row, or comparison is missing, failed, inaccessible, or stale.
+For design-backed frontend work, read [Design-Backed Delivery](references/design-backed-delivery.md) and `$engineering-frontend`'s [Design Conformance And Audit](../engineering-frontend/references/design-conformance.md). Keep the issue `Needs Verification` while required design proof is missing or stale.
 
 Run preview or staging scenarios when that environment safely exposes the exact
 candidate and deployment is already automated or separately authorized. This

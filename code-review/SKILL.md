@@ -93,34 +93,16 @@ Run the review as six distinct phases:
 When `$code-review` is invoked as the read-only analysis engine inside
 `$issue-delivery` or another explicitly authorized delivery workflow, read and
 follow [Review Loop Contract](references/review-loop-contract.md) before Phase
-0. The composing workflow must supply a governing issue with correction and
-escalation authority.
-
-Keep every finder and verifier read-only. After completing the normal full
-discovery and verification pipeline, return the complete evidence-based verdict
-queue and route-relevant facts to the composing workflow. The Independent
-Reviewer owns verdicts; the **Delivery Operator** owns `AUTO_CORRECT`,
-`DEFER_FOLLOW_UP`, `USER_DECISION`, `BLOCKED`, or `RESIDUAL_RISK` routing and
-checkpoint advancement under the governing Review Loop Contract. This mode
-overrides ordinary one-at-a-time presentation only when the composing workflow
-has authority to process the complete queue; it does not weaken evidence,
-review independence, or user ownership of material decisions.
+0. Require a governing issue with correction and escalation authority. Return
+the complete evidence-based verdict queue to the composing workflow; the
+Independent Reviewer stays read-only and does not select finding routes.
 
 ### Checkpoint Review Mode
 
 When the composing delivery workflow identifies a review checkpoint, read and
 follow [Checkpoint Review](references/checkpoint-review.md) before Phase 0.
-
-Checkpoint Review Mode keeps the normal discovery, verification, deduplication,
-severity, and independence standards. It changes only the declared review range
-and checkpoint-specific return record; the Delivery Operator still owns route
-and advancement decisions.
-
-A checkpoint review must finish the complete candidate landscape for that
-checkpoint before returning findings. Do not alternate between discovering one
-finding and correcting it while other checkpoint findings remain undiscovered.
-
-Checkpoint Review Mode never replaces the final full integration review.
+It changes the declared range and return record, not the review standard or the
+requirement for a final full integration review.
 
 ## Phase 0: Gather the Review Scope
 

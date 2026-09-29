@@ -3,6 +3,9 @@
 Use this contract only when `$code-review` is the read-only Independent
 Reviewer inside a composing workflow such as `$issue-delivery`. Direct review
 keeps the interactive Review Queue behavior from `SKILL.md`.
+Return the complete verified queue at once only when the composing workflow has
+authority to process it; this does not weaken review independence or user
+ownership of material decisions.
 
 ## Required Issue Contract
 

@@ -5,7 +5,7 @@ description: Explicit observability doctrine for backend and frontend operationa
 
 # Engineering Observability
 
-Use this companion skill with `$engineering-for-certainty` when work touches operational telemetry. Apply the doctrine in order: centralized configuration, signal-specific contracts, tracing and correlation, client ingestion, delivery and capacity, then verification.
+Use this companion skill with `$engineering-for-certainty` when work touches operational telemetry. Apply the common signal-safety contract below and read the references triggered by the changed behavior before verification.
 
 ## Scope
 
@@ -90,84 +90,17 @@ db.constraint
 
 Output-validation failures and unexpected infrastructure failures must still produce a Safe Log Event through their owning source adapter.
 
-## Tracing Activation And Instrumentation
+## Tracing And Correlation
 
-Require tracing when the work explicitly changes tracing; crosses services, processes, queues, webhooks, or other asynchronous boundaries; changes a critical multi-dependency path that logs and metrics cannot diagnose; or extends a path already traced by the repo. Do not add tracing to simple local work without one of these triggers.
+Tracing is required when the work explicitly changes tracing; crosses services, processes, queues, webhooks, or other asynchronous boundaries; changes a critical multi-dependency path that logs and metrics cannot diagnose; or extends a path already traced by the repo. For tracing activation, span contracts, W3C propagation, or correlation ownership, read [Tracing And Correlation](references/tracing-and-correlation.md).
 
-- Preserve a compatible existing tracing stack. Otherwise use OpenTelemetry with W3C Trace Context.
-- Prefer maintained framework and library instrumentation for supported HTTP, RPC, database, provider, and messaging boundaries. Add targeted manual spans for significant domain operations, unsupported integrations, or missing causal links; do not create one span per function.
-- Create inbound server or consumer spans, outbound client or producer spans, and inject or extract context at every supported causal boundary on the affected path.
-- Use parent context for direct causal continuation, links for fan-out, fan-in, batch, or otherwise non-parental relationships, and a root span for cron or background work with no valid upstream context.
-- Let `$engineering-frontend` own where significant client spans begin. Activate browser or mobile tracing only for critical journeys that meet the same risk trigger.
+## Client Telemetry
 
-## Trace Context And Span Contract
+For frontend operational events or spans, ingestion, or direct crash reporting, read [Client Telemetry](references/client-telemetry.md). Structured operational events and traces use controlled backend ingestion; the reference defines the narrow direct crash-reporting exception.
 
-- Follow the applicable OpenTelemetry semantic convention for span names, kinds, attributes, and error status before defining custom fields.
-- Keep span names stable and low-cardinality. Put approved execution identifiers in bounded attributes, never in span names, and namespace application-specific attributes.
-- Review every automatic instrumentation's emitted attributes and capture settings. Allowlist or sanitize them before export; disable HTTP headers, query strings and userinfo, database statements and parameters, messaging payloads, RPC bodies, and provider request or response capture unless a narrower safe contract explicitly permits a field.
-- Mark a span as `Error` with a predictable low-cardinality `error.type` when the instrumented operation throws, returns an error result, or otherwise fails its declared contract.
-- Record a sanitized propagated exception at one owning boundary when it materially helps diagnosis. Never export raw messages, stacks, causes, bodies, query text, parameters, or third-party payloads.
-- Represent handled expected domain outcomes with a bounded outcome attribute rather than error status. Leave successful status unset unless the applicable convention requires `Ok`.
-- Treat incoming baggage as untrusted. Propagate only approved bounded keys, never put secrets or direct identity in baggage, and never use baggage for authentication or authorization.
+## Sampling, Delivery, Capacity, And Retention
 
-## Correlation And Ownership
-
-- Give each identifier one lifecycle: a request ID identifies one inbound request when the API convention needs it; trace and span IDs identify the connected execution and current operation; a separate correlation ID exists only for a business workflow spanning multiple traces or when an external contract requires it.
-- Add active trace and span IDs to structured logs. Propagate trace context through causally connected boundaries; do not manufacture request IDs for queues, cron, or jobs.
-- Derive actor, tenant, environment, and deployment context from trusted server state. Never trust a frontend payload to assert identity or authority.
-- Generate authoritative security and audit events on the backend. Frontend events are advisory operational telemetry only.
-
-## Client Telemetry Ingestion
-
-- Send frontend structured operational events and trace payloads through dedicated controlled backend endpoints. Never export those signals directly to Better Stack, an OpenTelemetry Collector, or another third-party sink.
-- Treat each endpoint as an untrusted public telemetry boundary. Use a strict discriminated union for operational events and a closed, bounded client trace contract. Permit OTLP only when the receiver validates and reduces it to that restricted contract before export.
-- Reject unknown fields, wrong content types, unsupported versions, oversized bodies or batches, excessive span or event counts, excessive attributes or links, excessive string lengths, and invalid or implausible timestamps.
-- Allowlist accepted span names, kinds, resource fields, attributes, events, links, and baggage-derived fields. Reject or discard client-owned identity, tenant, environment, deployment, service authority, and exporter-routing metadata.
-- Authenticate ingestion by default. If pre-auth telemetry is required, expose a reduced anonymous event set with lower limits and no client-provided identity.
-- Apply rate limits and abuse protection before expensive decoding or forwarding when the framework permits. Do not persist or log raw rate-limit keys such as IP addresses.
-- Attach server-owned ingestion time, request ID, verified actor or tenant context, environment, and deployment metadata after validation.
-- Reject raw messages, stacks, breadcrumbs, console arguments, storage values, request bodies, form values, and URLs with query strings.
-- Return a generic response. Invalid telemetry must not disclose validation internals or create another unsafe log containing the rejected payload.
-- Prevent recursive ingestion: client or endpoint logging failures must not emit another frontend event through the same path.
-
-### Direct Crash-Reporting Exception
-
-A project may allow a dedicated frontend crash/error-reporting SDK to export
-directly to its vendor only for unexpected or unhandled exception capture. This
-is a separate advisory diagnostic signal, not an alternate route for structured
-business operational events, metrics, traces, product analytics, or security-
-or audit-relevant signals. Those signals keep their controlled-backend and
-backend-authority requirements.
-
-Allow the exception only when all of these conditions hold:
-
-- The vendor's client key or token is explicitly designed for public client embedding: write-only, project-scoped, and vendor-rate-limited. Never embed a write credential for the project's own logging, tracing, or telemetry backend.
-- Default PII capture and session replay are disabled unless separately reviewed. Restrict breadcrumbs and automatic capture to non-sensitive fields; never capture request or response bodies, headers, user-entered input, auth data, storage values, or URLs with query strings. Treat exception messages and stacks as crash-report payloads governed by this exception, never as Safe Log Events.
-- Crash data remains advisory and diagnostic. Never use it as authoritative identity, security, authorization, or audit evidence.
-- When an exception is causally associated with an outbound request, attach the same approved opaque execution reference to the request, corresponding backend log, and crash event. Prefer the active trace ID when tracing exists; otherwise follow the project's approved request or correlation convention. Treat a client-supplied identifier only as an advisory join key, and do not invent a backend relationship for a client-only crash.
-
-Adopting this exception remains a project-level architectural decision that the
-consuming project records for itself, such as in its own ADR. This skill defines
-only the conditions under which that exception is permitted; it does not select
-a vendor.
-
-## Sampling And Export
-
-- Configure sampling explicitly by environment. Development and tests may sample every trace at bounded volume; production must declare and justify its root policy from measured traffic, cost, and diagnostic needs.
-- Use parent-based sampling so child spans respect the upstream decision. Use Collector-side tail sampling for slow or failed traces only when the deployment supports it and the policy is documented.
-- Keep all structured operational-event and trace exporter credentials and routing on the controlled backend. The only permitted client key exception is a dedicated crash-reporting SDK that satisfies the conditions above. Preserve a compatible server-owned exporter; otherwise prefer OTLP through an OpenTelemetry Collector, while allowing direct backend-to-provider export when the same safety and capacity rules hold.
-- Treat missing or structurally invalid required production tracing configuration as a startup failure. After successful startup, tracing and exporter failures must fail open and never fail a business operation.
-- Export asynchronously through bounded queues and batches with explicit timeouts. Bound flush and shutdown; drop spans after capacity is exhausted and surface only safe aggregate failure and drop signals.
-
-## Delivery, Capacity, And Retention
-
-- Treat telemetry as best-effort except when an audit event is explicitly authoritative. Use bounded in-memory or dedicated telemetry queues, batch delivery, explicit timeouts, and a circuit breaker around external sinks.
-- Apply `$engineering-resilience` to queues, retries, timeouts, backoff, circuit breaking, concurrency, and sink outages.
-- Return after bounded validation and enqueue rather than waiting synchronously for the external sink. Do not write frontend telemetry through the application database or a business transaction.
-- Define one observability budget with signal-specific limits. For traces include root sampling, sampled throughput, span attributes/events/links/baggage, attribute cardinality and length, queue and batch capacity, flush interval, export timeout, provider-outage duration, and dropped-span behavior.
-- For frontend events include peak clients, maximum events and bytes per client, sustained and burst rate, queue capacity, and provider-outage duration.
-- Under pressure, drop or sample low-priority telemetry, increment safe aggregate drop metrics, and preserve business traffic. Never create an unbounded queue or retry storm.
-- Restrict access to persisted telemetry by least privilege, audit access when required, and define per-signal retention and deletion from operational, contractual, regional, and privacy needs. Do not keep telemetry indefinitely by default.
+For tracing or any changed sink, exporter, queue, sampling, capacity, timeout, or retention policy, read [Sampling And Delivery](references/sampling-and-delivery.md). Telemetry failure must not fail a business operation unless an audit event is explicitly authoritative.
 
 ## Testing And Review
 

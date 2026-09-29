@@ -5,7 +5,7 @@
 Apply only when the issue scope triggers them. Use repo-specific docs and existing patterns to decide whether each gate applies.
 
 - **Auth and permissions**: identify the server-side authorization boundary; client-only checks never suffice.
-- **Observability**: require typed Safe Log Events, source-specific allowlists, correlation/request context, privacy and log-injection tests, retention and reader access, and verification. Apply `$engineering-resilience` when telemetry uses queues, retries, timeouts, circuit breakers, or an external sink.
+- **Observability**: apply [Operational And Error Gates](operational-and-error-gates.md) and `$engineering-observability` for the event, privacy, retention, access, and verification contract. Apply `$engineering-resilience` when telemetry uses queues, retries, timeouts, circuit breakers, or an external sink.
 - **Resilience**: require timeout, retry/backoff, idempotency, concurrency, and recovery behavior where relevant.
 - **External data boundary**: name the validator/parser/schema used before raw data reaches domain logic; prefer `.safeParse()` or the repo's equivalent boundary API.
 - **Database writes or concurrent writes**: state uniqueness constraints, idempotency, race handling, and deletion policy.

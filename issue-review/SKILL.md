@@ -171,9 +171,7 @@ Vague phrases like "improve this", "fix logic", or "clean up" do not pass.
 
 The issue must name the affected files, modules, routes, commands, tables, schemas, APIs, UI flows, or docs. Include line numbers when the relevant area is narrow. A whole-file reference is acceptable only when the whole file is intentionally in scope.
 
-When behavior depends on a platform or library mechanism, name the literal mechanism and its production owner. Do not accept abstractions such as "refetch," "refresh," "protect route exit," or "handle navigation" without the concrete API, hook, event, or interception point—for example, an imperative query call or History API interception—and the symbol or module that invokes it. Verify that the installed framework and version support the named mechanism.
-
-When the issue introduces an environment variable that a runtime component reads directly, name the literal delivery mechanism, not only its presence in `.env` or `.env.example`. Trace the specific variable from its consumer—such as a workflow expression or `process.env` read—through every required injection point, such as a Compose `environment:` block or systemd `Environment=` entry. Do not infer its delivery from a superficially similar variable.
+When the issue depends on a literal platform mechanism or delivers a new runtime environment variable, read [Conditional Claims And Proof](references/conditional-claims-and-proof.md) and verify the full path.
 
 ### 3. Root Cause Or Background
 
@@ -192,11 +190,7 @@ against the exact final local candidate and every applicable authorized
 pre-merge preview or staging candidate. Link post-merge-only staging proof as a
 separate downstream release gate rather than implying it already passed.
 
-When a criterion uses universal or negative language ("only", "all", "every", "never", "no other"), verify it cannot be satisfied by a weaker existential check. Either the issue enumerates the exact elements the claim covers and states that each must independently hold, or it says explicitly that the check is a spot-check and why that's acceptable. A criterion like "the file contains only placeholder values" is otherwise easy to implement as "at least one placeholder is present" — a check that passes even when most of the listed values are real.
-
-When a criterion claims mutual exclusivity ("reachable from X, not from anyone else"), require independent verification in both directions: reject every disallowed side, and identify and accept the allowed side specifically rather than merely proving that some request succeeds. If the test method has a structural blind spot in either direction, state the blind spot and require a named compensating manual or automated verification step. For example, same-Docker-host traffic may use hairpin NAT and therefore cannot prove source-IP behavior across a genuine external network boundary.
-
-When a criterion combines a formatted or rounded value shown to a user with a pass/fail or status indicator derived from the same raw quantity, require an explicit rule preventing disagreement at rounding boundaries. Derive both from the same displayed value, or state the precise reason divergence is intentional.
+For universal, negative, mutually exclusive, or rounded-display claims, read [Conditional Claims And Proof](references/conditional-claims-and-proof.md) and require proof of the exact claim.
 
 ### 5. Scope Boundary
 
@@ -224,9 +218,10 @@ Include:
 
 Name upstream blockers, downstream dependents, and ordering constraints. Check roadmap and nearby issue files for implied dependencies the issue forgot to mention.
 
-If this issue changes or extends a rule, convention, or domain concept that another issue file explicitly claims to inherit, match, or reuse (search sibling issue files for phrases like "match issue #N", "per issue #N", "same as #N", "inherits from #N"), or that is documented in `CONTEXT.md`/`CONTEXT-MAP.md`, open every referencing file now. Either reconcile them in this same review pass, or record an explicit follow-up issue to do so before this issue is marked ready — never leave a referencing issue or the glossary silently stale.
-
-If the issue changes a config value, protocol, or URL with existing consumers, search for every consumer and inspect each one even when the expected conclusion is "no code change needed." State whether the change alters each consumer's failure modes, error classification, or default error state as well as its happy path. Pay particular attention to generic health checks, doctor commands, and catch-all error handlers, where a new expected failure can otherwise become a misleading operator message.
+When a rule, convention, domain concept, config value, protocol, or URL has
+inheriting issues, documented definitions, or existing consumers, read
+[Conditional Claims And Proof](references/conditional-claims-and-proof.md) and
+reconcile each affected surface.
 
 ### 8. Test Approach
 
@@ -249,13 +244,7 @@ separated pass in the same implementation context is supplemental evidence, not
 independent review; record the limitation and keep the independent-review gate
 unsatisfied.
 
-When an acceptance criterion names a specific runtime mechanism (a "scheduled" job, a "background" retry, an "on reconnect" handler), the Test Approach must state whether verification exercises that literal mechanism or a named, justified proxy (e.g. a manual one-shot invocation of the same script the scheduler calls). An unstated substitution leaves a criterion looking tested when only an adjacent code path was actually exercised.
-
-Apply the same rule to platform and library mechanisms named under Affected Surface: exercise the actual API, hook, event, or interception path, or name and justify the proxy and its blind spot.
-
-When the issue introduces a new artifact covered by an existing repo-wide invariant, such as image pinning, network exposure, or secrets hygiene, inspect the shared test files or suites that encode that invariant. The Test Approach must name the existing assertions and explicitly extend them to the new service, image, port, secret, or other artifact rather than adding only scenario-specific tests.
-
-When verification is split between standalone checks and a live or deployed instance, identify whether the issue-owned live-only portion contains the scenario most likely to expose an integration defect, such as cross-branch recombination, interacting failure paths, or multi-service behavior. If it does, the issue must remain explicitly unverified—use a status such as `Needs Verification`, not `Done` with a caveat—until that scenario has run successfully. When the environment can receive only merged changes, make the scenario an explicit downstream release gate with its owner and trigger; it blocks release rather than falsely claiming pre-merge proof.
+For literal runtime mechanisms, new artifacts governed by shared invariants, or proof split across local and live environments, read [Conditional Claims And Proof](references/conditional-claims-and-proof.md).
 
 If no local convention is visible, use:
 
@@ -279,21 +268,11 @@ When implementation is governed by an authoritative design, read [Design Referen
 
 ### 9. Operational And Migration Safety
 
-If the issue changes persisted data, generated artifacts, imports, migrations, deployment config, background jobs, or external integrations, state how the change is applied, rolled back or retried, and verified.
-
-Every database schema or data migration must use the `$engineering-for-certainty` Migration Proof Harness. Require an isolated disposable local database container, the prior released schema, representative legacy and boundary fixtures, the exact production migration mechanism, after-state schema and data assertions, application read/write proof, and supported repeat invocation or no-op behavior. Require rollback proof only when rollback is part of the deployment contract; otherwise name forward recovery. Structural code migrations do not trigger the database harness.
-
-If the issue adds persisted state alongside existing persisted state already enumerated in documentation, update every affected table, destructive-operations warning, backup or restore runbook, and blast-radius description. Documenting the new state in isolation does not pass when existing operational guidance would become false or incomplete. For example, a warning that says an operation destroys "both" named volumes becomes false when a third volume is added.
+For persisted data, generated artifacts, imports, migrations, deployment configuration, background jobs, or external integrations, read [Operational And Error Gates](references/operational-and-error-gates.md). Record application, recovery, and verification.
 
 ### 10. Observability And Errors
 
-If the issue changes runtime behavior, state expected error behavior and any logging, metrics, audit events, or user-visible messages needed by the repo's conventions. If none are needed, say why.
-
-When telemetry changes, require typed default-deny Safe Log Events. The issue must name each event family, allowed fields, source adapter, correlation ownership, retention and reader access, and tests proving that raw errors, arbitrary context, secrets, direct PII, and forbidden source-specific fields cannot reach logs, metrics, traces, audits, or fallbacks.
-
-For frontend operational logging, require the client emission boundary and condition, deduplication or aggregation rule, production sampling or debug policy, bounded queue and delivery behavior, backend ingestion schema, authentication or reduced anonymous event set, rate and payload limits, non-recursive failure path, and Telemetry Budget. Product analytics and authoritative backend security or audit events remain separate.
-
-When errors use a discriminated union or coded envelope, require a code-to-details matrix that names each error code, its compatible `details` shape, its producer, and each consumer's behavior. The Test Approach must cover every valid mapping plus missing envelopes, malformed envelopes, unknown codes, and code-incompatible `details`. State the fallback behavior for invalid combinations; do not let consumers trust `details` based on shape alone or a code alone.
+For runtime changes, name expected error behavior and applicable operational signals, or say why none is needed. For telemetry or coded error envelopes, read [Operational And Error Gates](references/operational-and-error-gates.md).
 
 ### 11. Engineering Certainty
 
