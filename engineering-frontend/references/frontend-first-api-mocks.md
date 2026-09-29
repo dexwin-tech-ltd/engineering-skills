@@ -62,12 +62,12 @@ const OrdersMockScenarioNameSchema = z.enum([
 
 const ApiEnvironmentSchema = z.discriminatedUnion("VITE_API_MODE", [
   z.object({
-    MODE: z.enum(["development", "test", "production"]),
+    MODE: z.enum(["development", "test", "staging", "production"]),
     VITE_API_MODE: z.literal("production"),
     VITE_API_BASE_URL: z.string().url(),
   }),
   z.object({
-    MODE: z.enum(["development", "test"]),
+    MODE: z.enum(["development", "test", "staging"]),
     VITE_API_MODE: z.literal("mock"),
     VITE_ORDERS_MOCK_SCENARIO: OrdersMockScenarioNameSchema,
   }),
@@ -113,6 +113,9 @@ export const env = match(parsedEnvironment.data)
 
 Read environment values at startup. Do not change them after importing the
 domain API entrypoint and expect the already-created functions to change.
+`staging` here means a separately built non-production target; the production
+build still rejects mock mode. Do not let a URL parameter or client-side flag
+change the validated API mode.
 
 ## Mock Outcomes And Scenarios
 
@@ -316,6 +319,26 @@ export const createOrder = ordersApi.createOrder;
 
 Use the repository's existing shared `ApiClient` instance instead of
 constructing one here when its composition boundary already provides one.
+
+## URL-Selected Review Scenarios
+
+The examples above use one scenario fixed at startup. For a staged
+[UI-first review](ui-first-review.md), keep the production-or-mock mode fixed
+at startup but allow the mock adapter to receive an injected, validated
+scenario resolver. Resolve the current named preset when an operation runs,
+not when the domain module is imported. Do not mutate environment variables
+or production API inputs to switch presets. This is a mock-adapter variation;
+the exported API functions and consuming hooks and flows retain their
+production contracts.
+
+The review router or controller reads the scenario name from the URL and maps
+it exhaustively to a complete typed fixture and outcome set. The floating
+selector updates that name. On a change, isolate or cancel in-flight work and
+reset affected query caches and flow state; otherwise a late result from the
+previous scenario could contaminate the new one. Direct links, refresh, and
+back/forward navigation must select the same scenario. Keep raw fixture data
+and secrets out of the URL. The URL does nothing when mock mode is not enabled
+by the non-production build or deployment configuration.
 
 ## Hook And Flow
 

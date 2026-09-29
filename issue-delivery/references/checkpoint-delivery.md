@@ -58,7 +58,22 @@ For each checkpoint:
     head, and re-review the same checkpoint.
 12. Record the accepted head SHA only when the checkpoint passes its advance
     rule.
-13. Begin the next checkpoint from that accepted head.
+13. If this is a UI-first user-review checkpoint and a pull request is the
+    only way to obtain its pre-merge preview, invoke `$pull-request-creation`'s
+    checkpoint-preview path for the accepted head before staging review. Respect
+    the effective publication boundary. Keep the pull request draft and the
+    issue `Needs Verification`; the backend and final integration review are
+    still pending. If the preview cannot be obtained, do not advance.
+14. If this is a UI-first user-review checkpoint, run or reconcile the
+    separately authorized staging deployment of the accepted UI candidate,
+    record its exact build and scenario links, and wait for the user's UI
+    approval. A clean engineering review is not that approval. If staging was
+    replaced, recheck the affected evidence before requesting approval. If the
+    user requests changes, correct and re-review the affected checkpoint work,
+    record the corrected accepted head, update the same draft pull request
+    when it owns the preview, then restage that candidate for approval.
+15. Begin the next checkpoint from the accepted head only after every planned
+    user-review gate has passed.
 
 ## Advance Rule
 
@@ -103,4 +118,6 @@ Escalate to `USER_DECISION` when:
 
 Return to the main `$issue-delivery` workflow. Run complete issue-owned
 validation and a final full integration review of the issue-base-to-current-head
-diff before creating or updating the pull request.
+diff before the normal pull-request creation or readiness update. An early
+checkpoint-preview draft remains draft until the full issue proof and final
+review pass.

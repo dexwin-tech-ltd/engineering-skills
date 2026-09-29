@@ -101,6 +101,24 @@ A Smallest Coherent Slice must:
 
 The slice need not be independently deployed when the product intentionally releases only after the full pack is complete. When splitting, record the parent, ordered children, cross-slice contracts, and release boundary. Preserve existing pack-local numbering when it is already stable.
 
+For a feature with material UI and backend integration, plan the interactive
+frontend and its staging review before real backend implementation. Read
+`$engineering-frontend`'s [UI-First
+Review](../engineering-frontend/references/ui-first-review.md) during
+decomposition. Inspect the deployment workflow and existing staging process to
+verify whether an unmerged branch can reach a reviewable environment, including
+by an authorized manual deployment; lack of automatic PR previews does not
+answer that question. If staging receives only merged work, make the
+frontend-only UI an independently reviewable first child with its own branch
+and pull request; make backend integration a later child dependent on recorded
+user approval of the staged UI. If a pre-merge staging candidate is available
+and the work is one coherent slice, a frontend review checkpoint may serve the
+same gate. Do not approve a backend-first issue or one combined feature pull
+request merely because the repository lacks pull-request preview deployments.
+Resolve an unknown or infeasible staging path or production-gate constraint before
+declaring the issue ready; ask the deployment owner only when the setup cannot
+be verified from available evidence.
+
 Do not create or approve one feature-sized implementation issue or pull request
 when the feature contains multiple Smallest Coherent Slices. Keep the feature as
 a parent issue pack, and require each child slice to own exactly one branch and

@@ -49,6 +49,11 @@ Before changing code, verify that the canonical issue:
 - contains testable acceptance criteria and a complete traceability ledger;
 - contains a complete Runtime Acceptance Plan for observable runtime changes,
   or a justified `Not applicable` entry for non-runtime work;
+- for a frontend-only slice or integration child in a material UI feature,
+  names its scenarios, staging timing, production access gate, user approval
+  boundary, and later real-backend proof; the integration child must also link
+  the recorded approval of the exact frontend staging revision before its work
+  begins;
 - for design-backed frontend work, contains the approved Design Reference
   Manifest, resolvable Evidence Bundle, complete Design Audit Matrix, and
   source-drift method required by `$engineering-frontend`;
@@ -57,6 +62,16 @@ Before changing code, verify that the canonical issue:
   justified by integration or rework risk, or states one delivery unit;
 - contains a Review Loop Contract; and
 - defines its Issue Completion Record and status-propagation requirements.
+
+For an issue or parent feature pack that combines material UI with backend
+integration, require an approved UI-first staging gate or an explicit
+user-approved exception. Inspect the parent pack or dependencies when the
+current issue is an integration child; do not rely on its label alone. When
+staging has no pre-merge deployment, require an ordered frontend-only slice
+followed by an integration slice, not one combined implementation issue. If
+the issue omits that decomposition or the integration child lacks the prior UI
+approval, stop before code changes and return it to `$issue-review`; do not
+choose backend-first work by default.
 
 Also resolve the exact Approved Issue Commit. For immediate review-and-delivery,
 take its SHA, implementation branch, and worktree from the `$issue-review`
@@ -152,6 +167,12 @@ for each checkpoint in order.
 If the issue defines no separate checkpoints, treat the full implementation as
 one delivery unit and continue with the normal issue-wide validation and review
 steps.
+
+For UI-first work, read `$engineering-frontend`'s
+[UI-First Review](../engineering-frontend/references/ui-first-review.md).
+An engineering checkpoint or frontend-only slice may finish without making the
+full feature complete. Do not begin the backend integration stage before the
+planned user approval of the exact staging UI is recorded.
 
 Follow only the current checkpoint's affected surface, guardrails, acceptance
 criteria, traceability rows, and required reading. Use TDD where required by
@@ -354,9 +375,12 @@ publication gate. In either case, report every unperformed publication step as
 pending separate authorization, stop, and do not invoke
 `$pull-request-creation` or continue into steps 9-10.
 
-Invoke `$pull-request-creation`. Let it verify the Branch Contract, evidence,
-intentional commits, push, PR body, stack position, and remote state. Do not
-bypass a publication stop condition from inside this composing skill.
+Invoke `$pull-request-creation` for the normal creation or readiness update.
+An earlier UI checkpoint may already have opened a draft pull request solely
+to obtain a pre-merge preview; update that same pull request after full issue
+proof and final review. Let `$pull-request-creation` verify the Branch Contract,
+evidence, intentional commits, push, PR body, stack position, and remote state.
+Do not bypass a publication stop condition from inside this composing skill.
 
 ### 9. Follow CI To A Terminal State
 

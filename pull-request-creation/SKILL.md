@@ -20,7 +20,8 @@ assignment into publication authority.
 
 Do not implement missing work, perform code review, repair CI, invent evidence,
 or broaden scope. Stop when the work is not ready unless the user explicitly
-authorizes a work-in-progress PR.
+authorizes a work-in-progress PR or the approved issue's UI checkpoint-preview
+plan requires the narrow draft path below.
 
 ## Preconditions
 
@@ -44,6 +45,30 @@ Resolve and read:
   source-drift result, and independent Design Audit evidence.
 
 If no canonical issue exists, ask for the issue identity before publishing. Distinguish the repository's local numbered issue from a GitHub issue number; never invent `Closes #N` from a local filename.
+
+### UI Checkpoint Preview Draft
+
+`$issue-delivery` may invoke this skill before full issue completion only when
+an accepted UI-first checkpoint needs a pull request to create its pre-merge
+preview. Require the approved issue's checkpoint-preview plan, the Delivery
+Operator's publication authority, the accepted frontend head SHA, its current
+validation and independent checkpoint review, and evidence for every
+checkpoint-owned acceptance and design row. Verify the Branch Contract and
+worktree as usual. The current branch head must equal the accepted checkpoint
+head; do not add behavior-changing commits during this publication. Do not use
+this path to excuse missing frontend checkpoint proof or a narrower publication
+boundary.
+
+For this narrow draft, apply the completion-evidence checks below to the
+accepted frontend checkpoint rather than claiming full-issue completion. Keep
+the issue `Needs Verification`; state the pending backend integration, final
+review, and staging approval plainly in the draft pull request. Push the exact
+accepted head, verify the remote PR state, and return it to `$issue-delivery`
+to verify the resulting preview build, review its scenarios, and obtain user
+approval. If the user requests UI changes, update this same draft only after
+the corrected checkpoint passes
+validation and independent re-review. On the later normal invocation, require
+the complete issue evidence and final review before marking it ready.
 
 ## Workflow
 
@@ -190,8 +215,12 @@ Do not paste empty boilerplate, claim checks that did not run, or hide unresolve
 
 Choose exactly one outcome from evidence:
 
-- **Do not create:** material implementation or evidence is incomplete and the user did not request WIP publication.
-- **Draft:** the user explicitly requested WIP publication, or required evidence can only run after PR creation. Keep the issue `Needs Verification`.
+- **Do not create:** material implementation or evidence is incomplete and
+  neither user-authorized WIP publication nor the approved UI
+  checkpoint-preview path applies.
+- **Draft:** the user explicitly requested WIP publication, required evidence
+  can only run after PR creation, or the approved UI checkpoint-preview path
+  applies. Keep the issue `Needs Verification`.
 - **Ready for review:** the issue is verified complete, the traceability ledger,
   current Runtime Acceptance evidence, and final review are satisfied, accepted
   findings are fixed, every triggered Design Audit is current and complete, and

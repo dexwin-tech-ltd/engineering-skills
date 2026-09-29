@@ -35,3 +35,19 @@ The plan must:
   issue-ready Design Reference Manifest and Evidence Bundle, and include the
   exact source, baseline, states, platforms, viewports, interactions, matrix,
   source-drift method, and approved deviations in the plan.
+
+For a feature with material UI and backend integration, read
+[`$engineering-frontend`'s UI-First
+Review](../../engineering-frontend/references/ui-first-review.md). Plan the
+feature-specific scenario names, relevant data boundaries and transitions,
+shareable review links, selector behavior, staging revision evidence, and the
+user's UI approval gate. Name the frontend-only proxy, its integration blind
+spot, and the later real-backend scenarios. Record the evidence for whether a
+reviewable unmerged candidate can reach staging, including an authorized manual
+deployment, or staging receives only merged work. Record how the unfinished
+production surface remains inaccessible through a default-off trusted gate;
+if such a gate is unavailable, plan to defer production deployment of the
+UI-only code.
+Make the integration stage depend on recorded user approval of the exact
+frontend staging revision. Do not mark the full feature complete at the
+mock-backed stage.

@@ -45,7 +45,23 @@ Every checkpoint must:
 - record the final accepted head SHA before the next checkpoint begins.
 
 A checkpoint is not a separate issue, branch, pull request, or deployment unit.
-It is a review and evidence boundary inside one Smallest Coherent Slice.
+It is a review and evidence boundary inside one Smallest Coherent Slice. An
+early draft for a UI preview is the issue's eventual pull request, not another
+pull request for the checkpoint.
+
+For a planned [UI-first user
+review](../../engineering-frontend/references/ui-first-review.md), a frontend
+checkpoint can precede backend integration when the exact candidate can run on
+staging before merge. Its engineering `CLEAN` result does not substitute for
+the user's approval of that deployed UI; name the approval owner and the
+revision and scenario evidence needed before the integration checkpoint starts.
+When only a pull request triggers the pre-merge preview, record that the
+accepted frontend checkpoint needs an early draft pull request and that its
+later backend work and final review remain pending.
+When staging receives only merged work, require a complete frontend-only first
+slice and later integration slice in the parent pack instead of calling a
+post-merge deployment a checkpoint within one issue. Record the production
+release gate for the incomplete feature.
 
 For design-backed frontend work, follow
 [`$engineering-frontend`'s Design Conformance And
