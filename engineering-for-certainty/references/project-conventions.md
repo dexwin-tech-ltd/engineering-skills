@@ -9,11 +9,16 @@ Use when starting a project, changing its tooling, planning formal issue branche
 - Web frontend: React + Vite + TanStack Router + Tailwind.
 - Mobile: Expo React Native.
 - Form UI library (web/mobile): TanStack Form.
-- Server state and query orchestration (web/mobile): TanStack Query.
-- Backend: Fastify.
-- Database queries: Drizzle.
-- Validation: Zod.
-- Result library: neverthrow.
+- Application services, adapters, and orchestration in new TypeScript projects: Effect. Keep straightforward pure functions in TypeScript.
+- Server state and query orchestration: Effect Atom in new Effect web projects. For React Native, verify the selected integration on supported platforms first; retain TanStack Query as the fallback when that proof fails.
+- Backend: Effect HTTP stack in new Effect projects; Fastify is an exception for a concrete integration need.
+- Database queries and schema migrations: Drizzle ORM and Kit. Prefer verified native Effect integration where the selected driver supports it; allow direct Effect SQL where useful.
+- Validation: Effect Schema in new Effect projects.
+- Fallible service contracts: explicit `Effect<Success, ExactExpectedFailure, RequiredServices>` signatures in new Effect projects.
+- Exhaustive matching: Effect Match in new Effect projects.
+- Service/workflow testing: Effect test utilities and `@effect/vitest` in new Effect backend/web projects; retain platform UI, integration, E2E, migration, and mutation-analysis tools.
+
+These defaults do not authorize migration of existing projects. Preserve established Fastify, Zod, neverthrow, ts-pattern, TanStack Query, and test stacks until migration is separately chosen. Read `$engineering-effect` for common integration contracts. Lock compatible package versions, prove supported-platform integration, and review upgrades of unstable modules explicitly.
 - Path aliases: for new TypeScript/JavaScript projects, use named `#...`
   aliases for private imports within an app or package, and reserve
   `@scope/package` specifiers for workspace or published packages. Prefer

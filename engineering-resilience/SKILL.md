@@ -24,6 +24,8 @@ Apply this skill when the work includes:
 - Every outbound HTTP, queue, or third-party call must define an explicit timeout.
 - Propagate cancellation and `AbortSignal` semantics through adapters when the platform supports them.
 
+In Effect projects apply `$engineering-effect`: use owned scopes/fibers for cancellation and resource cleanup, and explicit Effect timeout/Schedule policies for calls. Preserve interruption separately from expected failures; at a total external boundary expose a safe cancelled outcome. Driver/SDK interruption support must be verified, and cancellation does not prove an external write was undone.
+
 ### Retry Rules
 
 - Retry only operations that are idempotent or explicitly marked as safe, such as operations that do not introduce additional side effects on repeated execution.
@@ -32,8 +34,8 @@ Apply this skill when the work includes:
 
 ### Error Mapping and Write Safety
 
-- Timeouts, cancellations, rate limits, and upstream failures must be mapped into explicit infrastructure error variants instead of leaking transport-library errors.
-- The boundary that performs an external call owns the timeout, cancellation, rate-limit, provider, and availability failures introduced by that call.
+- Map timeouts, rate limits, and upstream failures into explicit adapter-owned infrastructure variants instead of leaking transport-library errors. Effect interruption remains cancellation outside the expected-failure union; established Result boundaries may normalize cancellation into their declared infrastructure variants.
+- The boundary that performs an external call owns its timeout, rate-limit, provider, and availability failures and its cancellation policy.
 - Infrastructure error variants may be reusable atoms, but they are not an ambient union inherited by unrelated operations.
 - A calling operation may widen its error contract only with downstream variants it deliberately exposes and failures introduced by its own orchestration.
 - Operations that do not perform or depend on an external call must not claim that call's infrastructure failures in their result type.
@@ -43,7 +45,7 @@ Apply this skill when the work includes:
 
 ### Async Processing
 
-- Jobs, queues, cron tasks, and webhooks must validate payloads at their boundary with Zod.
+- Jobs, queues, cron tasks, and webhooks validate payloads with Effect Schema in Effect projects or the repository's established schema library.
 - Async handlers must be idempotent where retries or duplicate delivery are possible.
 - Retry policy, backoff strategy, and dead-letter behavior must be explicit for async work.
 - Important async flows require integration or end-to-end coverage for processing and failure cases.

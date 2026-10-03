@@ -84,6 +84,10 @@ Apply this subsection in order: shared permission source first, registry shape s
 - A route, guard, or adapter that introduces authentication or authorization checks may widen the underlying operation's error union with the exact failures introduced by those checks.
 - In Fastify or similar backends, perform auth checks before parsing request bodies when parsing errors could leak information.
 
+## Effect Integration
+
+In Effect projects resolve identity at the request/session boundary, then pass the actor explicitly into identity-sensitive domain services by default. A request-scoped actor service may supply HTTP middleware/handlers; domain operations should not retrieve identity from ambient context. Preserve a stronger established convention or document a concrete reason for an exception. Never install a request actor in a process-wide Layer. Authenticate before sensitive parsing, enforce permissions on the backend, and keep 401, 403, and infrastructure failures distinct. Public operations need no invented identity or authentication failures. Partition/reset client runtime state and caches at logout or actor change; cancel session-owned work and release resources. Effect HTTP security helpers do not replace cookie, CSRF, session-revocation, or permission policy.
+
 ## Runtime Authentication Acceptance
 
 For an authentication Runtime Acceptance Pass, follow `$engineering-for-certainty`'s

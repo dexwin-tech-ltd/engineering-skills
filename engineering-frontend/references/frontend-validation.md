@@ -23,7 +23,7 @@ For web or mobile features:
 1. Plan/gap review, including UI states, error states, accessibility states, and route/screen ownership.
 2. Shared contracts and API adapter types.
 3. API adapter tests for request validation, response validation, and error mapping.
-4. Hook tests for query/mutation behavior and `Result` branches.
+4. Hook tests for query/mutation behavior and the selected Effect or Result outcome branches, including defects, interruption, and stale-attempt protection where reachable.
 5. Flow tests for reducer transitions, orchestration, navigation, and submit outcomes.
 6. View/component tests for rendering, permissions, validation, success states, and error states.
 7. Implementation from API adapter inward to hook, flow, and view.

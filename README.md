@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `656005bd319dcad47f86327a13fdce9be8a26b3f`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `efc54f82b7875f9a7adccfe04ae9f978e3117bf4`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -17,6 +17,7 @@ replace stale local `deliver-issue` installations.
 - `engineering-for-certainty`
 - `engineering-observability`
 - `engineering-resilience`
+- `engineering-effect`
 - `engineering-auth-security`
 - `engineering-frontend`
 - `code-review`
@@ -122,18 +123,18 @@ Install a companion with its core dependency:
 npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-resilience
 ```
 
-Replace `engineering-resilience` with `engineering-observability`, `engineering-auth-security`, or `engineering-frontend` for another companion bundle.
+Replace `engineering-resilience` with `engineering-observability`, `engineering-auth-security`, `engineering-frontend`, or `engineering-effect` for another companion bundle.
 
 Install code review with its complete engineering doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review
 ```
 
 Install issue review with its complete engineering doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill grilling   --skill issue-review
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill grilling   --skill issue-review
 ```
 
 Issue review requires every companion triggered by the issue. The
@@ -143,13 +144,13 @@ observability issue from being reviewed without its governing doctrine.
 Install pull request review with the complete review-to-merge doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill issue-delivery   --skill pull-request-review
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill issue-delivery   --skill pull-request-review
 ```
 
 Install autonomous PR review and correction with its complete doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review   --skill pr-review-and-fix
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review   --skill pr-review-and-fix
 ```
 
 This workflow follows repository AGENTS.md label rules, records human
@@ -166,7 +167,7 @@ Install the delivery operator with its implementation, review, and
 publication doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-creation   --skill issue-delivery
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-creation   --skill issue-delivery
 ```
 
 Install docs-backed grilling:

@@ -18,11 +18,28 @@ safer to change.
 
 ## Authoring principles
 
+### Spacing and grouping
+
+Use blank lines to make semantic boundaries visible. Separate independent
+top-level definitions and meaningful groups of declarations. Keep tightly
+related declarations together, such as a schema and its inferred type, or a
+cohesive set of failure aliases.
+
+Within functions, separate meaningful stages with blank lines, such as reading
+state, preparing presentation values, and defining actions, or validating input,
+applying policy, and performing I/O. Keep statements that perform one stage
+together; do not insert a blank line between every variable, hook, or statement.
+
+Group definitions by purpose and dependency so readers can scan the file and
+follow its structure. Keep rationale comments attached to the definitions or
+stages they explain. Apply this alongside the repository's formatter; formatting
+alone does not establish semantic groups.
+
 ### Value contracts
 
 Prefer a declared schema for untrusted input and any cohesive internal value
 contract when it replaces scattered manual checks with a clearer contract.
-Prefer Zod when the repository already uses or explicitly selects it. Do not
+Prefer Effect Schema in new Effect projects; preserve Zod when the repository already uses or explicitly selects it. Do not
 require a schema for ordinary internal control flow, a proven performance
 constraint, or a repository that deliberately uses another validator.
 
@@ -48,8 +65,7 @@ return pipe(rawInput)
 ```
 
 Do not require a new pipe package. A generic fluent pipeline is for ordinary
-transformations; fallible work retains native `Result` or
-`ResultAsync` `.andThen(...)` semantics. Do not hide transaction ownership,
+transformations; fallible work retains native Effect composition in Effect projects, or `Result` / `ResultAsync` `.andThen(...)` semantics in established neverthrow projects. Effect generators and named pipelines are both valid; choose the form that makes dependencies and ordering clearest. Do not hide transaction ownership,
 resource lifetime, retries, or meaningful I/O in a chain when an explicit
 imperative form is clearer.
 

@@ -1,5 +1,6 @@
 # Frontend API Integration
 
+In new Effect projects use Effect Schema decoding and explicit Effect adapter contracts; apply `$engineering-effect` for execution, defects, and interruption. The `.safeParse()` and Result-specific instructions below apply to established Zod/neverthrow adapters. The same boundary validation, exact operation errors, and layer ownership apply to both.
 Read when changing a frontend API adapter or client boundary.
 
 ## API Integration

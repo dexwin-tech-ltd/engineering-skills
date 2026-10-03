@@ -5,12 +5,12 @@ Read when changing forms, validation messages, focus, keyboard interaction, or a
 ## Forms and Validation
 
 - Prefer TanStack Form as the default form-state and form-UI orchestration library for web and mobile projects unless the repo already standardizes on another tool.
-- Validate all form inputs with Zod schemas. Reuse field schemas across blur validation and submit/step validation.
-- Use `.safeParse()` for form validation. Do not pass raw Zod errors into JSX.
-- Return and render user-facing strings. Never expose raw Zod issues, client errors, or `Result` objects to views.
+- Use Effect Schema in new Effect projects and preserve Zod in established projects. Reuse field contracts across blur and submit/step validation; keep live-state business policy outside schemas.
+- Decode with the selected schema library; use `.safeParse()` for Zod. TanStack Form may use a supported Standard Schema adapter, but validation does not necessarily replace editable form values with decoded/transformed output. Explicitly decode at submission before calling the adapter.
+- Return and render plain user-facing strings. Never expose raw Schema issues, client errors, Effect causes, or Result objects to views.
 - Preserve all messages for a field. Do not collapse validation output to `issues[0]` or `fields[name][0]`.
 - Keep general/banner errors as a list of messages, not a nullable single string, when a flow can surface multiple independent problems.
-- Flows translate domain errors into plain submit outcomes, field errors, and banner messages. Views apply field errors to their form state after callbacks resolve.
+- Flows/hooks own TanStack Form and translate failures into plain submit outcomes, field errors, and banner messages. Views receive controlled values, all messages, and callbacks; they do not own form state or apply asynchronous outcomes themselves.
 
 ## Accessibility
 

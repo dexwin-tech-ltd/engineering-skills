@@ -1,5 +1,6 @@
 # Frontend-First API Mocks
 
+The example below uses established Zod/neverthrow conventions. In Effect projects preserve the same pure domain factory and validated entrypoint seam using Effect Schema and explicit Effect signatures; provide deterministic mock services through Layers. Only backend-calling adapters change; hooks, flows, and views retain production contracts.
 Use this pattern when frontend implementation intentionally precedes the
 backend. Adapt filenames and imports to the repository while preserving the
 boundaries below.

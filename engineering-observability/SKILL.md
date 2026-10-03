@@ -45,7 +45,7 @@ retryCount, environment, deploymentVersion
 - Use stable event and error codes instead of free-form explanations.
 - Never log secrets, API keys, tokens, cookies, authorization headers, session identifiers, connection strings, encryption material, or raw request and response bodies.
 - Never log direct personal data, user-entered values, form fields, file contents, URLs with query strings, console arguments, storage contents, or arbitrary third-party payloads.
-- Do not persist raw `Error.message`, `stack`, `cause`, Zod issues, provider errors, or serialized error objects. Diagnose with controlled operation, stage, class, code, correlation, and deployment metadata.
+- Do not persist raw `Error.message`, `stack`, `cause`, schema issues, provider errors, or serialized error objects. Diagnose with controlled operation, stage, class, code, correlation, and deployment metadata.
 - Normalize error class through an allowlist. Do not trust an arbitrary constructor name or driver property.
 - Allow an approved opaque actor or record identifier only when the event cannot meet its operational or audit purpose without it. Prefer keyed pseudonymization when joinability is needed without direct identity, and document retention and access implications.
 - Sanitize CR, LF, delimiters, and other log-injection characters in every remaining string field before encoding.
@@ -67,6 +67,10 @@ It is a delivery adapter, not an operational log or Safe Log Event.
   in non-production environments.
 - Runtime Acceptance evidence may record that the message was retrieved and
   accepted; it must not reproduce the secret or message body.
+
+## Effect Integration
+
+Apply `$engineering-effect` when wiring Effect logging and tracing. Configure logger/tracer services centrally through Layers; built-in annotations, causes, SQL tracing, or query loggers do not waive the allowlist. Do not serialize Cause/Exit, database SQL/parameters, schema issues, or raw errors into operational signals. Map them to bounded controlled metadata. Verify automatic instrumentation and exporter behavior, keep sink failure separate from business success, and preserve controlled frontend ingestion and sampling.
 
 ## Source-Specific Failure Adapters
 

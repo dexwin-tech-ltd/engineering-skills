@@ -1,5 +1,6 @@
 # Result Mutation Hooks
 
+This reference is for established neverthrow + TanStack Query projects. New Effect projects use `$engineering-effect` for an operation boundary with reactive state and attempt-specific `run`; do not add ResultAsync around Effect to copy this implementation.
 Use this pattern for every TanStack mutation hook. Adapt filenames and imports
 to the repository, but keep one shared settlement helper and one mutation
 instance per hook.

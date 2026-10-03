@@ -1,5 +1,7 @@
 # Boundaries, Architecture, and Errors
 
+For new Effect projects, apply `$engineering-effect`: Effect Schema replaces Zod at value boundaries; explicit Effect contracts replace internal Result/ResultAsync; Context services and Layers provide dependency injection; application/request scopes own lifetimes; and the Effect HTTP stack is preferred. The common ownership and exact-error rules below still apply. References to Zod, neverthrow, Fastify factories, and `withTransaction(tx)` describe established non-Effect projects. Preserve those paths unless migration is separately authorized.
+
 Read the relevant sections when work changes external input, backend modules, services, persistence, public contracts, or error behavior.
 
 ## Trust Boundaries
@@ -19,9 +21,9 @@ All external input is untrusted.
 Keep adapters thin and domain logic explicit.
 
 - Routes/controllers/adapters handle auth checks, parsing, validation, mapping, and response presentation only.
-- Domain services contain business rules and return `Result<T, E>` or `ResultAsync<T, E>`.
+- Domain services contain business rules and expose explicit Effect signatures in Effect projects, or `Result<T, E>` / `ResultAsync<T, E>` in established Result projects.
 - Repositories own persistence access and validate database records at the persistence boundary.
-- Prefer Drizzle as the default database query package for new work unless the repo already standardizes on another persistence stack.
+- Prefer Drizzle ORM and Kit unless the repo already standardizes on another persistence stack. In Effect projects prefer a verified native Effect driver; direct Effect SQL may serve queries that benefit from it. Keep connection and transaction ownership coherent, validate database records, and preserve isolated migration proof.
 - Cross-app or cross-feature logic belongs in shared packages/modules, not copied across apps.
 - Do not read `process.env` or global config inside business logic. Inject configuration explicitly.
 - Avoid hidden global state; prefer pure functions and explicit dependencies.
@@ -60,15 +62,12 @@ Keep adapters thin and domain logic explicit.
 - Keep wiring in a dedicated bootstrap layer. `app.ts` stays thin and focused
   on server setup and module route registration.
 - Register one route entrypoint per module in app wiring.
-- Use strict constructor or factory dependency injection only.
-- Build one typed `deps` object at startup and inject dependencies into module
-  factories.
+- In Effect projects use typed Context services and Layer assembly. In established non-Effect projects use strict constructor or factory dependency injection.
+- In non-Effect projects, build one typed `deps` object at startup and inject dependencies into module factories.
 - Do not use Fastify decorate as a dependency container.
-- Keep request-scoped context explicit in function parameters.
+- Keep request-scoped context explicit in parameters or typed Effect service requirements.
 - Do not read global config or environment inside services or repositories.
-- Instantiate repositories once with `db` at startup.
-- Repositories should expose `withTransaction(tx)` to produce transaction-scoped
-  instances with the same interface.
+- Assemble live repositories at startup. In non-Effect projects instantiate them with `db` and expose `withTransaction(tx)` for transaction-scoped instances; Effect projects use the verified SQL transaction context described in `$engineering-effect`.
 - Services own transaction boundaries.
 - Keep cross-domain orchestration explicit and deterministic.
 
@@ -82,6 +81,8 @@ Keep adapters thin and domain logic explicit.
 
 ## Errors and Results
 
+In Effect projects the expected-failure channel carries producer-owned failures; defects and interruption remain distinct and are handled at designated execution boundaries. Do not wrap every Effect in Result or relabel a defect as an expected domain failure. The Result-specific total-contract and thrown-error rules below apply to established Result projects. Read `$engineering-effect` for the Effect boundary policy.
+
 - Treat expected application failures as values. Domain services and exported callable operations must not throw them.
 - Expose the narrowest truthful closed error type from each producer: include every error variant it can emit and no variant it cannot emit.
 - Apply producer-owned truthfulness recursively. Each error code owns its exact
@@ -89,7 +90,7 @@ Keep adapters thin and domain logic explicit.
   coupled only to payloads a real producer branch can emit. Reject
   optional-property bags, Cartesian products, and nested combinations that no
   producer path can construct.
-- Use named top-level error aliases in public operation, service, and repository signatures, not inline unions inside `Result`/`ResultAsync`.
+- Use named top-level error aliases in public operation, service, and repository signatures, not inline unions inside Effect or Result/ResultAsync signatures.
 - Reuse domain, infrastructure, authorization, and provider error variants as atomic types and factories. Compose them into a producer-specific error union at each operation boundary.
 - Do not use a global, project-wide, or domain-wide umbrella error union as an operation's return type unless that operation can genuinely emit every variant in it.
 - Expose a success-only contract or `Result<T, never>` when an operation cannot emit an application-level error under its declared boundary policy; do not invent defensive variants.
@@ -108,7 +109,7 @@ Keep adapters thin and domain logic explicit.
 - Test and map every error variant exhaustively at the consuming boundary. Adding a producer variant should break affected consumers until they handle it.
 - Include actionable, sanitized `details` in HTTP/API error responses when the client can use them to understand or correct the failure.
 - Keep reusable error atoms and factories with their owning domain or infrastructure module; shared ownership does not make an error variant part of every operation contract.
-- Prefer discriminated `type` variants and small factory helpers; do not scatter inline `{ type: "..." as const }` shapes across the codebase.
+- Prefer discriminated `_tag` variants in Effect projects or established `type` variants in Result projects, with small factory helpers; do not scatter inline `{ type: "..." as const }` shapes across the codebase.
 
 ## Backend Build Sequence
 
@@ -117,7 +118,7 @@ For endpoint or service work:
 1. Plan/gap review.
 2. Contracts: request, response, domain, and error schemas/types.
 3. Boundary validation tests.
-4. Service tests using `Result`/`ResultAsync` errors.
+4. Service tests covering the selected Effect or Result failure contract.
 5. Repository/persistence tests when persistence behavior changes.
 6. Implementation: repository, service, route/controller.
 7. Exhaustive error mapping and response validation.
@@ -132,6 +133,8 @@ For endpoint or service work:
 - For large structural refactors, prefer codemod-style file moves and import
   rewrites first, then targeted manual cleanup.
 
+For all Drizzle projects, edit schema source and run the generator; do not hand-edit generated SQL or metadata. Use an explicit custom migration for authored SQL. Preserve the Migration Proof Harness regardless of runtime integration.
+
 For Fastify projects:
 
 - Declare request/response schemas in route metadata for OpenAPI when the project supports it.
@@ -139,6 +142,5 @@ For Fastify projects:
 - Do not hand-author JSON Schema for API schemas except for unavoidable framework gaps.
 - Use one dedicated response schema per status code.
 - Validate response payloads before sending. Prefer one reusable helper that validates against the Zod schema and prevents invalid output from leaving the boundary.
-- For Drizzle-backed database migrations, edit schema source files and run the generator. Never hand-edit generated migration files or generated migration metadata.
 - For protected routes, use the shared auth extractor or guard wiring instead of duplicating token parsing in handlers.
 - Keep actor context flow explicit from request boundary to service call; do not fetch auth context from hidden globals inside services.

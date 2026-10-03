@@ -47,6 +47,11 @@ could reveal a newly invalidated assumption.
   runtime acceptance, and recovery checks where applicable. Do not replace
   missing high-impact evidence with model confidence.
 
+When changed behavior has an important invariant across a broad input space or
+sequence of actions, assess the property-testing trigger in
+[Verification Details](verification-details.md#property-based-testing).
+The trigger follows behavior and available proof, not the rigor label alone.
+
 Automated checks prove only the behavior they exercise. Model review should
 focus on missing requirements, semantic correctness, architecture, security,
 edge cases, and maintainability. A minor naming or style preference without a

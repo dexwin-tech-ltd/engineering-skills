@@ -1,6 +1,6 @@
 # Verification Details
 
-Use the relevant section when work changes tests, API endpoints, observable runtime behavior, persisted schema or data, or a high-impact invariant that may need mutation analysis.
+Use the relevant section when work changes tests, API endpoints, observable runtime behavior, persisted schema or data, important invariants across broad input spaces or action sequences, or a high-impact invariant that may need mutation analysis.
 
 ## Testing Doctrine
 
@@ -26,6 +26,45 @@ Apply testing rules in this order: critical behavior correctness first, then fai
   `[domain].repository.test.ts`.
 - Structural migrations must preserve behavior and prove that with tests.
 - Keep test structure aligned with the real module structure.
+
+### Effect Testing
+
+In new Effect backend/web projects prefer Effect test utilities and `@effect/vitest` for service and workflow tests; read `$engineering-effect` for Layer, scope, virtual-time, failure-channel, and property-test guidance. They complement real database/HTTP integration, the Migration Proof Harness, RTL, Expo/Jest, Playwright, Maestro, mutation analysis, runtime acceptance, and independent review. Preserve established test stacks. Diagnose flaky tests instead of routinely retrying until green.
+
+### Property-Based Testing
+
+Property-based tests assert a rule across generated inputs or action sequences.
+Use them when changed behavior has an important invariant, a broad input space
+or sequence of actions, and a practical test seam. Examples include allocation
+and rounding rules, scoring bounds, normalization, serialization contracts,
+and state transitions. Base the trigger on changed behavior, not a blanket
+requirement for every Critical task. If the technique is unsuitable or another
+technique provides sufficient assurance, record the concrete reason, relevant
+input or sequence risks, and alternative proof before implementation. Cost
+alone or a few passing examples does not establish sufficient assurance.
+
+- Derive properties from the domain contract independently of the implementation.
+  Do not duplicate production logic to calculate expected results. Review
+  whether the properties would reject meaningful wrong behavior: preservation
+  of an allocation total alone does not establish its distribution rules.
+- Review generators alongside assertions. Exercise relevant boundaries,
+  combinations, and valid inputs, plus invalid inputs where rejection is part
+  of the contract. Avoid generators or excessive filtering that silently omit
+  important cases; use explicit examples for known boundaries and regressions.
+- Use shrinking to reduce failing inputs or action sequences, retain replay
+  information supported by the tool, and preserve discovered defects as stable
+  regression cases. If shrinking is unavailable, minimize failures explicitly.
+  Control time, randomness, and external state enough to reproduce failures.
+- Preserve established repository tools and budgets. Run the affected properties
+  locally and in relevant pull-request checks with bounded execution. Expand
+  exploration when impact, discovered failures, or input-coverage gaps warrant
+  it; do not impose a universal case count or new scheduled suite. Avoid fixing
+  one seed permanently for all exploration.
+- Record affected properties, generator scope, execution budget, results, and
+  replay information for failures in existing validation evidence. Generated
+  cases provide evidence for the exercised space, not a proof for every input.
+  Preserve required integration, runtime, mutation-analysis, and independent
+  review gates.
 
 ### Runtime Acceptance
 
@@ -61,6 +100,15 @@ keep the work unverified while required issue-owned proof is missing or stale.
   behavior-first tests, reach green, then strengthen observable-contract
   assertions against meaningful survivors and rerun both ordinary and mutation
   suites; do not write mutant-specific implementation checks.
+- Include applicable example and property tests. For property tests under
+  mutation analysis, use a bounded, reproducible property-test configuration
+  for the unmodified baseline and mutant runs; retain the configuration and
+  verify failure replay with the chosen tool. Keep broader varied exploration separate
+  and retain its discovered failures as stable regression cases. Investigate
+  meaningful survivors for weak assertions or generator gaps. Property tests
+  do not waive mutation triggers, survivor review, or required reruns. Their
+  runtime cost does not justify silently excluding code or treating mutation
+  timeouts as passes.
 - Require it when a plausible small mutation could cause unauthorized access;
   incorrect money, entitlement, grading, ranking, or scoring; an invalid state
   transition or invariant; persisted-data damage; consequential validation

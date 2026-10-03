@@ -4,7 +4,7 @@ Read when changing query hooks, loaders, prefetch, cache identity, or server-sta
 
 ## Hooks and Server State
 
-- Prefer TanStack Query as the default server-state/query library for web and mobile projects unless the repo already standardizes on another tool.
+- Prefer Atom in new Effect web projects. For React Native require selected-version platform proof first; use TanStack Query when that integration does not meet supported-platform requirements. Preserve established query libraries. Apply `$engineering-effect` for the Atom/runtime and Effect-to-Query bridge contract.
 - Treat server data required for a route or screen's initial render as navigation-owned work when the repository's router or framework provides a loader, server-data, or route-prefetch mechanism. Use that mechanism instead of initiating the fetch from a component or flow effect.
 - Integrate navigation-owned loading with the repository's existing query or cache layer through its supported dependency boundary, such as typed router context. Reuse the same query definition and cache identity in the loader or prefetch boundary and the consuming hook. Await route-critical data; start optional prefetching without blocking navigation when the framework supports it.
 - If no suitable navigation-owned data-loading API exists, preserve the repository's established query-hook or flow boundary rather than introducing a new router architecture or a hand-rolled prefetch effect merely to imitate loader behavior.
@@ -12,6 +12,8 @@ Read when changing query hooks, loaders, prefetch, cache identity, or server-sta
 - Hooks and flows receive the adapter's exact result type; do not widen it to a convenient global error union.
 - When a query or mutation awaits a `ResultAsync`, the resolved value is a `Result`; domain failures land in query/mutation `data`, not in Query's `error` state. Branch on `data.isOk()` / `data.isErr()` for domain outcomes.
 - Use TanStack Query `isError` / `error` only for unexpected thrown failures that violate the adapter contract.
+
+The neverthrow-specific Result/data/error instructions and examples below apply to established Result + TanStack Query projects. Effect integrations keep expected failures, defects, and interruption distinct at their owned bridge; they do not directly await an Effect as a Promise or treat interruption as an expected domain failure.
 
 ### Queries
 
