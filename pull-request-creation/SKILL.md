@@ -192,6 +192,11 @@ feat(learning): issue 08 - persist draft answers
 
 Follow a stricter compatible repository convention when present. Include `Closes #123` only for an actual GitHub issue intended to close on merge.
 
+Apply [PR Body Guidance](#pr-body-guidance) while preserving required repository
+template fields and the applicable evidence below. Read the local
+[PR Body Writing Guide](references/pr-body-writing.md) when composing or
+revising the description.
+
 Write a conditional PR body containing only applicable sections:
 
 1. Canonical local issue and GitHub issue link.
@@ -233,6 +238,40 @@ Pending GitHub CI alone does not make a completed PR a draft. When draft status 
 Re-read the PR and verify the repository, number, URL, base, head, head SHA, title, body, draft state, issue links, and stack dependency. Confirm the remote branch contains the intended local commit.
 
 Report the PR URL, readiness, branch and base, commits published, validation evidence, stack position, and anything still unverified. Never claim publication succeeded from a local push or mutation response alone.
+
+## PR Body Guidance
+
+Lead with the concrete problem and resulting behavior. Use the project's domain
+terms, consulting its glossary when available. Scale detail to the change;
+simple PRs may need only a short explanation and relevant validation.
+
+Choose the smallest explanation that makes the change clear. Use a sketch when
+it adds clarity; show a full block when a diff would hide important context.
+Keep sketches beside the text they explain and verify them against the final
+diff. Format-selection rules and original examples live in the local
+[PR Body Writing Guide](references/pr-body-writing.md).
+
+For behavior changes, pair observed before and after evidence when available.
+Use screenshots for visible differences and actual test results or execution
+output for runtime behavior. Distinguish an explanation of expected behavior
+from an observed result. If the earlier state was not captured, say so when
+material; never invent a failing run or screenshot. Reuse the verified handoff's
+evidence and retain its revision and environment. Presentation does not replace
+required proof or authorize new implementation work.
+
+For material risks, name the affected users, consumers, data, or systems and
+explain reversibility: what rollback restores, what it cannot restore, and any
+backup, recovery, or roll-forward requirement. Keep these claims grounded in
+the change and existing evidence. Avoid vague risk labels or speculative lists.
+
+All required PR-writing guidance is maintained in this skill and its local
+reference files. The source links below record historical inspiration only;
+using this workflow does not require fetching or loading those external skills.
+Upstream changes do not change our instructions unless deliberately adopted.
+
+Attribution: adapted from [Matt Pocock's PR skill](https://github.com/mattpocock/skills/blob/main/skills/engineering/pr/SKILL.md),
+which credits [Dex Horthy's show-me skill](https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md)
+for its visual explanation approach.
 
 ## Write Safety
 

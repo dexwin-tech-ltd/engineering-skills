@@ -36,7 +36,10 @@ history without explicit authorization.
    failed check, rejected push, or ambiguous credentials.
 3. Create or update the PR for the same head branch. Use the configured GitHub
    connector when it can represent the change; otherwise use authenticated CLI.
-   Follow the repository's title and PR-template conventions. Include the
+   Follow the repository's title and PR-template conventions and the shared
+   [PR Body Guidance](../SKILL.md#pr-body-guidance). Read the local
+   [PR Body Writing Guide](pr-body-writing.md) when composing or revising the
+   description. Include the
    outcome, changed scope, checks actually run, Standard review evidence when
    applicable, and material risks. Link a GitHub issue only when one exists
    and should close on merge. Omit empty boilerplate and sensitive data.
