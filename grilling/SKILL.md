@@ -5,6 +5,8 @@ description: Stress-test a plan, decision, or idea through thorough, self-contai
 
 # Grilling
 
+First check that the user is solving the right problem. Challenge unsupported assumptions and unnecessary scope, and recommend the simplest sufficient approach—even if that means reframing the problem, using an existing capability, or making no change. Resolve material disagreements about the problem or desired outcome before discussing downstream solution choices.
+
 Investigate the whole decision tree, but deliberate with the user on one unresolved material decision at a time. Do not make the user confirm obvious or discoverable facts. Provide a recommended answer and clear reasoning for every decision.
 
 ## Classify before asking

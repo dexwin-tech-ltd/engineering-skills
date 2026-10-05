@@ -4,6 +4,12 @@ Read when implementing or reviewing meaningful frontend behavior, tests, accessi
 
 ## Testing
 
+Apply the core [Testing Doctrine](../../engineering-for-certainty/references/verification-details.md#testing-doctrine).
+Choose coverage by behavior and risk; test placement does not require a
+separate suite for every adapter, hook, flow, view, or component. Keep relevant
+production collaborators running inside the behavior under test, and preserve
+the required journey and integration gates below.
+
 - Prefer `@testing-library/react` for web unit/component tests.
 - For mobile unit/component tests, prefer the repo's existing Expo/Jest integration, commonly `expo-jest`, instead of introducing a parallel test stack without a strong reason.
 - Web E2E tests are mandatory for important user-visible flows when a web app exists. Prefer Playwright.
@@ -20,15 +26,17 @@ Read when implementing or reviewing meaningful frontend behavior, tests, accessi
 
 For web or mobile features:
 
-1. Plan/gap review, including UI states, error states, accessibility states, and route/screen ownership.
-2. Shared contracts and API adapter types.
-3. API adapter tests for request validation, response validation, and error mapping.
-4. Hook tests for query/mutation behavior and the selected Effect or Result outcome branches, including defects, interruption, and stale-attempt protection where reachable.
-5. Flow tests for reducer transitions, orchestration, navigation, and submit outcomes.
-6. View/component tests for rendering, permissions, validation, success states, and error states.
-7. Implementation from API adapter inward to hook, flow, and view.
-8. Accessibility checks for critical user-visible states and flows.
-9. E2E coverage for important happy-path and failure-path user flows on supported platforms.
+1. Plan/gap review, including UI states, error states, accessibility states, route/screen ownership, and the distinct risks each test boundary must expose.
+2. Establish shared contracts and API adapter types.
+3. Select focused and assembled tests for the affected behavior. Cover applicable request/response validation and error mapping; query/mutation outcomes, defects, interruption, and stale-attempt protection where reachable; reducer transitions, orchestration, navigation, submission, rendering, permissions, and validation. Place assertions at boundaries that can expose those failures instead of creating a suite per layer.
+4. Implement from API adapter inward to hook, flow, and view, applying core test-first requirements. Add focused tests where meaningful local logic or fault isolation warrants them, and exercise real collaboration where wiring matters.
+5. Run accessibility checks for critical user-visible states and flows.
+6. Complete required E2E coverage for important happy-path and failure-path user flows on supported platforms.
+
+For example, a form/flow test can cover a forwarding hook and its visible
+outcomes together. A hook that owns stale-response protection can warrant its
+own focused tests. A flow test through a mock adapter does not prove production
+request serialization or live backend integration.
 
 When the backend operation is not yet available, complete the sequence through
 the mock adapter and record the production adapter plus live integration proof

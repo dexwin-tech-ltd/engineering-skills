@@ -35,6 +35,13 @@ other evidence reveals wider coupling. Reuse current plans and verified facts;
 do not rerun broad scans, full suites, or the same checks without a reason they
 could reveal a newly invalidated assumption.
 
+When designing, adding, materially changing, or reviewing tests, apply
+[Testing Doctrine](verification-details.md#testing-doctrine). Choose cases and
+boundaries that distinguish intended behavior from plausible failures; do not
+require a separate suite for every function, file, or layer. These quality
+rules apply at every rigor level without requiring new tests for trivial edits
+or weakening mandatory integration, runtime, or repository gates.
+
 - **Quick:** Run an existing focused automated check when it directly covers the
   outcome. Otherwise use a focused manual or visual check and state what was
   observed. Do not add a test that merely restates a trivial edit.

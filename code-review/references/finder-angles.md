@@ -82,7 +82,26 @@ Check whether failures can be detected, attributed, and diagnosed. Inspect struc
 
 ### K. Testing quality
 
-Check whether tests cover the changed contract, success paths, expected failures, boundaries, and regression scenario. Detect tests that mock away the disputed behavior, assert implementation details, pass vacuously, or omit real wiring. Treat missing tests as supporting evidence for a behavior risk, not automatically as a standalone finding.
+Read the core [Testing Doctrine](../../engineering-for-certainty/references/verification-details.md#testing-doctrine)
+when reviewing tests. Check whether evidence supports the changed behavior:
+
+- Expectations come from intended behavior or an independent contract, and
+  assertions reject plausible wrong results or consequential side effects.
+  Internal-value checks need a concrete contract or behavior reason; passing
+  `MAX_ATTEMPTS === 3` alone does not establish an enforced attempt limit.
+- Cases cover meaningful success and failure groups, relevant boundaries,
+  consequential combinations or sequences, and the regression scenario.
+- Test boundaries expose the relevant risks, doubles do not replace the
+  disputed behavior, and required real wiring is exercised. Distinguish
+  simulated outcomes from real integration evidence.
+- Tests run independently, failures are reproducible, and retries do not hide
+  flaky failures. For regressions, check failure on the broken behavior when
+  practical or the recorded limitation and alternative evidence.
+
+Detect vacuous or implementation-only assertions, but judge sufficiency by the
+behavioral claim and risk, not test count or a separate suite per layer. Treat
+missing tests as supporting evidence for a behavior risk, not automatically as
+a standalone finding.
 
 For observable runtime changes, independently audit the applicable real-boundary
 proof against accepted outcomes and important integration seams. Formal issues

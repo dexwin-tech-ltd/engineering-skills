@@ -1,6 +1,6 @@
 # Verification Details
 
-Use the relevant section when work changes tests, API endpoints, observable runtime behavior, persisted schema or data, important invariants across broad input spaces or action sequences, or a high-impact invariant that may need mutation analysis.
+Use the relevant section when designing, adding, materially changing, or reviewing tests, or when work changes API endpoints, observable runtime behavior, persisted schema or data, important invariants across broad input spaces or action sequences, or a high-impact invariant that may need mutation analysis.
 
 ## Testing Doctrine
 
@@ -9,23 +9,87 @@ failing test can express the requirement. For Standard work, prefer it when it
 clarifies the behavior. Quick work needs direct targeted proof, but not a new
 test for a trivial edit. Follow any stronger repository or approved-issue rule.
 
-Apply testing rules in this order: critical behavior correctness first, then failure and validation coverage, then naming and structural consistency.
+Apply the following quality rules to all new or materially changed tests.
+They guide test selection and review without imposing a test count or written
+justification for every assertion. Preserve required integration, E2E,
+property-testing, mutation-analysis, runtime, and repository gates.
+
+Prioritize critical behavior correctness, then meaningful failure and validation coverage, then naming and structural consistency.
+
+### Behavior and Assertions
+
+- Derive expectations from intended behavior or an independently established
+  contract. Do not calculate expected results by duplicating production logic.
+- Prefer assertions that survive changes to incidental implementation details.
+  Do not add a test solely to repeat an internal constant, private structure,
+  or production calculation. Direct checks of such details need a concrete
+  reason, such as a value that is itself a published contract. Setup may still
+  change when dependencies change.
+- For an internal three-attempt limit, checking `MAX_ATTEMPTS === 3` does not
+  prove enforcement. Check that the third attempt is allowed, the fourth is
+  rejected, and rejection performs no protected action. A published protocol
+  identifier can warrant a direct value check because the value is the promise.
+- Assert required results and consequential side effects, including the absence
+  of prohibited effects where relevant. Interaction assertions are appropriate
+  when the interaction is part of the contract, such as requesting a charge
+  exactly once; incidental helper calls and call order are not default contracts.
+
+### Test Boundaries and Doubles
+
+- Select boundaries from behavior and plausible failure modes, rather than
+  requiring separate suites for every function, file, or layer. Use focused
+  tests for meaningful local logic and wider tests for collaboration and wiring.
+  Add overlapping coverage when it protects a distinct risk or provides useful
+  fault isolation.
+- Use test doubles at explicit dependency seams outside the behavior under
+  test. Keep the relevant production logic running unchanged; do not replace
+  the logic, collaboration, or mechanism the test claims to verify. Keep
+  doubles consistent with relevant production contracts and distinguish
+  simulated outcomes from real integration evidence.
+- A controlled provider can expose a timeout or record charge requests. A fake
+  repository returning "rolled back" cannot prove a real database transaction.
+  Verify real boundaries when correctness depends on their behavior; the API
+  integration requirement below remains a stronger specific rule.
+
+### Cases and Reproducibility
+
+- Choose cases from meaningful success and failure groups, relevant boundaries,
+  and consequential combinations or action sequences. Cover applicable
+  validation failures, error variants, and exhaustive outcome mappings. Check
+  whether assertions reject plausible wrong behavior; preserving a sorted
+  list's length alone accepts an unchanged unsorted list. Avoid redundant cases
+  that add no distinct confidence. This does not require deliberately breaking
+  code for every test. Triggered mutation analysis still applies.
+- For debugging, build a deterministic repro loop and convert the minimized
+  repro into a regression test before fixing when a valid seam exists.
+  Demonstrate failure for the intended reason on the broken behavior when
+  practical; otherwise state the limitation and alternative evidence.
+- Make tests independently runnable and failures reproducible. Control relevant
+  time, randomness, mutable state, and external responses according to the test
+  boundary. Preserve varied property-test exploration and failure replay; do
+  not eliminate exploration by permanently fixing one seed.
+- Prefer bounded waits for observable conditions over arbitrary sleeps. Share
+  infrastructure only when test isolation is preserved. Investigate flaky
+  failures rather than routinely retrying until green. Any bounded retry for a
+  known infrastructure transient must remain visible, with its reason and the
+  original failure retained.
+
+### Execution and Conventions
 
 - When test-first work is required or selected and a useful seam exists: write the failing test first, implement the minimum to pass, then refactor with tests green.
 - When test-first work is required but unsuitable, state the concrete reason and alternative proof before implementation.
 - When setting up repo automation, prefer commit-time hooks for fast checks and push-time hooks for broader suites, while keeping CI as the authoritative full-environment validation.
-- Cover success paths, failure paths, validation failures, error variants, and exhaustive mapping.
 - For API endpoints, test status codes, response payloads, and actionable error details.
 - API integration tests are mandatory for endpoint changes. Exercise the real app wiring end-to-end through route, service, and persistence layers; mock only true external systems at the boundary.
 - When work touches observability, resilience, auth/security, or frontend engineering/accessibility, apply the relevant companion skill and test those behaviors explicitly.
 - Follow the repo's local test declaration and naming style. If none exists, use
   `test()` with multiline given/when/then test names.
-- For debugging: first build a deterministic repro loop. Convert the minimized repro into a regression test before fixing when a valid seam exists.
-- Test file naming should mirror production file naming, such as
+- When a dedicated test file is useful, its naming should mirror production file naming, such as
   `[domain].route.test.ts`, `[domain].service.test.ts`, and
   `[domain].repository.test.ts`.
 - Structural migrations must preserve behavior and prove that with tests.
-- Keep test structure aligned with the real module structure.
+- Organize tests around behavior and stable interfaces; keep them discoverable
+  alongside the relevant modules without requiring one suite per module.
 
 ### Effect Testing
 
