@@ -93,9 +93,9 @@ Run the review as six distinct phases:
 When `$code-review` is invoked as the read-only analysis engine inside
 `$issue-delivery` or another explicitly authorized delivery workflow, read and
 follow [Review Loop Contract](references/review-loop-contract.md) before Phase
-0. Require a governing issue with correction and escalation authority. Return
-the complete evidence-based verdict queue to the composing workflow; the
-Independent Reviewer stays read-only and does not select finding routes.
+0. Require a governing issue or approved task handoff with correction and
+escalation authority. Return the complete evidence-based verdict queue to the
+composing workflow; the Independent Reviewer stays read-only and does not select finding routes.
 
 ### Checkpoint Review Mode
 
@@ -109,6 +109,12 @@ requirement for a final full integration review.
 ### Resolve the target
 
 Honor a user-supplied PR, branch, commit, range, file list, or explicit base before applying defaults.
+
+For a merged PR, freeze the original PR diff using immutable base/head evidence
+or a verified provider patch, and record the resulting merge/squash commit
+separately. Do not substitute a moving default branch, an empty upstream diff,
+or today's whole repository. A later-code audit is a distinct target. Agent
+review never supplies the explicit human outcome required by post-merge review.
 
 For an implicit local or branch review:
 

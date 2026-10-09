@@ -1,8 +1,8 @@
 # Task-Level Pull Request
 
-Use this path only when the user requests publication of completed Quick or
-Standard work that has no canonical issue. The user request and compact task
-handoff govern scope. Critical work and any explicitly issue-driven work use
+Use this path for publication of completed Quick or Standard work that has no
+canonical issue, either directly requested or part of authorized delivery. The
+user request and compact task handoff govern scope. Critical work and any explicitly issue-driven work use
 the formal issue path in `SKILL.md` instead. Do not create a ceremonial issue
 merely to publish an eligible task-level change.
 
@@ -43,15 +43,25 @@ history without explicit authorization.
    outcome, changed scope, checks actually run, Standard review evidence when
    applicable, and material risks. Link a GitHub issue only when one exists
    and should close on merge. Omit empty boilerplate and sensitive data.
-4. Use **Draft** only for explicitly requested work in progress or proof that
-   can run only after PR creation. Otherwise mark the PR ready for human review
+4. Use **Draft** for an explicit draft-only boundary, explicitly requested work
+   in progress, or proof that
+   can run only after PR creation. Otherwise mark the PR non-draft
    when the task-level proof is complete. Pending CI alone does not force Draft.
    Never describe the PR as Ready to Merge until required CI and human gates
    are actually satisfied.
+   Preserve a requested draft even after all checks pass; do not mark it ready
+   or merge it without authorization to advance that boundary.
 5. Re-read the remote PR and verify repository, URL, base, head, head SHA,
    title, body, and draft state. Report any pending CI or evidence honestly.
+6. Apply the main skill's selective human-review enrollment step to important
+   work. Include any queue-file commit in current-head verification and CI.
+   Return the exact proof and compact task handoff to the owning delivery
+   operator for merge-gate verification; do not require a formal issue merely
+   to merge eligible task-level work.
 
-This path does not authorize merge, deployment, reviewer assignment, labels,
-or unrelated cleanup. It does not let an Implementation Worker or Independent
-Reviewer publish; the responsible user-facing agent retains publication
-authority and checks the returned evidence.
+The standalone PR-creation boundary does not include merge. Normal authorized
+delivery does, under [Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md).
+It does not grant new deployment authority, reviewer assignment, or unrelated
+cleanup. It does not let an Implementation Worker or Independent Reviewer
+publish; the responsible user-facing operator retains shipping authority and
+checks the returned evidence.

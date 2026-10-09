@@ -18,7 +18,9 @@ When a goal is active:
 - pause and yield on `USER_DECISION` or `BLOCKED`, leaving the goal incomplete;
 - do not cross a checkpoint with an unresolved confirmed finding; and
 - mark the goal complete only at the completion condition declared by the
-  governing issue or explicit user instruction. The default is Ready to Merge;
+  governing issue or explicit user instruction. The default is verified merge
+  with required selective human-review tracking and authorized release
+  follow-through, not waiting for post-merge human review;
   an explicit narrower publication boundary may define a truthful local
   completion target instead. A publication stop with no local completion target
   leaves the goal incomplete.

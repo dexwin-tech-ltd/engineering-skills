@@ -75,7 +75,7 @@ For issue creation, naming, or repository planning conventions, read [Convention
 
 ### Composed Review-to-Merge Authorization
 
-When an explicit review-to-merge workflow supplies verified findings, read [Composed Review-to-Merge Authorization](references/composed-review-to-merge.md) before writing a mechanical issue update. Product or scope decisions still require user confirmation.
+When authorized delivery, review-to-merge, or post-merge human feedback supplies verified findings, read [Composed Review-to-Merge Authorization](references/composed-review-to-merge.md) before writing a mechanical issue update. Product or scope decisions still require user confirmation. A merged PR correction gets a new Branch Contract from a current base, not an Existing PR Correction Contract for its old head.
 
 ### Deferred Follow-Up Inbox Mode
 
@@ -315,6 +315,12 @@ Every formal issue defines the write-back and status propagation required at com
 ### 13. Review Loop Contract
 
 Every rewritten issue states how implementation hands off to review and how verified findings are routed. Read [Review Loop Template](references/review-loop-template.md) when the issue is intended for `$issue-delivery`; otherwise state a human-gated workflow and disable automatic correction explicitly. Every correction batch requires invalidated proof to be rerun and a fresh full resulting-change review.
+
+For delivery, read [Delivery and Human Review](../engineering-for-certainty/references/delivery-and-human-review.md).
+Record the verified-merge completion default or the explicit narrower boundary,
+known release authority, and provisional human-review selection with its reason.
+Preserve existing explicit human gates. Reassess selection against the final
+change; queuing important work never makes unsafe work releasable.
 
 ## Conditional Gates and Execution
 

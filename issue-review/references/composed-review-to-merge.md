@@ -2,11 +2,16 @@
 
 ### Composed Review-to-Merge Authorization
 
-When an explicit review-to-merge workflow invokes this skill, that invocation
-supplies write authorization and shared-understanding confirmation only for a
+When authorized delivery, review-to-merge, or clear post-merge human feedback
+invokes this skill, that invocation supplies write authorization and shared-understanding confirmation only for a
 coherent issue update derived entirely from verified findings, the existing
 approved issue meaning, and discoverable repository conventions. Do not ask for
 a redundant confirmation before that mechanical write.
+
+For a merged source PR, prepare a new correction issue or bounded handoff and
+Branch Contract from the current verified base. Retain origin links and the
+original completion history; never reopen delivery on its merged head. Follow
+[Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md#corrections-after-merge).
 
 If the update would choose or change product meaning, acceptance, scope,
 architecture, public contracts, schemas, migrations, permissions, security

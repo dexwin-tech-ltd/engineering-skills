@@ -5,7 +5,12 @@ description: Verify completed task-level or issue-driven work, publish intended 
 
 # Pull Request Creation
 
-Load and follow `$engineering-for-certainty`. Convert completed, verified local work into a truthful GitHub handoff. Own branch verification, intentional publication, PR creation or update, readiness state, and remote verification.
+Load and follow `$engineering-for-certainty`. Convert completed, verified local work into a truthful GitHub handoff. Own branch verification, intentional publication, PR creation or update, readiness state, selective human-review enrollment, and remote verification.
+
+Read [Delivery and Human Review](../engineering-for-certainty/references/delivery-and-human-review.md).
+A standalone request to create a PR stops at that requested boundary. Inside
+authorized delivery, return current-head evidence to the owning operator for
+CI and verified merge; do not introduce a routine human approval stop.
 
 For a completed Quick or Standard task without a canonical issue, read and
 follow [Task-Level Pull Request](references/task-level-pr.md) instead of the
@@ -148,8 +153,9 @@ Confirm that:
   exact behavior-changing reviewed commit or deployed build, every invalidated
   scenario was rerun, and applicable auth and Design Conformance evidence is
   secret-free and complete. When the current head is later, verify that every
-  intervening commit changes only canonical issue, roadmap, or completion-
-  evidence surfaces and invalidates no recorded proof.
+  intervening commit changes only canonical issue, roadmap, backlog,
+  human-review index, or completion-evidence surfaces and invalidates no
+  recorded proof.
 - for design-backed frontend work, the authoritative source was rechecked
   against the approved baseline; the frozen images and HTML/Tailwind reference
   are resolvable and validated; every required matrix row has a current typed
@@ -223,21 +229,32 @@ Choose exactly one outcome from evidence:
 - **Do not create:** material implementation or evidence is incomplete and
   neither user-authorized WIP publication nor the approved UI
   checkpoint-preview path applies.
-- **Draft:** the user explicitly requested WIP publication, required evidence
+- **Draft:** the user explicitly requested a draft boundary or WIP publication, required evidence
   can only run after PR creation, or the approved UI checkpoint-preview path
-  applies. Keep the issue `Needs Verification`.
+  applies. Missing required issue proof keeps the issue `Needs Verification`;
+  an intentionally retained draft alone does not make verified proof missing.
 - **Ready for review:** the issue is verified complete, the traceability ledger,
   current Runtime Acceptance evidence, and final review are satisfied, accepted
   findings are fixed, every triggered Design Audit is current and complete, and
   no known blocker remains.
 
-Pending GitHub CI alone does not make a completed PR a draft. When draft status exists only to obtain remote evidence, verify that evidence, complete the final audit, and mark the PR ready when every gate passes.
+Pending GitHub CI alone does not make a completed PR a draft. When draft status exists only to obtain remote evidence, verify that evidence, complete the final audit, and mark the PR ready when every gate passes. Preserve an explicit draft-only boundary even when all proof passes.
 
-### 7. Verify Remote State
+### 7. Enroll Selected PRs And Verify Remote State
+
+Assess the actual final change for post-merge human review. For selected work,
+prepare compact guided review material, verify `human-review:pending`, and add
+the PR URL and brief description to root `PRS_PENDING_HUMAN_REVIEW.md` on this
+branch before merge. Follow Delivery and Human Review for exact-label creation,
+selection reasons, isolation, and reconciliation. Once the URL exists, publish
+the bookkeeping commit to this same PR; rerun invalidated proof, obtain required
+current-head verification, and follow CI on the resulting head. Keep the last
+behavior-changing reviewed revision distinct from bookkeeping descendants.
+Routine PRs and bookkeeping-only maintenance need no human-review entry.
 
 Re-read the PR and verify the repository, number, URL, base, head, head SHA, title, body, draft state, issue links, and stack dependency. Confirm the remote branch contains the intended local commit.
 
-Report the PR URL, readiness, branch and base, commits published, validation evidence, stack position, and anything still unverified. Never claim publication succeeded from a local push or mutation response alone.
+Report the PR URL, readiness, branch and base, commits published, validation evidence, stack position, human-review selection and tracking, and anything still unverified. Never claim publication succeeded from a local push or mutation response alone.
 
 ## PR Body Guidance
 
@@ -278,4 +295,7 @@ for its visual explanation approach.
 - Treat mixed worktrees, branch mismatches, missing issues, and incomplete evidence as stop conditions.
 - Never stage unrelated user changes or use destructive Git recovery.
 - Never publish secrets, private fixtures, raw logs, or sensitive local paths in the PR body.
-- Never merge, enable auto-merge, request reviewers, assign people, or alter labels unless the user separately requested those actions.
+- The owning delivery operator coordinates merge under Delivery and Human Review;
+  PR creation alone does not perform it. Selective human-review label and index
+  writes are part of authorized delivery. Other label changes, reviewer requests,
+  assignments, and auto-merge require their own authorization.

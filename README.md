@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `5e79b437f07a3df9e7989ea7e116a84e8c591713`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `541c14930d8e19e1d71a29319622d7d63bfb5867`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -69,15 +69,23 @@ branch.
 bounded Implementation Worker assignments, independent review,
 authorized corrections, revalidation, final
 integration review, pull-request creation or update, and CI
-follow-through.
+follow-through, then verified merge and the established authorized
+release process. Explicit narrower instructions and repository gates
+still control.
 
 When the active harness supports durable goals, configure one through
 that harness for work that should continue across turns. A durable
 goal adds persistence, not authority.
 
 Confirmed deterministic in-scope findings may be corrected and
-re-reviewed automatically. The operator stops when only human
-approval and merge remain.
+re-reviewed automatically. Important, significantly cross-cutting,
+hard-to-change, or critical-system PRs receive
+`human-review:pending` and a root
+`PRS_PENDING_HUMAN_REVIEW.md` entry with their link and brief
+description. Routine PRs need no human review. The original PR holds
+compact guided review material and the explicit human outcome; the
+label and file reflect that outcome. Pending human review alone does
+not block completed delivery or later shipping.
 
 ### 3. Handle human decision gates
 
@@ -95,6 +103,12 @@ blocker, or confirmed finding.
 Invoke  with an explicit review-to-merge request,
 for example:  A generic pull
 request review remains non-merging.
+
+Authorized delivery can also pass its current-head evidence to this
+merge workflow without another per-task merge request. For human
+review after merge, ask `pull-request-review` for the pending queue
+or help reviewing a merged PR. Clear bounded feedback starts a new
+linked correction PR; it never changes the merged PR's old branch.
 
 The workflow verifies the complete finding queue before changing the
 pull request. Deterministic in-scope corrections pass through
@@ -150,12 +164,14 @@ npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   
 Install autonomous PR review and correction with its complete doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review   --skill pr-review-and-fix
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review   --skill pull-request-creation   --skill issue-review   --skill issue-delivery   --skill grilling   --skill pr-review-and-fix
 ```
 
 This workflow follows repository AGENTS.md label rules, records human
 decisions in the PR, and routes decision requests to the verified
-github-review-requested Slack channel. It does not authorize merging.
+github-review-requested Slack channel. It normally continues through
+verified merge under repository gates; an explicit reviewer-
+reassessment boundary still stops before merge.
 
 Install pull request creation:
 
@@ -164,10 +180,10 @@ npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   
 ```
 
 Install the delivery operator with its implementation, review, and
-publication doctrine:
+merge doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-creation   --skill issue-delivery
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill pull-request-review   --skill issue-delivery
 ```
 
 Install docs-backed grilling:

@@ -1,4 +1,4 @@
 interface:
   display_name: "Issue Delivery"
-  short_description: "Deliver an approved issue to a ready-to-merge PR"
-  default_prompt: "Use $issue-delivery to carry this approved issue to a ready-to-merge pull request: <issue path>"
+  short_description: "Deliver issues through merge and selective human review"
+  default_prompt: "Use $issue-delivery to deliver this approved issue through verified merge, authorized release follow-through, and selective post-merge human-review tracking: <issue path>"

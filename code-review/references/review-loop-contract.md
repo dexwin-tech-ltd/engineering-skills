@@ -7,16 +7,18 @@ Return the complete verified queue at once only when the composing workflow has
 authority to process it; this does not weaken review independence or user
 ownership of material decisions.
 
-## Required Issue Contract
+## Required Delivery Contract
 
-The governing issue must state authorized transitions, the automatic-correction
-boundary, user-owned decisions, required revalidation and re-review, the churn
+The governing issue or approved task handoff must state authorized transitions,
+the automatic-correction boundary, user-owned decisions, required revalidation and re-review, the churn
 threshold, and the completion condition. Authorized `$issue-delivery` and
 review-to-merge workflows may make the repository-local follow-up inbox writes
 defined by [Follow-Up Inbox](../../engineering-for-certainty/references/follow-up-inbox.md);
-read-only review may only recommend them. An outer review-to-merge workflow must
-separately authorize publication writes. Never infer authority from a goal or a
-general request to finish.
+read-only review may only recommend them. The responsible delivery operator
+holds publication and merge authority under
+[Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md),
+subject to explicit narrower boundaries. Never infer authority from a goal,
+loading a skill, or an analysis-only request.
 
 ## Review Ownership
 
@@ -36,8 +38,8 @@ exactly one route to every non-refuted candidate: `AUTO_CORRECT`,
 `DEFER_FOLLOW_UP`, `USER_DECISION`, `BLOCKED`, or `RESIDUAL_RISK`.
 
 Use `AUTO_CORRECT` only when the finding is `CONFIRMED`; the failure and
-correction are fully inside the approved issue; the correction has one clear
-interpretation; it preserves approved architecture and public contracts; it
+correction are fully inside the approved issue or task; the correction has one
+clear interpretation; it preserves approved architecture and public contracts; it
 adds no dependency, migration, schema, permission, security-policy, or test-
 strategy choice; it requires no choice between plausible product meanings; it
 does not hide, weaken, or replace required proof; and verifier evidence has no

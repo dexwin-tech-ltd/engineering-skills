@@ -13,13 +13,19 @@ For an issue intended for `$issue-delivery`, include:
 ```md
 ## Review Loop Contract
 
-- Delivery mode: `$issue-delivery` to a ready-to-merge handoff.
+- Delivery mode: `$issue-delivery` through verified merge, followed by the
+  established authorized release process; record any explicit narrower boundary.
+- Human review: selective after merge under Delivery and Human Review; record
+  the provisional selection and reason, then reassess the final PR. Selected
+  work needs `human-review:pending`, a root `PRS_PENDING_HUMAN_REVIEW.md` entry,
+  and compact guided review material before merge.
 - Review checkpoints: `<none; treat the issue as one delivery unit>` or
   `<ordered checkpoint IDs and outcomes>`.
 - Automatic transitions: implementation -> checkpoint validation ->
   checkpoint review -> authorized corrections -> checkpoint revalidation and
   re-review -> next checkpoint -> final full validation and integration review
-  -> pull request -> CI follow-through.
+  -> pull request -> CI follow-through -> merge-gate verification -> verified
+  merge -> authorized release follow-through and tracking reconciliation.
 - Checkpoint advance rule: advance only from a clean accepted checkpoint head.
   `AUTO_CORRECT` returns to correction and re-review of the same checkpoint.
   `USER_DECISION` and `BLOCKED` pause delivery. An unresolved confirmed finding
@@ -56,11 +62,15 @@ For an issue intended for `$issue-delivery`, include:
   correction authority, or permits crossing a non-clean checkpoint.
 - Completion target: current-head acceptance evidence, clean independent
   review, green required automated CI, current Issue Completion Record, and a
-  truthful pull request with only human approval and merge remaining.
+  verified merged PR with required human-review tracking and accurate release
+  state, or the explicit narrower target. Pending post-merge human review alone
+  does not block completion or later shipping.
 ```
 
 Tighten the default contract for the issue's risk, but never broaden automatic
 authority. A durable goal supplies persistence, not permission to resolve a
 material ambiguity. Independent Reviewer contexts remain read-only; the
-Delivery Operator owns authorized edits, validation, publication, and CI
-follow-through.
+Delivery Operator owns authorized edits, validation, publication, CI, merge,
+and already-authorized release follow-through. Read
+[Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md)
+for exceptions, queue reconciliation, and human outcome handling.

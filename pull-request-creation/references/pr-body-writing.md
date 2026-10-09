@@ -11,6 +11,40 @@ Explain the final change for a reviewer who has not seen the conversation.
 A straightforward change may need only a few sentences and validation.
 
 Add a sketch when it answers a question that prose leaves hard to follow.
+
+## Human review after merge
+
+For a PR selected under
+[Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md),
+make the first screen enough to understand the change and choose where to look.
+Prefer a short problem/result statement, the reason for human review, and a few
+linked code entry points or contracts. Add a small before/after example,
+screenshot, diagram, or comparison table when it conveys the idea faster than
+prose. Explain necessary technical terms at the point of use.
+
+Keep consequential implementation choices, verified behavior, remaining risks,
+and recovery limits easy to find. Link detailed reasoning and raw evidence;
+use collapsible detail when the hosting surface supports it. Scale the format
+to the change instead of requiring six long sections or a fixed report. Keep
+the repository queue entry to a link, brief description, and review reason or
+focus; the PR is the guided review surface.
+
+Illustrative opening (replace placeholders with verified links and results):
+
+> **Change:** Permission checks now use one shared function.
+> **Why review:** This affects access across customer API routes.
+> **Start here:** Permission function → route integration → isolation tests.
+> **Evidence:** Cross-customer access was denied; permitted actions still passed.
+> **Watch for:** Exceptions that should remain specific to individual routes.
+
+Keep tested revision and environment with linked evidence. After merge, record
+the resulting merge/squash revision and known deployment state on the same PR.
+Do not present an expected result as observed, or a later live deployment as
+the exact version reviewed. Reuse the issue evidence index without duplicating
+it. A compact explanation never replaces required proof.
+
+## Explanation forms
+
 Choose by what the reviewer needs to understand:
 
 | Reviewer needs to understand | Useful form |

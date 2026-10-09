@@ -1,6 +1,6 @@
 ---
 name: pull-request-review
-description: Review a GitHub pull request through the evidence-verified code-review pipeline, reconcile existing threads, adjudicate comments or issue-owned fixes, deliver simple learning feedback to the responsible engineer, and optionally carry an explicitly authorized review-to-merge workflow through durable follow-ups, merge, and guarded branch cleanup. Use for GitHub PR review conversations or an explicit request to review a PR through merge.
+description: Review GitHub PRs through verified code analysis, coordinate authorized delivery through merge, or guide human review of selected merged PRs and their follow-up corrections. Use for PR review, review-through-merge, and the post-merge human-review queue; ordinary analysis never grants shipping authority.
 ---
 
 # Pull Request Review
@@ -12,13 +12,19 @@ request, reconcile existing threads, adjudicate new verified findings,
 coordinate issue-owned correction when authorized, publish selected comments,
 deliver qualifying learning feedback, and verify the resulting review state.
 
+A clean task-level Quick shipping handoff may use its direct proof and final
+diff inspection without routine independent code review, unless an explicit
+review request or repository gate requires it. Standard, Critical, and formal
+issue work retain all required independent-review gates.
+
 Do not duplicate or weaken `code-review` doctrine. If the canonical skill or
 one of its triggered engineering dependencies is unavailable, stop and name
 every missing skill.
 
 **Review-to-Merge Mode** additionally requires `$issue-review`,
-`$issue-delivery`, and `$grilling`, together with the dependencies those skills
-declare. Resolve the complete required skill set before starting mutations and
+`$issue-delivery`, and `$grilling` when issue-owned corrections or material
+decisions require them. A clean task-level shipping handoff does not require a
+ceremonial issue. Resolve the complete required skill set before starting mutations and
 stop with one complete missing-dependency list rather than discovering gaps
 mid-workflow.
 
@@ -32,18 +38,25 @@ rejected, unreviewed, `CONDITIONAL`, or `NEEDS_CONTEXT` candidates. Thread
 reconciliation may perform only the pre-authorized workflow-owned reply and
 resolution writes described below.
 
-Unless the user opts out, invoking this skill also authorizes one automatic
+Unless the user opts out, explicitly invoking open-PR review (including an
+explicit review-through-merge request) also authorizes one automatic
 top-level pull-request learning-feedback comment and one eligible private Slack
 message after the review settles. This authorization covers only the verified,
 bounded content and destinations in **Deliver Learning Feedback** below. It
 never authorizes a public Slack post, an unverified recipient, or a performance
 assessment.
 
+A shipping-only delivery handoff and post-merge human-review guidance do not
+inherit these learning-feedback or Slack writes. They require separate
+communication authority; skip those publication steps when none exists.
+
 Treat thread reconciliation as part of every invocation; do not require a separate request. Automatically reply to and resolve only workflow-owned threads that are verified as fixed or obsolete. Inspect human-owned threads, but never resolve them automatically.
 
-Enter **Review-to-Merge Mode** only when the user explicitly asks to take the
-pull request through merge, for example `$pull-request-review #123 to merge`.
-That invocation authorizes only the conditional writes and cleanup defined in
+Enter **Review-to-Merge Mode** when the user explicitly asks to take the
+pull request through merge, or an authorized delivery operator supplies its
+shipping handoff under
+[Delivery and Human Review](../engineering-for-certainty/references/delivery-and-human-review.md).
+That authority covers only the conditional writes and cleanup defined in
 [Review to Merge](references/review-to-merge.md). A generic request to review a
 pull request remains ordinary review mode and never implies implementation,
 push, approval, merge, auto-merge, or branch deletion authority.
@@ -51,6 +64,14 @@ push, approval, merge, auto-merge, or branch deletion authority.
 Do not dismiss human reviews, approve on another person's behalf, bypass branch
 protection, use an administrative merge override, deploy, force-push, or perform
 unrelated cleanup in either mode.
+
+For a merged PR or a request for the pending human-review queue, use
+[Post-Merge Human Review](references/post-merge-human-review.md) instead of the
+open-PR workflow below. Guide the human's inspection; agent analysis cannot
+complete their review. Queue inspection is read-only. Explicit human outcomes
+authorize their recording and queue reconciliation; clear bounded correction
+feedback uses the shared delivery policy. Learning-feedback and Slack writes
+from ordinary open-PR review are not part of this mode.
 
 ## Workflow
 
@@ -100,6 +121,11 @@ Load and follow `$code-review` against the current PR head. Provide it the PR
 description, governing issue, complete diff, relevant repository contracts,
 validation evidence, and current unresolved-thread claims so it can avoid
 duplicates.
+
+In composed shipping, valid independent review evidence for the exact full
+candidate may satisfy this stage. Verify its range, provenance, findings, and
+currency; rerun only when required coverage or independence is absent or proof
+was invalidated. Never substitute an implementer's self-review summary.
 
 Keep finder and verifier contexts logically independent. Never convert an
 existing comment, reviewer opinion, or delegated review-context claim directly

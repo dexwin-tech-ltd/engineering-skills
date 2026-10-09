@@ -19,6 +19,14 @@ For new or materially changed code, read [Style and Clarity](references/style-an
 
 Classify unresolved inputs: discoverable facts call for inspection; empirical unknowns call for bounded tests or research; material user-owned decisions call for options, a recommendation, and user direction. A companion skill never expands the user's authorization.
 
+Authorized implementation and delivery include PR publication and verified merge
+by default; explicit narrower instructions and repository gates control. Read
+[Delivery and Human Review](references/delivery-and-human-review.md) for shipping
+authority, selective post-merge human review, and queue maintenance. Important,
+cross-cutting, hard-to-change, or critical behavior gets `human-review:pending`
+and a root `PRS_PENDING_HUMAN_REVIEW.md` entry; routine work need not. This never
+replaces pre-merge engineering proof or grants new deployment authority.
+
 ## Specialist Routing
 
 Open only the guidance triggered by the affected behavior. If you cannot establish that a trigger is absent, read the relevant reference or companion before proceeding.
@@ -42,7 +50,7 @@ Planning Agent, Delivery Operator, Implementation Worker, and Independent Review
 
 Before editing code:
 
-1. Classify the request's action mode. Answer, explain, plan, review, and diagnose authorize investigation and recommendations only; change, build, implement, or fix authorize in-scope edits. Do not infer write authority from a companion skill or from discovering a possible improvement.
+1. Classify the request's action mode. Answer, explain, plan, review, and diagnose authorize investigation and recommendations only; change, build, implement, or fix authorize in-scope delivery under Delivery and Human Review. Resolve any narrower stopping boundary before acting. Do not infer write authority from merely loading a companion skill or discovering an improvement.
 2. Start with relevant local instructions, the nearest implementation and tests, and any current approved plan or handoff. Expand to docs, ADRs, and callers when the change or evidence requires them.
 3. Identify only the layers and dependencies the changed behavior crosses.
 4. For non-trivial work, perform a proportionate gap review. Resolve the scope, contracts, failure behavior, and proof needed for this change.
@@ -67,5 +75,7 @@ the selected rigor level. Include only applicable items:
 - deviations from plan or doctrine, with reasons
 - residual risks, limitations, and anything still unverified
 - canonical issue, plan, ADR, roadmap, or pull-request updates made or still required
+- verified merge and release state, human-review selection, and required queue
+  links or incomplete tracking; do not imply that shipped means human-reviewed
 
 Do not collapse an unverified item into a caveated success. Every triggered companion check must be verified, or its omission and alternative assurance must be recorded in this handoff.

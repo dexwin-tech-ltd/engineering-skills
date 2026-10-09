@@ -1,14 +1,18 @@
 ---
 name: pr-review-and-fix
-description: Autonomously review and correct an existing pull request through verified findings, independent re-review, CI, repository-defined labels, and human decisions recorded in the PR and escalated to Slack. Use when asked to own both PR review and corrections; ordinary review remains pull-request-review.
+description: Review and correct an open PR through verified findings, independent re-review, CI, repository labels, decisions, and verified merge by default. Use when asked to own review and corrections; honor explicit reviewer-reassessment boundaries. Merged-PR feedback uses the post-merge human-review route in pull-request-review.
 ---
 
 # PR Review and Fix
 
 ## Ownership and authority
 
-Own the existing PR from review through authorized corrections and reviewer
-reassessment. Use `pull-request-review` for GitHub evidence, comment formatting,
+Own the open PR from review through authorized corrections and verified merge,
+unless the user or governing issue explicitly stops at reviewer reassessment.
+Read [Delivery and Human Review](../engineering-for-certainty/references/delivery-and-human-review.md).
+For an already-merged PR, use `$pull-request-review`'s post-merge route and a
+new correction branch/PR; never apply this open-head mutation workflow to it.
+Use `pull-request-review` for GitHub evidence, comment formatting,
 thread ownership, and readback; `code-review` as the sole analysis engine; and
 `engineering-for-certainty` as governing doctrine. Load every engineering
 companion triggered by the reviewed or corrected surface. Resolve these
@@ -27,9 +31,11 @@ This workflow replaces ordinary interactive finding adjudication and the
 `pull-request-review` issue-delivery handoff for clear in-scope corrections.
 The active governing agent fulfills the Delivery Operator role and owns
 implementation and publication. Independent Reviewer contexts remain
-read-only. Do not invoke ordinary review-to-merge handling.
-Do not merge, approve or dismiss reviews, force-push, deploy, bypass branch
-protection, or perform unrelated cleanup. External mutations during runtime
+read-only. Retain this workflow's correction routes and decision notifications;
+after correction, use the shared Review-to-Merge gates and guarded cleanup
+without restarting ordinary interactive adjudication. Do not approve or dismiss
+reviews, force-push, grant new deployment authority, bypass branch protection,
+or perform unrelated cleanup. External mutations during runtime
 validation require existing authorization.
 
 Do not send private learning feedback or other Slack messages. Only decision
@@ -67,7 +73,9 @@ existing governing issue or handoff, limited to the authorized scope:
   DEFER_FOLLOW_UP.
 - Every correction requires affected proof and full resulting-diff re-review.
 - Two unsuccessful correction cycles for the same root cause force escalation.
-- Completion means verified corrections awaiting reviewer approval, never merge.
+- Completion means verified merge with required selective human-review tracking
+  and authorized release follow-through, unless the explicit boundary is
+  reviewer reassessment or another narrower target.
 
 If no governing artifact exists, create a bounded PR correction handoff in the
 repository's prescribed location, or a PR comment when no location is defined.
@@ -265,9 +273,20 @@ verified backlog entry or exact existing owner linked from the PR, and
 repository workflow labels match the required state. Verify the request and
 avoid duplicates for an unchanged head.
 
+Reviewer reassessment remains a request, not proof of approval. If the effective
+boundary includes merge, prepare required human-review enrollment through
+`$pull-request-creation`, verify its resulting head and CI, and apply
+[$pull-request-review's merge gates and cleanup](../pull-request-review/references/review-to-merge.md#merge-gates).
+Required reviewer approval and repository gates still block merge. Reuse valid
+independent current-head evidence, reconcile tracking after verified merge,
+and follow only the established authorized release process. Queue age or size
+does not add a shipping gate.
+
 Use accurate, potentially overlapping outcomes:
 
-- **Corrections completed; awaiting reviewer approval**: all gates passed.
+- **Merged; human review pending or not required**: shipping and tracking verified.
+- **Corrections completed; awaiting reviewer approval**: correction proof passed,
+  but an explicit reassessment boundary or required approval stops shipping.
 - **Awaiting human decision**: independent work finished; decisions remain.
 - **Decisions recorded; awaiting fixes**: decisions settled, but a named blocker
   prevents finishing their corrections.

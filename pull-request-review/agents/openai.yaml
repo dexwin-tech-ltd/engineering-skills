@@ -1,4 +1,4 @@
 interface:
   display_name: "Pull Request Review"
-  short_description: "Review PRs, teach engineers, and conditionally merge"
-  default_prompt: "Use $pull-request-review to take this GitHub pull request through explicit review-to-merge, including authorized fixes, simple learning feedback, durable follow-ups, merge gates, and guarded branch cleanup."
+  short_description: "Review PRs, coordinate merge, and guide human review"
+  default_prompt: "Use $pull-request-review to guide my human review of this merged PR, explain the important changes simply, and track my explicit outcome and authorized corrections."

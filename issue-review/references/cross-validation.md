@@ -39,7 +39,7 @@ Before editing, verify:
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
 - **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
-- **Review loop**: the issue explicitly selects automatic or human-gated delivery, routes mechanical corrections separately from user-owned decisions and blockers, requires current-head revalidation and re-review, and defines its churn threshold and ready-to-merge stopping condition.
+- **Review loop**: the issue explicitly selects automatic or human-gated delivery, routes mechanical corrections separately from user-owned decisions and blockers, requires current-head revalidation and re-review, and defines its churn threshold and verified-merge or explicit narrower stopping condition. Human-review selection and release authority agree with Delivery and Human Review; existing human gates remain explicit.
 - **Deferred follow-up**: when invoked for `DEFER_FOLLOW_UP`, every finding is
   still eligible under the Follow-Up Inbox contract, deduplicated by root
   cause, and linked to an existing exact owner or a short entry in the

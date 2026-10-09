@@ -1,15 +1,17 @@
 # Review to Merge
 
-Use this mode only when the user explicitly asks to carry a resolved pull
-request through merge. Keep the contract model- and harness-agnostic. The
-Planning Agent prepares issue changes, the Delivery Operator owns workflow
+Use this mode for an explicit review-through-merge request or a shipping handoff
+from authorized delivery under
+[Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md).
+Honor the effective narrower boundary. Keep the contract model- and
+harness-agnostic. The Planning Agent prepares issue changes, the Delivery Operator owns workflow
 routes and mutations, Implementation Workers perform bounded assignments, and
 the Independent Reviewer owns evidence verdicts. The active harness resolves
 those roles to concrete execution contexts.
 
 ## Authorization
 
-The explicit invocation authorizes this workflow to:
+The explicit invocation or authorized delivery handoff authorizes this workflow to:
 
 - route verified findings under the rules below;
 - update the governing issue when issue review confirms the change;
@@ -17,6 +19,7 @@ The explicit invocation authorizes this workflow to:
 - create and publish eligible deferred follow-up inbox entries in the
   repository's canonical backlog file on the pull-request branch;
 - update the existing pull-request description with those durable links;
+- verify selective human-review enrollment and reconcile tracking after merge;
 - monitor required CI and merge the exact verified head when every gate passes;
   and
 - perform the guarded post-merge cleanup defined below.
@@ -28,11 +31,13 @@ force-push, or unrelated cleanup.
 
 ## Establish The Write Context
 
-Complete the initial read-only review before creating a worktree. When the
+Complete or verify the current-head proof required by the selected rigor before
+creating a worktree. When the
 verified routes require a governing-issue correction or deferred planning
 write, resolve the exact pull-request head repository, owner, branch, base,
 remote SHA, push authority, and current worktree ownership. Create or verify the
-issue-approved dedicated linked worktree for that published head before
+issue-approved dedicated linked worktree for that published head (or the
+verified task-level branch context when no formal issue is required) before
 invoking any skill in write mode. Record its runtime path and resolved SHA in
 the execution handoff, never in the portable issue.
 
@@ -46,17 +51,28 @@ passes.
 
 ## Route The Complete Queue
 
-Run the full `$code-review` discovery, verification, deduplication, and ranking
-pipeline before changing the pull request. Require exactly one route for every
+For Standard, Critical, formal issue work, or an explicit review request, run
+or verify existing independent evidence from the full `$code-review`
+discovery, verification, deduplication, and ranking pipeline before changing
+the pull request. Reuse only evidence covering the exact full candidate under
+the main skill's currency rules. Require exactly one route for every
 non-refuted result:
+
+For a clean task-level Quick shipping handoff without an additional review
+gate, verify its direct proof and final diff inspection instead of imposing a
+routine independent-review pipeline. Escalate when risk or proof no longer
+supports Quick; do not use this exception to waive an explicit requested review
+or formal issue gate. Route any discovered blockers under the same rules below.
 
 - `AUTO_CORRECT`: collect deterministic, in-scope corrections into one coherent
   batch. Use `$issue-review` to verify the governing issue and scope, then
   `$issue-delivery` to implement, validate, independently re-review, commit,
   push, update the existing pull request, follow CI, and update the Issue
-  Completion Record. The explicit review-to-merge invocation supplies delivery
-  authorization only while the issue remains unchanged in meaning and passes
+  Completion Record. The explicit invocation or authorized handoff supplies
+  delivery authorization only while the issue remains unchanged in meaning and passes
   its normal gates.
+  Eligible task-level corrections may retain their approved task handoff and
+  selected rigor; use formal issue delivery when the work requires it.
 - `DEFER_FOLLOW_UP`: use only when every contract condition in the code-review
   Review Loop Contract passes. Route the deduplicated root causes through
   `$issue-review` Deferred Follow-Up Inbox Mode, then publish the resulting
@@ -130,12 +146,13 @@ When exact follow-up reuse or a PR-description-only update leaves the Git head
 unchanged, keep the existing current-head review and verify only the durable
 backlog ownership plus the resulting remote PR metadata.
 
-When every route is settled and the final current-head review verifies that no
-undispositioned confirmed finding remains, return
-to the main skill's **Deliver Learning Feedback** and **Verify Publication**
-steps before evaluating the merge gates. A learning-feedback comment or Slack
-message does not change the Git head. Missing or failed Slack delivery remains
-nonblocking under the main skill's rules.
+When every route is settled and required current-head proof verifies that no
+undispositioned confirmed finding remains, evaluate the merge gates. For an
+explicit open-PR review invocation with communication authority, first complete
+the main skill's **Deliver Learning Feedback** and **Verify Publication** steps.
+A shipping-only handoff does not inherit learning-feedback or Slack writes.
+A learning comment or Slack message does not change the Git head. Missing or
+failed Slack delivery remains nonblocking under the main skill's rules.
 
 Do not merge from an earlier clean review, a mutation response, a stale CI run,
 or an Issue Completion Record whose reviewed change head does not contain the
@@ -150,9 +167,14 @@ Immediately before merge, re-read the pull request and verify:
 
 - repository, pull-request number, base, head branch, and exact head SHA;
 - the pull request is open, non-draft, conflict-free, and not superseded;
-- the governing issue and Issue Completion Record name the reviewed
-  behavior-changing head, and every later current-head commit is independently
-  verified as issue, backlog, or completion evidence only;
+- for formal issue work, the governing issue and Issue Completion Record name
+  the reviewed behavior-changing head, and every later current-head commit is independently
+  verified as issue, backlog, human-review-index, or completion evidence only;
+- for eligible task-level work without an issue, the approved task handoff
+  instead records scope, selected rigor, exact checks, required independent
+  review, findings, and current candidate identity; do not invent an issue
+  completion record. For either path, human-review-index descendants also need
+  current-head verification and must invalidate no behavior proof;
 - every acceptance criterion and required current-head validation has evidence;
 - every confirmed finding has a verified disposition, including durable backlog
   and PR-link proof for `DEFER_FOLLOW_UP`;
@@ -160,6 +182,13 @@ Immediately before merge, re-read the pull request and verify:
 - no unresolved change request, required reviewer approval, stack dependency,
   or repository policy blocks merge; and
 - every required CI check for that exact head is green.
+
+For selected human-review work, also verify the compact guided description,
+`human-review:pending`, and the correct `PRS_PENDING_HUMAN_REVIEW.md` entry in
+the actual candidate tree. Refresh the base and check queue entries after
+integration or conflict resolution; never overwrite another pending entry.
+Routine work can merge without human-review tracking. Apply the shared
+shipping exceptions; a queue label never authorizes an unsafe merge.
 
 Use the repository's established merge method. When no single method can be
 discovered safely, stop rather than silently choosing a history strategy. Pass
@@ -173,6 +202,12 @@ can safely monitor it; otherwise return the exact ready-to-merge blocker.
 
 After the merge mutation, re-read provider state and verify the merged status,
 base, merged head SHA, and resulting merge or squash commit before cleanup.
+
+Reconcile the selected PR's queue entry on the actual merged base and record
+merge and known release identities on the original PR under Delivery and Human
+Review. Return release follow-through to the owning delivery operator; this
+review workflow does not acquire new deployment authority. Failed tracking
+reconciliation needs a reported, repairable gap, not a second merge attempt.
 
 An open downstream pull request based on the current head branch does not by
 itself block merging its upstream pull request. An unmet predecessor of the
@@ -221,3 +256,5 @@ finding dispositions, learning-comment link and Slack delivery status, created
 or reused follow-up inbox entries, merge method and resulting
 commit, deleted branches and worktrees, and every retained cleanup target with
 its reason. Never collapse a failed merge or cleanup verification into success.
+Include human-review selection, verified queue links or tracking gaps, and the
+release handoff. Shipped and pending human review are separate states.

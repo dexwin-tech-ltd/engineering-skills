@@ -1,6 +1,6 @@
 ---
 name: issue-delivery
-description: Deliver an approved, implementation-ready issue through implementation, issue-owned validation, independent code review, authorized correction loops, pull-request creation, and CI to a ready-to-merge handoff. Use when the user asks an agent to act as the Delivery Operator for a canonical issue, carry an issue through the complete build-review-PR-CI flow, or continue until only human approval and merge remain.
+description: Deliver an approved issue through implementation, validation, independent review, corrections, PR creation, CI, verified merge, and selective post-merge human-review tracking. Use when asked to carry a canonical issue through delivery; honor explicit narrower stopping boundaries and existing release authority.
 ---
 
 # Issue Delivery
@@ -30,7 +30,8 @@ Load and follow:
   frontend work;
 - `$code-review` for independent, evidence-verified review; and
 - `$pull-request-creation` for branch publication and pull-request creation or
-  update.
+  update; and
+- `$pull-request-review` for merge coordination when this workflow owns merge.
 
 If a required skill is unavailable, stop and name it. Do not reconstruct its
 contract from memory.
@@ -98,8 +99,10 @@ the approved implementation issue.
 
 The user's invocation authorizes the in-scope implementation, validation,
 review coordination, mechanical correction loop, branch publication,
-pull-request creation or update, CI repair, and repository-local Follow-Up Inbox
-capture needed to reach the completion condition.
+pull-request creation or update, CI repair, repository-local Follow-Up Inbox
+capture, and verified merge needed to reach the completion condition. Read
+[Delivery and Human Review](../engineering-for-certainty/references/delivery-and-human-review.md)
+for selection, queue tracking, merge exceptions, and release authority.
 
 Honor a narrower explicit publication boundary in the governing issue or user
 request. It may stop delivery after local implementation, validation, and
@@ -115,16 +118,16 @@ publication pending; do not invent a local completion condition.
 It does not authorize changing product intent, acceptance criteria,
 architecture, public contracts, schemas, migrations, permissions, security
 policy, dependencies, or scope without the decision required by the issue's
-Review Loop Contract. It also does not authorize merge, auto-merge, deployment,
-reviewer assignment, or unrelated cleanup.
+Review Loop Contract. It does not grant new deployment authority, auto-merge,
+reviewer assignment, or unrelated cleanup. The established authorized release
+process may proceed after merge without waiting for post-merge human review.
 
-When an outer **Review-to-Merge Mode** invokes this skill, this authority and
-completion boundary do not change. Deliver only the approved issue and return
-the exact ready-to-merge head and evidence to the outer workflow. This skill
-owns inbox capture for findings discovered during issue delivery; the outer
-workflow owns follow-ups from its separate pull-request review, the final merge
-decision, and guarded post-merge branch cleanup. Do not treat the outer
-workflow's merge authority as implementation authority.
+When an outer **Review-to-Merge Mode** invokes this skill for corrections,
+return the exact ready-to-merge head and evidence to that outer operator; do not
+recursively invoke merge coordination. This skill owns inbox capture for its
+delivery findings; the outer workflow owns its review findings, final merge,
+and guarded cleanup. Both obey the same effective stopping boundary. Merge
+authority never broadens implementation scope.
 
 ## Goal And Gate Interaction
 
@@ -403,20 +406,31 @@ state.
 
 Any production code, configuration, test, generated artifact, or product or
 operational documentation change made after review makes the previous
-acceptance and final-review proof stale. A later canonical issue, roadmap, or
-completion-evidence commit requires current-head review and record
-reconciliation, but it does not invalidate runtime proof unless its diff changes
+acceptance and final-review proof stale. A later canonical issue, roadmap, backlog, human-review-index, or
+completion-evidence commit requires current-head review and record reconciliation, but it does not invalidate runtime proof unless its diff changes
 or contradicts the behavior, acceptance, test, or environment contract.
 
-### 10. Reconcile The Ready-To-Merge Handoff
+### 10. Reconcile And Complete Shipping
 
 Re-read the PR and verify its base, head, head SHA, commits, body, issue links,
 stack position, automated checks, and unresolved review state. Update the Issue
 Completion Record and every repository status surface required by the issue so
 they describe the same reviewed change head and evidence. If the current head
 is later, verify that every descendant changes only canonical issue, roadmap,
-or completion-evidence surfaces and invalidates no recorded proof. Review the
-complete current head; do not create a self-referential evidence-update loop.
+backlog, human-review index, or completion-evidence surfaces and invalidates no
+recorded proof. Review the complete current head; do not create a self-referential evidence-update loop.
+
+If this operator owns merge and the effective boundary permits it, pass the
+approved issue, exact current-head proof, finding dispositions, and review
+selection to `$pull-request-review` in Review-to-Merge Mode. Reuse valid review
+evidence rather than rerunning an unchanged full review. Verify required queue
+tracking before merge and reconcile it after merge under Delivery and Human
+Review. Continue only the already-authorized release process and report its
+actual result. Pending human review alone does not keep delivery incomplete.
+
+For an explicit ready-to-merge boundary or a correction owned by an outer
+operator, return that verified handoff instead. Report unresolved human gates
+or external blockers as pending; never claim verified merge from readiness.
 
 ## Completion Condition
 
@@ -440,14 +454,18 @@ Declare delivery complete only when:
   linked from the Issue Completion Record;
 - the Issue Completion Record and linked status surfaces are current; and
 - one of these publication conditions is satisfied:
-  - **Default Ready to Merge:** the pull request truthfully describes and points
-    to the current head, every required automated CI check for that head is
-    green, and only human approval and the merge action remain; or
+  - **Default shipped:** the exact verified PR head is confirmed merged by the
+    provider, required selective human-review tracking is verified, and the
+    established authorized release follow-through has reached its truthful
+    terminal state. A failed required release is reported incomplete; a release
+    awaiting separate authority is explicitly pending, never claimed deployed.
+    Post-merge human review is pending or not required, independently of delivery;
   - **Explicit narrower boundary:** the governing issue or explicit user
-    instruction defines a local completion target; that target is satisfied;
-    the current local head and completion record have passed independent
-    review; publication is reported as pending; and the workflow does not claim
-    Ready to Merge.
+    instruction defines a local, draft, or ready-to-merge target; that target
+    and its applicable proof are satisfied, and later shipping is reported
+    pending without claiming it occurred; or
+  - **Outer correction handoff:** the owning review-to-merge operator has the
+    verified current head and completed evidence and retains final shipping.
 
 Branch creation, implementation completion, a green local test run, one review
 pass, PR creation, a push, or CI start is progress, not completion unless the

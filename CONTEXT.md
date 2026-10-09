@@ -184,8 +184,9 @@ _Avoid_: Last checkpoint review, cumulative assumption
 The delivery state in which the current pull-request head satisfies the issue,
 has current validation and independent review evidence, has green required
 automated CI, and has no unresolved confirmed finding or blocker. Only human
-approval and the merge action remain; the term does not claim that required
-human approval has already happened.
+approval where explicitly required and the merge action remain; this is an
+intermediate state in normal delivery or final only at an explicit narrower
+boundary. The term never claims that approval or merge occurred.
 _Avoid_: PR opened, ready for review, merged, deployed
 
 **Code Review**:
@@ -242,15 +243,41 @@ and publication instead of ordinary interactive adjudication. Material decisions
 are recorded in the PR and escalated to the verified `github-review-requested`
 Slack channel; authorized answers are recorded before dependent fixes begin.
 Applicable AGENTS.md rules own labels, including pending fixes after a decision.
-This workflow does not own merge, approval, or dismissal of existing reviews.
+It owns verified merge by default under Delivery and Human Review, or stops at
+an explicit reviewer-reassessment boundary. It never owns approval or dismissal
+of another person's review.
 _Avoid_: Ordinary read-only review, Review-to-Merge Mode, self-approved fixes
 
 **Review-to-Merge Mode**:
-An explicitly authorized **Pull Request Review** mode that coordinates
+An authorized **Pull Request Review** mode that coordinates
 current-head review, issue-owned corrections, deferred follow-up capture,
 revalidation, merge-gate verification, merge, and guarded cleanup of the merged
-head branch. A generic pull-request review does not enter this mode implicitly.
+head branch. An authorized delivery handoff enters this mode; a generic
+pull-request review does not enter it implicitly.
 _Avoid_: Generic PR review, merge bot, branch-protection bypass
+
+**Delivery and Human Review**:
+The default shipping contract for authorized implementation, delivery, and
+fixes: required engineering proof and independent review precede verified merge;
+the established authorized release process may continue before human review.
+Explicit narrower instructions, human gates, repository rules, unresolved
+material decisions, and unsafe or unrecoverable consequences still pause work.
+_Avoid_: Unconditional auto-merge, new production authority, waived agent review
+
+**Post-Merge Human Review**:
+Human inspection of selected important, significantly cross-cutting,
+hard-to-change, or critical-system PRs after shipping. The original PR provides
+compact guidance and owns the explicit human outcome. Routine work can be
+exempt; agent review and silence never count as human completion.
+_Avoid_: Every PR needs human review, agent verdict, pre-merge approval
+
+**Pending Human Review Index**:
+The `human-review:pending` label plus root `PRS_PENDING_HUMAN_REVIEW.md`, with
+PR links, brief descriptions, and review reasons or focus. The entry ships in
+the original PR. Both indexes reflect the explicit human outcome recorded on
+that PR; completed review and outstanding repairs remain separate states.
+Queue size or age alone never blocks shipping.
+_Avoid_: Authoritative label alone, backlog inbox, reviewer-reassessment label
 
 **Deferred Follow-up Finding**:
 A confirmed discovery during authorized delivery or pull-request review that
@@ -526,8 +553,9 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - Every implementation-ready issue states a **Review Loop Contract**. A durable
   goal supplies persistence but does not expand correction authority.
 - A **Delivery Operator** consumes the issue, preserves the ownership boundaries
-  of **Code Review** and **Pull Request Creation**, and finishes at a
-  **Ready-to-Merge Handoff**.
+  of **Code Review** and **Pull Request Creation**, and normally completes
+  verified merge, required selective human-review tracking, and the established
+  authorized release follow-through. An explicit narrower boundary controls.
 - A substantial **Smallest Coherent Slice** may contain a small ordered set of
   **Review Checkpoints** without creating extra branches or pull requests.
 - Every **Review Checkpoint** advances only from a reviewed candidate to an
@@ -555,7 +583,8 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   the complete queue is adjudicated, findings marked `fix` pass through
   `$issue-review` before the **Delivery Operator** changes the existing pull
   request under its approved issue and branch contracts.
-- **Review-to-Merge Mode** may start only from an explicit request. It routes
+- **Review-to-Merge Mode** starts from an explicit request or an authorized
+  delivery handoff. It routes
   deterministic in-scope corrections through issue review and the **Delivery
   Operator**; user-owned decisions go through grilling before issue review and
   delivery; missing authority, access, or prerequisites stop the workflow.
@@ -567,6 +596,20 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - **Review-to-Merge Mode** merges only the exact current head that passed its
   acceptance, validation, review, thread, conflict, approval, and required-CI
   gates. It never bypasses branch protection or uses an administrative override.
+- **Delivery and Human Review** applies to formal issues and task-level work.
+  Quick still needs direct proof; Standard and Critical still need their
+  required independent review. Post-merge selection follows actual impact,
+  coupling, reversibility, and critical behavior rather than file type or size.
+- Selected PRs reach the merged base with their **Pending Human Review Index**
+  entry and compact guided description already prepared. Live provider state
+  verifies merge and release identities; a tracking failure is reported and
+  repaired separately, never hidden as a successful reconciliation.
+- Only explicit human completion clears the pending label and file entry.
+  Authorized bookkeeping uses a small isolated PR exempt from human review;
+  substantive repairs use new branches and linked PRs and are selected normally.
+- Generic queue inspection is read-only. Recording explicit human outcomes and
+  applying clear bounded correction feedback use **Delivery and Human Review**;
+  material choices still go through grilling.
 - A **Deferred Follow-up Finding** gets a short entry in the repository's
   canonical backlog file on the pull-request branch before merge; the workflow
   creates root `BACKLOG.md` if none exists. That planning commit changes the
@@ -599,7 +642,7 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - **Learning Feedback** is published once per settled review against the latest reviewed pull-request head, after every finding has a disposition and every authorized correction has been re-reviewed; it does not wait for merge.
 - **Learning Feedback** is one top-level comment in the pull-request conversation, separate from inline finding threads; the workflow does not require or create a GitHub issue to hold it.
 - When the requesting user is not the **Responsible Engineer**, the workflow also sends **Learning Feedback** privately through Slack only after resolving the engineer's exact Slack identity. Missing Slack access or identity mapping skips that delivery with an explicit report; public Slack delivery requires a separate request.
-- Invoking **Pull Request Review** authorizes automatic pull-request and eligible private Slack delivery of qualifying **Learning Feedback** after the review settles. The workflow publishes no empty summary, verifies each attempted delivery, reports every skipped or failed destination, and never blocks review or merge solely because Slack delivery is unavailable.
+- Explicit open-PR **Pull Request Review** authorizes automatic pull-request and eligible private Slack delivery of qualifying **Learning Feedback** after the review settles. Shipping-only handoffs and post-merge human-review guidance do not inherit those communications. The workflow publishes no empty summary, verifies each attempted delivery, reports every skipped or failed destination, and never blocks review or merge solely because Slack delivery is unavailable.
 - A **Stacked Pull Request** depends on exactly one earlier base in an ordered stack; independent slices target the canonical base branch directly.
 - A **Code Review** produces one **Review Queue** after investigating, verifying, deduplicating, and ranking the complete finding landscape.
 - A **Code Review** includes a **Style and Clarity Pass**; it reports only a cited convention violation or an evidence-backed clarity risk with a concrete maintenance, misuse, or defect consequence. Broader style advice appears only in an explicitly requested style-focused review.
@@ -661,9 +704,10 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - "Keep going until done" implied permission to push through adverse findings -
   resolved: a durable goal preserves persistence but cannot change review
   routes, correction authority, or checkpoint advance conditions.
-- "Ready to merge" implied that human approval had already happened - resolved:
-  a **Ready-to-Merge Handoff** ends immediately before human approval and the
-  merge action.
+- "Ready to merge" implied completed shipping or human approval - resolved:
+  a **Ready-to-Merge Handoff** precedes merge and any explicit required approval;
+  normal delivery continues through verified merge. Human review after merge is
+  a separate selective state, not a routine completion gate.
 - "Stacked" was used as a synonym for parallel issue work - resolved: a **Stacked Pull Request** has an explicit dependency, while independent pull requests share the canonical base.
 - "Clean subagent" was used as a worktree requirement - resolved: an
   **Independent Reviewer** needs a **Clean Review Context**, which does not

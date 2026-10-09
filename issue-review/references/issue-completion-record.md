@@ -32,10 +32,18 @@ The record must contain:
   trigger for downstream work;
 - every eligible deferred finding, with a link to its repository backlog entry
   or exact existing owner and the evidence that made deferral safe; and
-- branch, commit, and pull-request references when available.
+- branch, commit, and pull-request references when available;
+- the shipping boundary, human-review selection and reason, and links to required
+  queue tracking. Record verified merge and release state when available; the
+  original PR owns later human outcomes and shipping reconciliation.
 
 The record is an evidence index, not an evidence dump. Prefer compact tables and
 durable links to raw CI, pull-request, test, or review evidence.
+
+Keep implementation proof, shipping state, and human-review state distinct.
+The pre-merge record may link the PR for later provider-confirmed merge and
+release evidence instead of requiring a recursive post-merge evidence commit.
+Pending human review alone does not reopen completed delivery.
 
 Do not require the record to name the commit that contains the record itself.
 When later commits change only the canonical issue, roadmap or index, backlog
