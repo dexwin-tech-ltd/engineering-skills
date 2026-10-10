@@ -12,6 +12,7 @@ PRs with `human-review:pending` in the requested repositories. List brief
 descriptions and reasons, consequential items first and then older items.
 Report known missing entries and incomplete access. Inspection alone does not
 authorize recording outcomes, changing labels, or editing the file.
+Include each verified walkthrough link or known publication-pending state.
 
 For a specific PR, verify its repository, merged status, original review range,
 head, resulting merge/squash commit, approved intent, and guided description.
@@ -27,6 +28,15 @@ helps. Let the human choose where to go deeper. The
 [PR writing guide](../../pull-request-creation/references/pr-body-writing.md#human-review-after-merge)
 sets the compact presentation standard; do not paste a full issue or evidence
 ledger into chat.
+
+Prefer the PR's **View feature walkthrough** link for layered orientation.
+Verify that it describes the original delivered revision and respects repository
+visibility. Use [$feature-walkthrough](../../feature-walkthrough/SKILL.md) when
+creation or repair is authorized; a read-only queue/explanation request does not
+authorize remote publication. If hosting is pending or unavailable, guide the
+human from the PR, original evidence, or an agent-opened local HTML copy and
+report the gap. Opening the page or passing agent checks never completes human
+review. Keep its archived explanation after queue removal.
 
 Identify known deployment state separately. If current production includes
 later changes, explain that inspecting it does not establish the behavior of

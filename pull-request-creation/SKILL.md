@@ -23,7 +23,7 @@ Operator named by the governing workflow. An Implementation Worker or
 Independent Reviewer cannot bypass that operator or turn its narrower
 assignment into publication authority.
 
-Do not implement missing work, perform code review, repair CI, invent evidence,
+Do not implement missing feature work, perform code review, repair CI, invent evidence,
 or broaden scope. Stop when the work is not ready unless the user explicitly
 authorizes a work-in-progress PR or the approved issue's UI checkpoint-preview
 plan requires the narrow draft path below.
@@ -154,7 +154,7 @@ Confirm that:
   scenario was rerun, and applicable auth and Design Conformance evidence is
   secret-free and complete. When the current head is later, verify that every
   intervening commit changes only canonical issue, roadmap, backlog,
-  human-review index, or completion-evidence surfaces and invalidates no
+  human-review index, feature-walkthrough explanation, or completion-evidence surfaces and invalidates no
   recorded proof.
 - for design-backed frontend work, the authoritative source was rechecked
   against the approved baseline; the frozen images and HTML/Tailwind reference
@@ -243,7 +243,15 @@ Pending GitHub CI alone does not make a completed PR a draft. When draft status 
 ### 7. Enroll Selected PRs And Verify Remote State
 
 Assess the actual final change for post-merge human review. For selected work,
-prepare compact guided review material, verify `human-review:pending`, and add
+invoke [$feature-walkthrough](../feature-walkthrough/SKILL.md) to prepare and
+browser-check the HTML explanation from the verified handoff, publish through
+configured hosting, and place **View feature walkthrough** prominently in the
+description. Keep a compact summary beside the link. This presentation work
+does not authorize changing the feature or inventing proof. Include artifact
+commits in required current-head checks and independent review. A hosting-only
+failure leaves explicit publication-pending status and a tracked repair under
+Delivery and Human Review; it does not alone force Draft or block shipping.
+Verify `human-review:pending`, and add
 the PR URL and brief description to root `PRS_PENDING_HUMAN_REVIEW.md` on this
 branch before merge. Follow Delivery and Human Review for exact-label creation,
 selection reasons, isolation, and reconciliation. Once the URL exists, publish
@@ -251,6 +259,9 @@ the bookkeeping commit to this same PR; rerun invalidated proof, obtain required
 current-head verification, and follow CI on the resulting head. Keep the last
 behavior-changing reviewed revision distinct from bookkeeping descendants.
 Routine PRs and bookkeeping-only maintenance need no human-review entry.
+Include the verified rendered walkthrough URL or its explicit pending status
+in the queue entry. Preserve the final delivered explanation after merge and
+human-review completion; a source-file link is only a labeled fallback.
 
 Re-read the PR and verify the repository, number, URL, base, head, head SHA, title, body, draft state, issue links, and stack dependency. Confirm the remote branch contains the intended local commit.
 

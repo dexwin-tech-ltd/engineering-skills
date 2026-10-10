@@ -267,13 +267,22 @@ _Avoid_: Unconditional auto-merge, new production authority, waived agent review
 **Post-Merge Human Review**:
 Human inspection of selected important, significantly cross-cutting,
 hard-to-change, or critical-system PRs after shipping. The original PR provides
-compact guidance and owns the explicit human outcome. Routine work can be
+compact guidance, links its **Feature Walkthrough**, and owns the explicit human outcome. Routine work can be
 exempt; agent review and silence never count as human completion.
 _Avoid_: Every PR needs human review, agent verdict, pre-merge approval
 
+**Feature Walkthrough**:
+A self-contained HTML explanation for a selected PR or explicit feature-review
+request. Its rendered URL opens a layered explanation of actual behavior,
+consequential choices, and evidence. Repository visibility controls the audience;
+the delivered PR's original explanation is preserved. Hosting failure leaves
+walkthrough publication unfinished without blocking otherwise-ready shipping.
+_Avoid_: Raw HTML source link, live application demo, expiring tunnel, human outcome
+
 **Pending Human Review Index**:
 The `human-review:pending` label plus root `PRS_PENDING_HUMAN_REVIEW.md`, with
-PR links, brief descriptions, and review reasons or focus. The entry ships in
+PR links, brief descriptions, review reasons or focus, and rendered walkthrough
+links or explicit publication-pending status. The entry ships in
 the original PR. Both indexes reflect the explicit human outcome recorded on
 that PR; completed review and outstanding repairs remain separate states.
 Queue size or age alone never blocks shipping.
@@ -604,6 +613,12 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   entry and compact guided description already prepared. Live provider state
   verifies merge and release identities; a tracking failure is reported and
   repaired separately, never hidden as a successful reconciliation.
+- `$feature-walkthrough` owns **Feature Walkthrough** creation, browser checks,
+  configured publication, and historical preservation. Delivery and PR creation
+  prepare it; post-merge human review uses it for orientation. A hosting-only
+  failure has an explicit durable repair owner/trigger and does not waive
+  feature proof, index tracking, or access controls. The original PR remains the
+  authoritative review record; review completion does not delete its walkthrough.
 - Only explicit human completion clears the pending label and file entry.
   Authorized bookkeeping uses a small isolated PR exempt from human review;
   substantive repairs use new branches and linked PRs and are selected normally.

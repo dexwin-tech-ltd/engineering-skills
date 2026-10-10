@@ -406,7 +406,7 @@ state.
 
 Any production code, configuration, test, generated artifact, or product or
 operational documentation change made after review makes the previous
-acceptance and final-review proof stale. A later canonical issue, roadmap, backlog, human-review-index, or
+acceptance and final-review proof stale. A later canonical issue, roadmap, backlog, human-review-index, feature-walkthrough explanation, or
 completion-evidence commit requires current-head review and record reconciliation, but it does not invalidate runtime proof unless its diff changes
 or contradicts the behavior, acceptance, test, or environment contract.
 
@@ -417,7 +417,7 @@ stack position, automated checks, and unresolved review state. Update the Issue
 Completion Record and every repository status surface required by the issue so
 they describe the same reviewed change head and evidence. If the current head
 is later, verify that every descendant changes only canonical issue, roadmap,
-backlog, human-review index, or completion-evidence surfaces and invalidates no
+backlog, human-review index, feature-walkthrough explanation, or completion-evidence surfaces and invalidates no
 recorded proof. Review the complete current head; do not create a self-referential evidence-update loop.
 
 If this operator owns merge and the effective boundary permits it, pass the
@@ -425,7 +425,9 @@ approved issue, exact current-head proof, finding dispositions, and review
 selection to `$pull-request-review` in Review-to-Merge Mode. Reuse valid review
 evidence rather than rerunning an unchanged full review. Verify required queue
 tracking before merge and reconcile it after merge under Delivery and Human
-Review. Continue only the already-authorized release process and report its
+Review. For selected work, use `$feature-walkthrough` through PR creation and
+report its verified rendered link or tracked publication-pending state separately.
+Continue only the already-authorized release process and report its
 actual result. Pending human review alone does not keep delivery incomplete.
 
 For an explicit ready-to-merge boundary or a correction owned by an outer
@@ -459,7 +461,10 @@ Declare delivery complete only when:
     established authorized release follow-through has reached its truthful
     terminal state. A failed required release is reported incomplete; a release
     awaiting separate authority is explicitly pending, never claimed deployed.
-    Post-merge human review is pending or not required, independently of delivery;
+    Post-merge human review is pending or not required, independently of delivery.
+    A hosting-only walkthrough failure can remain separately tracked publication
+    work without reopening completed feature shipping; walkthrough delivery is
+    complete only after its rendering, access, and links are verified;
   - **Explicit narrower boundary:** the governing issue or explicit user
     instruction defines a local, draft, or ready-to-merge target; that target
     and its applicable proof are satisfied, and later shipping is reported

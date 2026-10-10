@@ -17,6 +17,11 @@ Add a sketch when it answers a question that prose leaves hard to follow.
 For a PR selected under
 [Delivery and Human Review](../../engineering-for-certainty/references/delivery-and-human-review.md),
 make the first screen enough to understand the change and choose where to look.
+Use [$feature-walkthrough](../../feature-walkthrough/SKILL.md) for its standalone
+HTML explanation, and place **View feature walkthrough** near the top with a
+verified rendered URL. Preserve a short summary in the PR. If hosting or access
+verification is unavailable, say **Walkthrough publication pending** and link
+its durable repair owner/trigger; label any source-file fallback as source.
 Prefer a short problem/result statement, the reason for human review, and a few
 linked code entry points or contracts. Add a small before/after example,
 screenshot, diagram, or comparison table when it conveys the idea faster than
@@ -27,7 +32,9 @@ and recovery limits easy to find. Link detailed reasoning and raw evidence;
 use collapsible detail when the hosting surface supports it. Scale the format
 to the change instead of requiring six long sections or a fixed report. Keep
 the repository queue entry to a link, brief description, and review reason or
-focus; the PR is the guided review surface.
+focus plus the rendered link or publication-pending status. The PR owns the
+review record and outcome; the HTML is the layered reading surface. Preserve
+the delivered PR's explanation and code revision when later features change.
 
 Illustrative opening (replace placeholders with verified links and results):
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Walkthrough"
+  short_description: "Explain implemented changes in standalone HTML"
+  default_prompt: "Use $feature-walkthrough to create and verify a rendered HTML walkthrough for this implemented change."

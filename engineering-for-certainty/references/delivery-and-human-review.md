@@ -58,13 +58,17 @@ Bookkeeping-only queue maintenance is exempt; a repair is assessed normally.
 For each selected PR, the publishing operator must:
 
 1. Prepare the compact guided description using
-   [the PR writing guide](../../pull-request-creation/references/pr-body-writing.md#human-review-after-merge).
+   [the PR writing guide](../../pull-request-creation/references/pr-body-writing.md#human-review-after-merge)
+   and invoke [$feature-walkthrough](../../feature-walkthrough/SKILL.md) to
+   prepare, browser-check, and publish the standalone HTML explanation. Place
+   its verified rendered link prominently in the PR; retain the compact summary.
 2. Apply and read back `human-review:pending`. Creating this exact label when
    absent is part of authorized delivery; preserve unrelated labels and any
    repository reviewer-reassessment labels.
 3. Once the PR URL exists, add one entry keyed by that URL to root
    `PRS_PENDING_HUMAN_REVIEW.md` on the PR branch. Create the file if absent;
-   include a brief description, selection reason, and useful review focus.
+   include a brief description, selection reason, useful review focus, and the
+   verified rendered walkthrough link or explicit publication-pending status.
    Preserve other entries. The entry reaches the base with the original merge,
    not through a separate post-merge enrollment PR.
 4. Include the bookkeeping commit in final current-head verification and CI.
@@ -72,12 +76,22 @@ For each selected PR, the publishing operator must:
    repository rules prevent required tracking, report the exact blocker rather
    than silently exempting important work.
 
+Walkthrough publication is a separate state. A hosting outage, missing authorized
+setup, or failed access check can leave **Walkthrough publication pending** while
+otherwise-ready feature shipping proceeds. Record the cause and durable repair
+owner/trigger in the PR and index; withhold unsafe uploads and unverified links.
+Missing preparation, false claims, or required feature proof still need correction.
+This exception does not waive repository gates, the label, or the queue entry.
+The publishing operator remains responsible for walkthrough repair; do not claim
+the walkthrough is delivered until rendering and access have been verified.
+Retain each delivered PR's explanation after human review completes.
+
 Example entry (replace the illustrative URL):
 
 ```markdown
 - [#142 — Centralize permission checks](https://github.com/OWNER/REPO/pull/142)
   Changes authorization across API routes. Review focus: access boundaries
-  and compatibility.
+  and compatibility. [View feature walkthrough](https://docs.example.com/pr-142/revision-abc123/).
 ```
 
 The merged pending queue is `is:pr is:merged label:"human-review:pending"`,

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>One export, even after repeated clicks · Example walkthrough</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #1e293b; background: #f3f5f7; line-height: 1.65; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 960px; margin: auto; padding: 48px 24px 72px; }
+    h1, h2, h3 { line-height: 1.2; color: #172b3a; }
+    h1 { font-size: clamp(2rem, 5vw, 3.3rem); max-width: 20ch; margin: 16px 0; }
+    h2 { margin-top: 0; font-size: 1.45rem; }
+    h3 { font-size: 1.1rem; }
+    p { max-width: 74ch; }
+    a { color: #135e67; text-underline-offset: 3px; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid #9e4617; outline-offset: 5px; }
+    .skip { position: absolute; left: -10000px; }
+    .skip:focus { position: fixed; left: 16px; top: 16px; background: white; padding: 12px; z-index: 1; }
+    .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #526274; }
+    .notice { border-left: 4px solid #9e4617; padding: 12px 18px; background: #fff2e7; }
+    nav { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 24px 0; }
+    section, details { margin-top: 24px; background: white; border: 1px solid #d4dde3; border-radius: 14px; padding: 24px; scroll-margin-top: 20px; }
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .comparison article { background: #f3f5f7; padding: 18px; border-radius: 10px; }
+    .comparison h3 { margin-top: 0; }
+    .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0; list-style: none; counter-reset: steps; }
+    .flow li { border-top: 3px solid #135e67; padding: 14px; background: #f3f5f7; counter-increment: steps; }
+    .flow li::before { content: counter(steps) ". "; font-weight: bold; }
+    summary { cursor: pointer; font-size: 1.15rem; font-weight: 650; color: #172b3a; }
+    details[open] summary { margin-bottom: 16px; }
+    code { overflow-wrap: anywhere; background: #edf1f4; padding: 2px 5px; border-radius: 4px; }
+    footer { margin-top: 32px; color: #526274; font-size: .9rem; }
+    @media (max-width: 600px) { main { padding: 28px 16px 48px; } section, details { padding: 20px; } .comparison, .flow { grid-template-columns: 1fr; } }
+    @media print { :root { background: white; } main { padding: 0; } nav, .skip { display: none; } details { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#walkthrough">Skip to walkthrough</a>
+  <main id="walkthrough">
+    <header>
+      <div class="eyebrow">Illustrative walkthrough · Fictional change</div>
+      <h1>One export, even after repeated clicks.</h1>
+      <p>Repeated requests for the same report and options now reuse an active export job. Users can click again without starting another copy through this sequential request path.</p>
+      <p><strong>Why review:</strong> This changes when the system creates a job and when it returns an existing one.</p>
+      <p class="notice"><strong>Example only.</strong> This file demonstrates an explanation layout. It has no implemented repository, tested revision, captured results, or live application connection. In this scenario, concurrent requests remain an unresolved limitation.</p>
+      <nav aria-label="Walkthrough sections">
+        <a href="#comparison">Before and after</a>
+        <a href="#path">Request path</a>
+        <a href="#deeper">Choices and evidence</a>
+      </nav>
+    </header>
+    <section id="comparison" aria-labelledby="comparison-title">
+      <h2 id="comparison-title">Same action. Different result.</h2>
+      <p>Illustrative scenario: a user submits the same report and options again while the first export is still active.</p>
+      <div class="comparison">
+        <article><h3>Before</h3><p>The handler creates job A, then creates job B for the repeated request. Both jobs process the same export.</p></article>
+        <article><h3>After</h3><p>The handler creates job A. The repeated request finds A still active and returns its ID. Different options still start a separate job.</p></article>
+      </div>
+    </section>
+    <section id="path" aria-labelledby="path-title">
+      <h2 id="path-title">Follow the request</h2>
+      <ol class="flow">
+        <li><strong>Validate.</strong><br>Check the requested report and export options.</li>
+        <li><strong>Find a match.</strong><br>Look for an active job with the same report and options.</li>
+        <li><strong>Reuse or create.</strong><br>Return the match; otherwise create and enqueue a new job.</li>
+      </ol>
+      <p>A completed job is not active. A later export can therefore create a new job.</p>
+    </section>
+    <div id="deeper">
+      <details>
+        <summary>Why match both report and options?</summary>
+        <p>Two requests for the same report can ask for different output formats. Reusing a job based only on the report could return the wrong file. The match includes the options that determine the export.</p>
+      </details>
+      <details>
+        <summary>What evidence would establish this behavior?</summary>
+        <p>A real walkthrough would link observed results for repeated requests, different options, and completed jobs, with the command or scenario, exact revision, and environment. None was executed for this fictional example.</p>
+        <p>A readable diagram explains the intended path. It cannot establish that the implementation follows it.</p>
+      </details>
+      <details>
+        <summary>What remains risky, and what would rollback restore?</summary>
+        <p>Two simultaneous requests might both see no active job and both create one. Sequential reuse alone does not establish concurrency safety.</p>
+        <p>Reverting this hypothetical handler change would restore the earlier selection behavior. It would not remove jobs already queued or undo exports already delivered.</p>
+      </details>
+      <details>
+        <summary>Where would I inspect the implementation?</summary>
+        <p>A real page would link the immutable request handler, job lookup, and relevant tests, followed by its original PR. This example omits code links because no corresponding implementation exists.</p>
+      </details>
+    </div>
+    <footer>Portable HTML: all styling is embedded, disclosures work without JavaScript, and the explanation makes no network requests.</footer>
+  </main>
+</body>
+</html>

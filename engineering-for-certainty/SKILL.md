@@ -24,8 +24,11 @@ by default; explicit narrower instructions and repository gates control. Read
 [Delivery and Human Review](references/delivery-and-human-review.md) for shipping
 authority, selective post-merge human review, and queue maintenance. Important,
 cross-cutting, hard-to-change, or critical behavior gets `human-review:pending`
-and a root `PRS_PENDING_HUMAN_REVIEW.md` entry; routine work need not. This never
-replaces pre-merge engineering proof or grants new deployment authority.
+and a root `PRS_PENDING_HUMAN_REVIEW.md` entry; routine work need not. Selected
+work also uses `$feature-walkthrough` for a standalone rendered HTML explanation
+linked from the PR and index. Hosting failures remain explicit publication-pending
+work without blocking otherwise-ready shipping. This never replaces pre-merge
+engineering proof or grants new deployment authority.
 
 ## Specialist Routing
 
