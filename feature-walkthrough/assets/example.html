@@ -1,95 +1,246 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>One export, even after repeated clicks · Example walkthrough</title>
-  <style>
-    :root { font-family: system-ui, sans-serif; color: #1e293b; background: #f3f5f7; line-height: 1.65; }
-    * { box-sizing: border-box; }
-    body { margin: 0; }
-    main { max-width: 960px; margin: auto; padding: 48px 24px 72px; }
-    h1, h2, h3 { line-height: 1.2; color: #172b3a; }
-    h1 { font-size: clamp(2rem, 5vw, 3.3rem); max-width: 20ch; margin: 16px 0; }
-    h2 { margin-top: 0; font-size: 1.45rem; }
-    h3 { font-size: 1.1rem; }
-    p { max-width: 74ch; }
-    a { color: #135e67; text-underline-offset: 3px; }
-    a:focus-visible, summary:focus-visible { outline: 3px solid #9e4617; outline-offset: 5px; }
-    .skip { position: absolute; left: -10000px; }
-    .skip:focus { position: fixed; left: 16px; top: 16px; background: white; padding: 12px; z-index: 1; }
-    .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #526274; }
-    .notice { border-left: 4px solid #9e4617; padding: 12px 18px; background: #fff2e7; }
-    nav { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 24px 0; }
-    section, details { margin-top: 24px; background: white; border: 1px solid #d4dde3; border-radius: 14px; padding: 24px; scroll-margin-top: 20px; }
-    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .comparison article { background: #f3f5f7; padding: 18px; border-radius: 10px; }
-    .comparison h3 { margin-top: 0; }
-    .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0; list-style: none; counter-reset: steps; }
-    .flow li { border-top: 3px solid #135e67; padding: 14px; background: #f3f5f7; counter-increment: steps; }
-    .flow li::before { content: counter(steps) ". "; font-weight: bold; }
-    summary { cursor: pointer; font-size: 1.15rem; font-weight: 650; color: #172b3a; }
-    details[open] summary { margin-bottom: 16px; }
-    code { overflow-wrap: anywhere; background: #edf1f4; padding: 2px 5px; border-radius: 4px; }
-    footer { margin-top: 32px; color: #526274; font-size: .9rem; }
-    @media (max-width: 600px) { main { padding: 28px 16px 48px; } section, details { padding: 20px; } .comparison, .flow { grid-template-columns: 1fr; } }
-    @media print { :root { background: white; } main { padding: 0; } nav, .skip { display: none; } details { break-inside: avoid; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Click twice. Run once. · Walkthrough example</title>
+<style>
+:root { color-scheme: light; font-family: ui-sans-serif, system-ui, sans-serif; color: #203b40; background: #f5f3ed; line-height: 1.5; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1120px; margin: auto; padding: 38px 28px 64px; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.8rem); letter-spacing: -.055em; line-height: 1.04; margin: 18px 0 24px; max-width: 17ch; }
+h2 { font-size: 1.25rem; letter-spacing: -.025em; margin: 0; }
+h3 { margin: 0; font-size: 1rem; }
+p { margin: 10px 0; }
+a { color: #175d60; text-underline-offset: 4px; }
+button, select { font: inherit; color: inherit; }
+button, select, summary { cursor: pointer; }
+button { border: 1px solid #a1b4b2; border-radius: 10px; background: white; padding: 10px 16px; min-height: 44px; font-weight: 650; }
+button:hover { background: #e8eeeb; }
+button.primary { color: white; background: #175d60; border-color: #175d60; }
+button.primary:hover { background: #12494c; }
+button:disabled { cursor: default; background: #e9e9e3; color: #526164; }
+select { min-height: 44px; padding: 8px 34px 8px 12px; border: 1px solid #a1b4b2; border-radius: 8px; background: white; }
+:focus-visible { outline: 3px solid #a1461a; outline-offset: 4px; }
+[hidden] { display: none !important; }
+.skip { position: absolute; left: -10000px; }
+.skip:focus { position: fixed; left: 16px; top: 16px; background: white; padding: 12px; z-index: 10; }
+.eyebrow { font-size: .75rem; letter-spacing: .11em; text-transform: uppercase; font-weight: 750; color: #526164; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid #becdc7; border-radius: 99px; font-size: .78rem; font-weight: 650; background: #fff; }
+.notice { display: flex; align-items: center; gap: 10px; color: #793710; background: #fff0d9; border: 1px solid #ceaa77; border-radius: 10px; padding: 10px 14px; font-size: .9rem; margin: 16px 0 24px; }
+.notice svg { width: 22px; height: 22px; flex: none; }
+.surface { background: #fffefa; border: 1px solid #cad2ca; border-radius: 20px; padding: 24px; margin: 20px 0; }
+.section-head { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 22px; }
+.controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 0; }
+.control-label { font-size: .85rem; font-weight: 650; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+legend { font-size: .8rem; font-weight: 700; padding: 0 0 7px; }
+.choices { display: flex; gap: 6px; flex-wrap: wrap; }
+.choice { position: relative; }
+.choice input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.choice span { display: block; padding: 9px 14px; min-height: 44px; border: 1px solid #a1b4b2; border-radius: 8px; font-size: .9rem; }
+.choice input:checked + span { background: #203b40; color: #fff; border-color: #203b40; }
+.choice input:focus-visible + span { outline: 3px solid #a1461a; outline-offset: 4px; }
+.caption { color: #526164; font-size: .9rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+svg { overflow: visible; }
+.icon { width: 52px; height: 52px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.lane { min-width: 0; padding: 20px; border-radius: 14px; border: 1px solid #ccd6d0; background: #f4f5ef; }
+.lane.after { background: #eaf4ee; border-color: #9dbbad; }
+.lane header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.metric { font-size: .85rem; font-weight: 750; }
+.jobs { display: flex; gap: 20px 12px; flex-wrap: wrap; min-height: 155px; align-content: flex-start; }
+.job-group { display: flex; flex-direction: column; align-items: center; min-width: 75px; }
+.requests { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; max-width: 130px; }
+.request { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; background: #203b40; color: white; font-size: .72rem; font-weight: 700; }
+.stem { height: 23px; width: 2px; background: #7a9890; position: relative; }
+.stem::after { content: ''; position: absolute; bottom: 0; left: -3px; width: 8px; height: 8px; border-right: 2px solid #7a9890; border-bottom: 2px solid #7a9890; transform: rotate(45deg); }
+.job { display: grid; justify-items: center; padding: 10px 14px; background: #fffefa; border: 2px solid #7a9890; border-radius: 10px; }
+.job strong { font-size: .8rem; }
+.job small { font-size: .7rem; }
+.job.done { border-style: dashed; }
+.empty { display: grid; place-items: center; width: 100%; color: #526164; border: 2px dashed #b5c5bc; border-radius: 10px; min-height: 155px; }
+.empty .icon { opacity: .65; }
+.result { font-weight: 700; font-size: 1.05rem; min-height: 1.6em; margin: 20px 0 0; }
+.details { margin-top: 30px; }
+details { border-top: 1px solid #b7c7be; padding: 16px 0; }
+summary { font-weight: 700; min-height: 32px; }
+details p, details li { max-width: 76ch; font-size: .92rem; }
+code { overflow-wrap: anywhere; background: #e6ece6; padding: 2px 5px; border-radius: 4px; }
+footer { color: #526164; margin-top: 30px; font-size: .8rem; }
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; list-style: none; padding: 0; margin: 26px 0; }
+.flow li { position: relative; display: grid; justify-items: center; align-content: start; gap: 8px; text-align: center; min-width: 0; }
+.flow li:not(:last-child)::after { content: '→'; position: absolute; right: -17px; top: 24px; font-size: 1.35rem; color: #57766d; }
+.node { display: grid; place-items: center; border: 2px solid #93afa1; border-radius: 18px; width: 82px; height: 82px; background: #eaf4ee; }
+.flow strong { font-size: .85rem; }
+.flow small { font-size: .75rem; color: #526164; }
+.node.pending { color: #793710; background: #fff0d9; border-color: #b47d3a; border-style: dashed; }
+.node.muted { background: #f1f1ec; border-color: #c0c8c0; color: #526164; }
+.outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.outcome { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid #bccdc2; border-radius: 12px; background: #f4f5ef; }
+.outcome svg { width: 34px; height: 34px; flex: none; }
+.outcome strong, .outcome small { display: block; }
+.outcome small { font-size: .8rem; color: #526164; }
+.sketch { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 110px; }
+.paper { width: 72px; height: 90px; border: 2px solid #9bad9f; border-radius: 5px; padding: 12px 8px; display: grid; gap: 5px; }
+.paper i { display: block; height: 3px; background: #b4bfb2; }
+.mini-node { display: grid; place-items: center; background: #eaf4ee; border: 2px solid #93afa1; border-radius: 10px; padding: 10px; }
+.mini-node .icon { width: 32px; height: 32px; }
+@media (max-width: 700px) { main { padding: 26px 16px 48px; } .surface { padding: 18px; } .comparison { grid-template-columns: 1fr; } .flow { grid-template-columns: 1fr; gap: 22px; } .flow li { grid-template-columns: 68px 1fr; text-align: left; align-items: center; justify-items: start; gap: 4px 16px; } .flow .node { width: 68px; height: 68px; grid-row: span 2; } .flow strong { align-self: end; } .flow small { align-self: start; } .flow li:not(:last-child)::after { content: '↓'; top: auto; bottom: -24px; left: 26px; right: auto; } .outcomes { grid-template-columns: 1fr; } .lane { padding: 16px; } }
+@media (prefers-reduced-motion: no-preference) { .job-group { animation: arrive .22s ease-out; } @keyframes arrive { from { transform: translateY(5px); opacity: .4; } to { transform: translateY(0); opacity: 1; } } }
+</style>
 </head>
 <body>
-  <a class="skip" href="#walkthrough">Skip to walkthrough</a>
-  <main id="walkthrough">
-    <header>
-      <div class="eyebrow">Illustrative walkthrough · Fictional change</div>
-      <h1>One export, even after repeated clicks.</h1>
-      <p>Repeated requests for the same report and options now reuse an active export job. Users can click again without starting another copy through this sequential request path.</p>
-      <p><strong>Why review:</strong> This changes when the system creates a job and when it returns an existing one.</p>
-      <p class="notice"><strong>Example only.</strong> This file demonstrates an explanation layout. It has no implemented repository, tested revision, captured results, or live application connection. In this scenario, concurrent requests remain an unresolved limitation.</p>
-      <nav aria-label="Walkthrough sections">
-        <a href="#comparison">Before and after</a>
-        <a href="#path">Request path</a>
-        <a href="#deeper">Choices and evidence</a>
-      </nav>
-    </header>
-    <section id="comparison" aria-labelledby="comparison-title">
-      <h2 id="comparison-title">Same action. Different result.</h2>
-      <p>Illustrative scenario: a user submits the same report and options again while the first export is still active.</p>
-      <div class="comparison">
-        <article><h3>Before</h3><p>The handler creates job A, then creates job B for the repeated request. Both jobs process the same export.</p></article>
-        <article><h3>After</h3><p>The handler creates job A. The repeated request finds A still active and returns its ID. Different options still start a separate job.</p></article>
-      </div>
-    </section>
-    <section id="path" aria-labelledby="path-title">
-      <h2 id="path-title">Follow the request</h2>
-      <ol class="flow">
-        <li><strong>Validate.</strong><br>Check the requested report and export options.</li>
-        <li><strong>Find a match.</strong><br>Look for an active job with the same report and options.</li>
-        <li><strong>Reuse or create.</strong><br>Return the match; otherwise create and enqueue a new job.</li>
-      </ol>
-      <p>A completed job is not active. A later export can therefore create a new job.</p>
-    </section>
-    <div id="deeper">
-      <details>
-        <summary>Why match both report and options?</summary>
-        <p>Two requests for the same report can ask for different output formats. Reusing a job based only on the report could return the wrong file. The match includes the options that determine the export.</p>
-      </details>
-      <details>
-        <summary>What evidence would establish this behavior?</summary>
-        <p>A real walkthrough would link observed results for repeated requests, different options, and completed jobs, with the command or scenario, exact revision, and environment. None was executed for this fictional example.</p>
-        <p>A readable diagram explains the intended path. It cannot establish that the implementation follows it.</p>
-      </details>
-      <details>
-        <summary>What remains risky, and what would rollback restore?</summary>
-        <p>Two simultaneous requests might both see no active job and both create one. Sequential reuse alone does not establish concurrency safety.</p>
-        <p>Reverting this hypothetical handler change would restore the earlier selection behavior. It would not remove jobs already queued or undo exports already delivered.</p>
-      </details>
-      <details>
-        <summary>Where would I inspect the implementation?</summary>
-        <p>A real page would link the immutable request handler, job lookup, and relevant tests, followed by its original PR. This example omits code links because no corresponding implementation exists.</p>
-      </details>
-    </div>
-    <footer>Portable HTML: all styling is embedded, disclosures work without JavaScript, and the explanation makes no network requests.</footer>
-  </main>
+<svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="document" viewBox="0 0 48 48"><path d="M12 5h16l9 9v29H12zM28 5v10h9M19 24h11M19 31h11"/></symbol>
+<symbol id="click" viewBox="0 0 48 48"><path d="m13 9 23 16-12 2-5 11zM7 4l-3-3M22 5l2-4M5 18l-4 1"/></symbol>
+<symbol id="eye" viewBox="0 0 48 48"><path d="M3 24s8-13 21-13 21 13 21 13-8 13-21 13S3 24 3 24z"/><circle cx="24" cy="24" r="6"/></symbol>
+<symbol id="page" viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="4"/><path d="M5 15h38M11 11h1M16 11h1M13 31l8-9 7 10 7-5"/></symbol>
+<symbol id="check" viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><path d="m14 24 7 7 14-15"/></symbol>
+<symbol id="cloud" viewBox="0 0 48 48"><path d="M13 35h23a9 9 0 0 0 1-18 13 13 0 0 0-25-2 10 10 0 0 0 1 20zM24 30V17m-5 5 5-5 5 5"/></symbol>
+<symbol id="link" viewBox="0 0 48 48"><path d="m20 29-5 5a8 8 0 0 1-11-11l9-9a8 8 0 0 1 11 0m4 5 5-5a8 8 0 0 1 11 11l-9 9a8 8 0 0 1-11 0M16 32l16-16"/></symbol>
+<symbol id="lock" viewBox="0 0 48 48"><rect x="10" y="21" width="28" height="22" rx="3"/><path d="M16 21V13a8 8 0 0 1 16 0v8M24 29v6"/></symbol>
+<symbol id="warning" viewBox="0 0 48 48"><path d="M24 4 46 43H2zM24 16v12M24 35v1"/></symbol>
+<symbol id="ship" viewBox="0 0 48 48"><path d="M24 4c-9 7-11 16-11 26l11 6 11-6C35 20 33 11 24 4zM13 22l-7 8v9l10-6M35 22l7 8v9l-10-6M20 40l4 5 4-5"/><circle cx="24" cy="19" r="4"/></symbol>
+<symbol id="queue" viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="38" rx="3"/><path d="M15 16h3m6 0h9M15 25h3m6 0h9M15 34h3m6 0h9"/></symbol>
+</defs></svg>
+<a class="skip" href="#main">Skip to walkthrough</a>
+<main id="main">
+
+<header>
+<div class="eyebrow">Feature walkthrough · Fictional example</div>
+<h1>Click twice.<br>Run once.</h1>
+<span class="chip">Interactive illustration · no application connection</span>
+<div class="notice"><svg class="icon" aria-hidden="true"><use href="#warning"/></svg><span>Sequential requests only; concurrency safety is unproven.</span></div>
+</header>
+<section class="surface" aria-labelledby="export-title">
+<div class="section-head"><h2 id="export-title">Try the same request twice</h2><span class="chip">Same report</span></div>
+<div class="controls" id="export-controls" hidden>
+<label class="control-label" for="format">Options</label><select id="format"><option value="CSV">CSV</option><option value="PDF">PDF</option></select>
+<button class="primary" id="export">Export</button><button id="finish">Finish active jobs</button><button id="reset">Reset</button>
+</div>
+<div class="comparison">
+<article class="lane"><header><h3>Before</h3><span class="metric" id="before-count">2 jobs</span></header><div class="jobs" id="before-jobs" aria-label="Before: each click creates a job">
+<div class="job-group"><div class="requests"><span class="request">1</span></div><div class="stem"></div><div class="job"><svg class="icon" aria-hidden="true"><use href="#document"/></svg><strong>Job A · CSV</strong></div></div>
+<div class="job-group"><div class="requests"><span class="request">2</span></div><div class="stem"></div><div class="job"><svg class="icon" aria-hidden="true"><use href="#document"/></svg><strong>Job B · CSV</strong></div></div>
+</div></article>
+<article class="lane after"><header><h3>After</h3><span class="metric" id="after-count">1 job</span></header><div class="jobs" id="after-jobs" aria-label="After: repeated requests share an active matching job">
+<div class="job-group"><div class="requests"><span class="request">1</span><span class="request">2</span></div><div class="stem"></div><div class="job"><svg class="icon" aria-hidden="true"><use href="#document"/></svg><strong>Job A · CSV</strong></div></div>
+</div></article>
+</div>
+<p class="result" id="export-result" role="status" aria-live="polite">2 clicks → 2 jobs before · 1 job after</p>
+<p class="caption">Different options or completed jobs → a new job.</p>
+<noscript><p class="caption">Static example shown; enable JavaScript to try other requests.</p></noscript>
+</section>
+<div class="details">
+<details><summary>What does the match include?</summary><p>The fictional lookup matches the report and output options against active jobs. A different format creates another job; finishing a job makes it ineligible for reuse.</p></details>
+<details><summary>Evidence and limits</summary><p>This is a fictional behavior model, not an implemented export service or executed test. A real walkthrough would link raw results, the exact code revision, and the environment for repeated requests, changed options, completed jobs, and any concurrency guarantee.</p></details>
+<details><summary>Recovery and code</summary><p>Reverting this hypothetical reuse rule restores one job per request. It cannot undo jobs already queued or files already delivered. No code or PR links are supplied because this example has no corresponding implementation.</p></details>
+</div>
+<footer>One file · Embedded graphics and controls · No network resources</footer>
+
+</main>
+<script>
+const exportState = { requests: 0, beforeJobs: [], afterJobs: [] };
+const formatControl = document.querySelector('#format');
+const beforeJobsView = document.querySelector('#before-jobs');
+const afterJobsView = document.querySelector('#after-jobs');
+const exportResult = document.querySelector('#export-result');
+
+function createJob(format, requestNumber, ordinal) {
+  return { format, requests: [requestNumber], active: true, ordinal };
+}
+
+function renderJobs(container, jobs) {
+  container.replaceChildren();
+  if (jobs.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.textContent = 'No jobs yet';
+    container.append(empty);
+    return;
+  }
+
+  for (const job of jobs) {
+    const group = document.createElement('div');
+    group.className = 'job-group';
+    const requests = document.createElement('div');
+    requests.className = 'requests';
+    for (const requestNumber of job.requests) {
+      const token = document.createElement('span');
+      token.className = 'request';
+      token.textContent = requestNumber;
+      token.setAttribute('aria-label', `Request ${requestNumber}`);
+      requests.append(token);
+    }
+    const stem = document.createElement('div');
+    stem.className = 'stem';
+    stem.setAttribute('aria-hidden', 'true');
+    const card = document.createElement('div');
+    card.className = job.active ? 'job' : 'job done';
+    const graphic = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    graphic.setAttribute('class', 'icon');
+    graphic.setAttribute('aria-hidden', 'true');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', job.active ? '#document' : '#check');
+    graphic.append(use);
+    const name = document.createElement('strong');
+    name.textContent = `Job ${job.ordinal} · ${job.format}`;
+    const status = document.createElement('small');
+    status.textContent = job.active ? 'Active' : 'Complete';
+    card.append(graphic, name, status);
+    group.append(requests, stem, card);
+    container.append(group);
+  }
+}
+
+function renderExport(message) {
+  renderJobs(beforeJobsView, exportState.beforeJobs);
+  renderJobs(afterJobsView, exportState.afterJobs);
+  for (const [prefix, jobs] of [['before', exportState.beforeJobs], ['after', exportState.afterJobs]]) {
+    document.querySelector(`#${prefix}-count`).textContent = `${jobs.length} ${jobs.length === 1 ? 'job' : 'jobs'}`;
+  }
+  document.querySelector('#finish').disabled = !exportState.afterJobs.some(job => job.active);
+  exportResult.textContent = message;
+}
+
+function handleExport() {
+  exportState.requests += 1;
+  const format = formatControl.value;
+  const requestNumber = exportState.requests;
+  exportState.beforeJobs.push(createJob(format, requestNumber, exportState.beforeJobs.length + 1));
+  const matchingJob = exportState.afterJobs.find(job => job.active && job.format === format);
+  if (matchingJob) {
+    matchingJob.requests.push(requestNumber);
+  } else {
+    exportState.afterJobs.push(createJob(format, requestNumber, exportState.afterJobs.length + 1));
+  }
+  const message = `${requestNumber} ${requestNumber === 1 ? 'click' : 'clicks'} → ${exportState.beforeJobs.length} ${exportState.beforeJobs.length === 1 ? 'job' : 'jobs'} before · ${exportState.afterJobs.length} ${exportState.afterJobs.length === 1 ? 'job' : 'jobs'} after`;
+  renderExport(message);
+}
+
+function handleFinish() {
+  for (const job of [...exportState.beforeJobs, ...exportState.afterJobs]) job.active = false;
+  renderExport('Jobs complete → the next export creates a new job.');
+}
+
+function handleReset() {
+  exportState.requests = 0;
+  exportState.beforeJobs = [];
+  exportState.afterJobs = [];
+  formatControl.value = 'CSV';
+  renderExport('Click Export twice. Follow the numbered requests.');
+}
+
+document.querySelector('#export-controls').hidden = false;
+document.querySelector('#export').addEventListener('click', handleExport);
+document.querySelector('#finish').addEventListener('click', handleFinish);
+document.querySelector('#reset').addEventListener('click', handleReset);
+handleReset();
+</script>
 </body>
 </html>

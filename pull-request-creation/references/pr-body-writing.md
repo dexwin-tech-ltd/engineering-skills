@@ -33,7 +33,7 @@ use collapsible detail when the hosting surface supports it. Scale the format
 to the change instead of requiring six long sections or a fixed report. Keep
 the repository queue entry to a link, brief description, and review reason or
 focus plus the rendered link or publication-pending status. The PR owns the
-review record and outcome; the HTML is the layered reading surface. Preserve
+review record and outcome; the HTML explains visually with optional detail. Preserve
 the delivered PR's explanation and code revision when later features change.
 
 Illustrative opening (replace placeholders with verified links and results):

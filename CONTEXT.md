@@ -273,8 +273,9 @@ _Avoid_: Every PR needs human review, agent verdict, pre-merge approval
 
 **Feature Walkthrough**:
 A self-contained HTML explanation for a selected PR or explicit feature-review
-request. Its rendered URL opens a layered explanation of actual behavior,
-consequential choices, and evidence. Repository visibility controls the audience;
+request. Its rendered URL opens a visual explanation of actual behavior, with
+meaningful interaction where useful, short labels/captions, and optional choices
+and evidence. Repository visibility controls the audience;
 the delivered PR's original explanation is preserved. Hosting failure leaves
 walkthrough publication unfinished without blocking otherwise-ready shipping.
 _Avoid_: Raw HTML source link, live application demo, expiring tunnel, human outcome

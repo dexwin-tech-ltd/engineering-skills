@@ -44,30 +44,37 @@ with the change. A local-only explanation uses the requested output location or
 an isolated local artifact directory; it does not require repository or Git
 mutations. Record the hosting configuration separately from page content.
 
-Write a layered walkthrough: a short opening establishes the problem, changed
-behavior, and reason for human review. Let the reader expand relevant details:
+Make the visual carry the explanation. Follow one concrete request, file, job,
+or PR through the changed behavior, showing its trigger, before/after, and
+outcome. Use a system map to support that story when needed. A backend policy,
+migration, refactor, and UI feature need different visual treatments; icons
+beside paragraphs, paragraph cards connected by arrows, and screenshots of prose
+do not satisfy this requirement.
 
-- one concrete before/after scenario;
-- how the changed path works, with a useful diagram, screenshot, or step-through;
-- consequential choices and their tradeoffs;
-- observed evidence, limits, material risks, and recovery boundaries;
-- a few precise code and evidence links.
+Require interaction when an action can demonstrate the change: repeated
+requests merging into one job, a permission changing a route, or a failure
+redirecting a workflow. Controls must visibly change the represented behavior.
+Use a pictorial sequence when interaction adds little; navigation, disclosures,
+and decorative animation alone are not a behavior demonstration.
 
-Scale the presentation to the change. A backend policy, migration, refactor,
-and UI feature need different visual explanations. Explain technical terms at
-first use. Show important warnings in the opening rather than hiding them in
-collapsed details. Avoid a long report or mandatory empty sections.
+Use short labels and at most one short sentence per visual on the main path.
+Do not use prose blocks there. Put supporting explanations, consequential
+choices/tradeoffs, precise code/evidence links, and recovery detail in optional
+disclosures. Keep essential warnings and relevant exceptions visible. Explain
+necessary technical terms briefly. Scale to the change without mandatory empty
+sections or a page-wide word cap.
 
 Keep CSS, JavaScript, diagrams, and necessary images inside the single file.
 Use inline SVG or embedded image data. No CDN scripts, remote fonts, analytics,
 runtime fetches, build step, or application backend may be required to read the
 core explanation. Code/evidence links may be external and remain authenticated
-where appropriate. Prefer native HTML disclosure and navigation; add interactive
-models only when they clarify behavior. Label illustrations and simulations;
+where appropriate. Prefer native controls, disclosure, and navigation. Label
+illustrations and simulations;
 never present them as captured application behavior or executed tests.
 
-[The example page](assets/example.html) demonstrates a lightweight, responsive
-layout with native disclosures and a before/after comparison. It is fictional
+[The example page](assets/example.html) demonstrates a responsive visual model
+with repeated requests, changed options, completed jobs, and optional evidence.
+It is fictional
 and contains no runtime proof. Adapt its presentation rather than copying its
 claims. Escape untrusted text before inserting it into HTML; do not execute
 repository or PR content as page code. Exclude secrets, customer data, raw logs,
@@ -79,6 +86,13 @@ Verify factual claims against the diff and raw evidence. Include the explained
 revision, evidence environments, PR link when known, and limitations. Keep
 deployment state separate; a walkthrough is an explanation, not a live feature
 demo or proof that production runs this revision.
+
+In the rendered page, verify that the main visual path alone communicates the
+trigger, changed behavior, outcome, and important relevant failure or exception,
+without opening supporting prose. Record what the visual demonstrates and the
+scenarios checked; this is agent validation, not an added human approval gate.
+If the main path fails, revise the visual or interaction instead of adding
+paragraphs. A structural checklist of diagrams and controls is insufficient.
 
 Open the page in a browser and inspect a desktop and narrow viewport. Exercise
 its disclosures, navigation, and any interactive model, including keyboard
