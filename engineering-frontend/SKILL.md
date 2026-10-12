@@ -11,7 +11,7 @@ Use this companion skill with `$engineering-for-certainty` when work touches fro
 
 Preserve the repository's existing frontend architecture, libraries, and test stack. New Effect projects apply `$engineering-effect`, preferring Atom after platform proof; existing-stack migration remains separate. Keep route/screen, flow, view, hook, adapter, and test boundaries explicit; validate external data before it reaches UI or domain code; preserve accessibility of changed user-visible states; and cover important supported-platform flows. When priorities conflict, preserve correctness and accessibility before broader E2E coverage.
 
-For a task-level Quick change, use a focused direct UI check and inspect the final diff. Escalate when the change affects interaction, accessibility behavior, shared design tokens, multiple states, or an authoritative design contract that a focused check cannot establish. Formal observable-runtime issues follow the Runtime Acceptance contract.
+For Fast tasks and formal issues, use focused direct UI proof and final self-review. Cover affected interactions, accessibility, shared tokens, and states; expand checks when focused proof cannot establish them. Consequential changed behavior or unresolved uncertainty requires Extensive, not interaction or multiple files alone. Formal observable-runtime issues follow the Runtime Acceptance contract.
 
 ## Open the Relevant Detail
 

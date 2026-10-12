@@ -68,8 +68,8 @@ pending and continue answering without repeatedly asking for completion.
 Create repairs on new branches from the current verified base and link both
 PRs. Verify the old claim against current code before changing it. Preserve
 the original merge and review history. The repair ships through normal proof
-and is independently assessed for human-review selection. Critical repairs
-use the formal issue path; eligible Quick/Standard task repairs can use a bounded
+and is independently assessed for human-review selection. Explicitly issue-driven repairs
+use the formal issue path; task repairs in either mode can use a bounded
 handoff. Bookkeeping-only
 index maintenance uses a small isolated PR and is exempt from human review.
 

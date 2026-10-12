@@ -71,7 +71,9 @@ existing governing issue or handoff, limited to the authorized scope:
 - Material choices use USER_DECISION; only findings eligible under
   `$engineering-for-certainty`'s Follow-Up Inbox contract may use
   DEFER_FOLLOW_UP.
-- Every correction requires affected proof and full resulting-diff re-review.
+- Every correction requires affected proof and an updated independent verdict
+  under the core Review and Corrections contract; full re-review follows broad
+  or uncertain impact, or an explicit stronger gate.
 - Two unsuccessful correction cycles for the same root cause force escalation.
 - Completion means verified merge with required selective human-review tracking
   and authorized release follow-through, unless the explicit boundary is
@@ -191,10 +193,13 @@ meaningful regression coverage when appropriate and run repository-required
 checks plus focused proof. Do not weaken tests, acceptance criteria, checks, or
 security controls. Distinguish executed proof from unavailable checks.
 
-Use a separate read-only Independent Reviewer context with code-review against the complete
-resulting base-to-candidate-head diff, not merely correction commits. Supply raw
-requirements, recorded decisions, prior finding IDs, current diff, proof, and
-limitations. Require independent verification, attempted refutation, prior-
+Use a separate read-only Independent Reviewer context with code-review. The
+initial review covers the complete base-to-candidate diff. For follow-up review,
+supply raw requirements, recorded decisions, prior findings, the current diff,
+proof, and earlier review evidence. The reviewer checks corrections and their
+interactions, verifies any carried coverage, and returns a current-candidate
+verdict under the core Review and Corrections contract. Broad or uncertain
+impact requires another full review. Preserve attempted refutation, prior-
 finding reassessment, and regression inspection.
 
 Apply clear AUTO_CORRECT results, repeat invalidated proof, and independently
@@ -267,7 +272,7 @@ published next-step instructions. Read back every label change.
 
 Request reviewer reassessment only when all blocking concerns have evidenced
 dispositions, required corrections are pushed, no USER_DECISION remains,
-required checks and CI pass for the current head, independent full-diff review
+required checks and CI pass for the current head, current independent review, including verified carried coverage,
 has no undispositioned confirmed findings, every deferred finding has a
 verified backlog entry or exact existing owner linked from the PR, and
 repository workflow labels match the required state. Verify the request and

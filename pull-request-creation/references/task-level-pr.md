@@ -1,19 +1,20 @@
 # Task-Level Pull Request
 
-Use this path for publication of completed Quick or Standard work that has no
-canonical issue, either directly requested or part of authorized delivery. The
-user request and compact task handoff govern scope. Critical work and any explicitly issue-driven work use
-the formal issue path in `SKILL.md` instead. Do not create a ceremonial issue
+Use this path for publication of completed Fast or Extensive work without a
+canonical issue, directly requested or part of authorized delivery. The user
+request and compact task handoff govern scope. Explicitly issue-driven work uses
+the formal path in `SKILL.md` in either mode; assurance alone does not require it. Do not create a ceremonial issue
 merely to publish an eligible task-level change.
 
 ## Preconditions
 
 The responsible agent supplies the requested outcome, changed files, risk level
 and reason, final diff, exact checks and results, known limitations, and
-accepted decisions. For Standard, require a current independent `$code-review`
-of the complete change and a fresh full review after every correction batch.
-For Quick, require direct targeted proof and final diff inspection; no routine
-independent model review is required. If the change has outgrown its level,
+accepted decisions. Fast requires direct proof and final self-review, without
+routine independent review. Extensive or an explicit independent gate requires
+initial full `$code-review` and a current-candidate verdict. Apply the core
+Review and Corrections contract to later revisions: verify carried coverage,
+rerun affected proof, and repeat full review when impact is broad or uncertain. If the change has outgrown its level,
 stop and escalate before publication. A task-level PR never claims formal issue
 traceability or Ready-to-Merge Handoff status it has not earned.
 
@@ -40,7 +41,7 @@ history without explicit authorization.
    [PR Body Guidance](../SKILL.md#pr-body-guidance). Read the local
    [PR Body Writing Guide](pr-body-writing.md) when composing or revising the
    description. Include the
-   outcome, changed scope, checks actually run, Standard review evidence when
+   outcome, changed scope, checks actually run, required independent review evidence when
    applicable, and material risks. Link a GitHub issue only when one exists
    and should close on merge. Omit empty boilerplate and sensitive data.
 4. Use **Draft** for an explicit draft-only boundary, explicitly requested work

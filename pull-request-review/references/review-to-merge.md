@@ -51,22 +51,21 @@ passes.
 
 ## Route The Complete Queue
 
-For Standard, Critical, formal issue work, or an explicit review request, run
+For Extensive, an explicit independent gate, or an explicit review request, run
 or verify existing independent evidence from the full `$code-review`
 discovery, verification, deduplication, and ranking pipeline before changing
 the pull request. Reuse only evidence covering the exact full candidate under
 the main skill's currency rules. Require exactly one route for every
 non-refuted result:
 
-For a clean task-level Quick shipping handoff without an additional review
-gate, verify its direct proof and final diff inspection instead of imposing a
-routine independent-review pipeline. Escalate when risk or proof no longer
-supports Quick; do not use this exception to waive an explicit requested review
-or formal issue gate. Route any discovered blockers under the same rules below.
+For a clean Fast shipping handoff, including formal issue work, without an
+explicit independent gate, verify direct proof and final self-review instead of
+imposing the independent pipeline. Escalate when consequential risk or proof
+no longer supports Fast; never waive an explicit requested review or issue gate. Route any discovered blockers under the same rules below.
 
 - `AUTO_CORRECT`: collect deterministic, in-scope corrections into one coherent
   batch. Use `$issue-review` to verify the governing issue and scope, then
-  `$issue-delivery` to implement, validate, independently re-review, commit,
+  `$issue-delivery` to implement, validate, update self-review or required independent review, commit,
   push, update the existing pull request, follow CI, and update the Issue
   Completion Record. The explicit invocation or authorized handoff supplies
   delivery authorization only while the issue remains unchanged in meaning and passes
@@ -138,7 +137,10 @@ After every correction or planning batch that changes the Git head:
 1. Resolve the new local and remote head SHA.
 2. Re-run every acceptance, Runtime Acceptance, validation, and CI proof the
    change invalidated.
-3. Run a clean `$code-review` against the complete current pull-request diff.
+3. Update self-review or required independent review under the core Review and
+   Corrections contract. Check the new range, interactions, and carried coverage;
+   obtain a current-candidate verdict. Broad or uncertain impact requires full
+   independent re-review when independence applies.
 4. Reconcile existing threads and prior findings against that head.
 5. Repeat only while an authorized route makes measurable progress.
 
@@ -157,8 +159,8 @@ failed Slack delivery remains nonblocking under the main skill's rules.
 Do not merge from an earlier clean review, a mutation response, a stale CI run,
 or an Issue Completion Record whose reviewed change head does not contain the
 validated behavior. The record does not name its own containing commit. Permit
-later issue, backlog, feature-walkthrough explanation, or completion-evidence commits only after reviewing the
-complete current head and verifying that those descendants invalidate no
+later issue, backlog, feature-walkthrough explanation, or completion-evidence commits only after updating review of the
+current candidate and verifying that those descendants invalidate no
 acceptance or runtime proof.
 
 ## Merge Gates
@@ -168,8 +170,8 @@ Immediately before merge, re-read the pull request and verify:
 - repository, pull-request number, base, head branch, and exact head SHA;
 - the pull request is open, non-draft, conflict-free, and not superseded;
 - for formal issue work, the governing issue and Issue Completion Record name
-  the reviewed behavior-changing head, and every later current-head commit is independently
-  verified as issue, backlog, human-review-index, feature-walkthrough explanation, or completion evidence only;
+  the reviewed behavior-changing head, and every later current-head commit is
+  verified by self-review or required independent review as issue, backlog, human-review-index, feature-walkthrough explanation, or completion evidence only;
 - for eligible task-level work without an issue, the approved task handoff
   instead records scope, selected rigor, exact checks, required independent
   review, findings, and current candidate identity; do not invent an issue

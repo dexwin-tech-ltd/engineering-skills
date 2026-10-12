@@ -28,7 +28,7 @@ Use during independent review of changed frontend behavior, selecting checks app
 - If a platform or E2E tool is unsupported in the repo, document the limitation and prioritize accessibility plus unit/component and flow coverage on supported platforms.
 - A mock-backed frontend slice is not reported as an end-to-end complete feature; production adapter integration and live contract/integration evidence remain explicit until verified.
 - Observable frontend issues have current browser, computer, emulator, or
-  device Runtime Acceptance evidence. Task-level Quick changes have focused
+  device Runtime Acceptance evidence. Fast task-level changes have focused
   direct UI evidence. When an issue uses an authoritative design, it also has
   a current Design Reference Manifest and Evidence Bundle, a source-drift
   result, a complete classified Design Audit Matrix, and the required

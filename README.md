@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `89758ec82e89643f2e91171db8d1829dc8997fd4`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `0d8ba1ed9a6e117213fa34864611c4c99fae4740`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -42,6 +42,25 @@ text. When delegation is unavailable, the primary agent may perform
 safe planning, delivery, and implementation roles in sequence. A
 same-context self-review never satisfies an independent-review gate.
 
+## Assurance modes
+
+Fast is the default for ordinary bounded tasks and formal issues.
+It requires direct behavioral proof and final self-review, without
+routine independent review. Extensive is opt-in or required when
+changed consequences or unresolved uncertainty affect high-impact
+invariants. It adds deeper risk-directed proof and independent review
+of the complete change. Explicit issue and repository gates remain
+binding in either mode.
+
+Corrections repeat affected proof and update required review. Carry
+earlier coverage forward only after verifying its continued validity;
+broad or uncertain impact requires full re-review. Use existing issue
+and PR records rather than creating a document for every task. See
+[Risk, Rigor, and Verification](engineering-for-certainty/references/rigor-and-verification.md)
+for selection, correction coverage, and the first-ten-deliveries
+evaluation checkpoint. Refresh stale local copies to adopt this policy;
+legacy explicit approval gates cannot be silently downgraded.
+
 ## Automated issue delivery
 
 ### 1. Prepare and approve the issue
@@ -67,9 +86,9 @@ approved issue commit. It never starts implementation on a second
 branch.
 
 `issue-delivery` coordinates implementation, checkpoint validation,
-bounded Implementation Worker assignments, independent review,
-authorized corrections, revalidation, final
-integration review, pull-request creation or update, and CI
+bounded Implementation Worker assignments, self-review or required
+independent review, authorized corrections, affected revalidation,
+combined-change verification, pull-request creation or update, and CI
 follow-through, then verified merge and the established authorized
 release process. Explicit narrower instructions and repository gates
 still control.

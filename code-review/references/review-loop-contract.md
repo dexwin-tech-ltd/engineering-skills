@@ -101,9 +101,13 @@ deduplicate authorized follow-ups.
 
 ## Re-Review
 
-After correction, review the resulting head, rerun affected proof, reassess
-prior findings, and inspect the full resulting diff. Preserve IDs for existing
-root causes. Checkpoint review never replaces final full integration review.
+After correction, rerun affected proof and reassess prior findings and integration
+seams. Follow the core
+[Review and Corrections](../../engineering-for-certainty/references/rigor-and-verification.md#review-and-corrections)
+contract: verify continuing coverage before carrying it forward and return an
+updated verdict for the current candidate. Broad or uncertain impact requires
+full re-review. Preserve IDs for existing root causes. Where independent final
+integration review is required, checkpoint review cannot replace it.
 Do not declare the loop clean until every `CONFIRMED` finding on the current
 head has a valid correction, decision, or deferred disposition, every prior
 finding has a disposition, required inbox entries are filed at closeout, and

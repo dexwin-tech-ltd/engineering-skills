@@ -4,10 +4,10 @@ Use the relevant section when designing, adding, materially changing, or reviewi
 
 ## Testing Doctrine
 
-Use test-first development for Critical invariants and material behavior where a
-failing test can express the requirement. For Standard work, prefer it when it
-clarifies the behavior. Quick work needs direct targeted proof, but not a new
-test for a trivial edit. Follow any stronger repository or approved-issue rule.
+Use test-first development for high-impact invariants and material failures where
+a failing test can express the requirement. Otherwise prefer it when it clarifies
+behavior. Both modes require direct proof; reuse adequate existing coverage and
+add tests where they give lasting protection, not merely to restate a trivial edit. Follow any stronger repository or approved-issue rule.
 
 Apply the following quality rules to all new or materially changed tests.
 They guide test selection and review without imposing a test count or written
@@ -102,7 +102,7 @@ Use them when changed behavior has an important invariant, a broad input space
 or sequence of actions, and a practical test seam. Examples include allocation
 and rounding rules, scoring bounds, normalization, serialization contracts,
 and state transitions. Base the trigger on changed behavior, not a blanket
-requirement for every Critical task. If the technique is unsuitable or another
+requirement for every Extensive task. If the technique is unsuitable or another
 technique provides sufficient assurance, record the concrete reason, relevant
 input or sequence risks, and alternative proof before implementation. Cost
 alone or a few passing examples does not establish sufficient assurance.
@@ -135,10 +135,10 @@ alone or a few passing examples does not establish sufficient assurance.
 Every formal issue with observable runtime behavior requires Runtime Acceptance
 proof from current real-boundary evidence. Read and follow
 [Runtime Acceptance Pass](runtime-acceptance.md) when this applies.
-Outside the formal issue workflow, Standard and Critical work should exercise
-the assembled system through its real boundary when local checks cannot prove
-the changed integration; Critical work must prove the affected high-impact
-invariant. Quick may use the focused direct check from the rigor contract.
+In either mode outside the formal issue workflow, exercise the assembled system
+through its real boundary when local checks cannot prove the changed integration.
+Extensive work must additionally prove affected high-impact invariants. Fast may
+use focused direct checks when they establish the requested outcome.
 Record what each check proves and any remaining integration gap.
 
 Complete the applicable scenarios locally before pull-request readiness. Repeat them against preview or

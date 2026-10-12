@@ -1,6 +1,6 @@
 ---
 name: issue-delivery
-description: Deliver an approved issue through implementation, validation, independent review, corrections, PR creation, CI, verified merge, and selective post-merge human-review tracking. Use when asked to carry a canonical issue through delivery; honor explicit narrower stopping boundaries and existing release authority.
+description: Deliver an approved issue through implementation, risk-scaled validation and review, corrections, PR creation, CI, verified merge, and selective post-merge human-review tracking. Use when asked to carry a canonical issue through delivery; honor explicit narrower stopping boundaries and existing release authority.
 ---
 
 # Issue Delivery
@@ -11,12 +11,14 @@ remain accountable for the final result when work is delegated. Do not absorb
 their doctrine, weaken their gates, or let an implementation context serve as
 its own **Independent Reviewer**.
 
-This is the formal issue path. A task-level Quick change without an approved
-issue follows `$engineering-for-certainty` instead. For an approved issue,
-reuse its risk classification, plan, traceability, and validation commands;
-verify that they still match the code before expanding discovery. Standard is
-the default when the issue does not specify rigor. An issue's explicit proof
-and review gates remain binding even if a lower level might otherwise fit.
+This is the formal issue path. Tasks without an approved issue follow
+`$engineering-for-certainty` instead. Fast is the default for bounded issues;
+Extensive follows consequential changed behavior, uncertainty, or explicit
+request. Reuse the approved issue's classification, plan, traceability, and
+checks, verifying currency before expanding discovery. Explicit proof and
+review gates remain binding; do not silently downgrade legacy approved issues.
+In Fast, use self-review in the steps below unless an explicit gate requires
+independence. Formal delivery alone adds no independent-review requirement.
 
 ## Required Input And Skills
 
@@ -28,7 +30,8 @@ Load and follow:
 - `$engineering-for-certainty` for implementation and change control;
 - every companion it triggers for observability, resilience, auth/security, or
   frontend work;
-- `$code-review` for independent, evidence-verified review; and
+- `$code-review` when Extensive, a concrete concern, or an explicit gate calls
+  for independent, evidence-verified review; and
 - `$pull-request-creation` for branch publication and pull-request creation or
   update; and
 - `$pull-request-review` for merge coordination when this workflow owns merge.
@@ -266,9 +269,14 @@ Distinguish commands actually run from recommended or remote-only checks. Keep
 the issue at `Needs Verification` while issue-owned proof is missing, failed, or
 stale. Tie every runtime result to the exact local commit or deployed build.
 
-### 4. Run Final Full Integration Review
+### 4. Check The Combined Change
 
-Invoke `$code-review` against the complete issue-base-to-current-head diff and
+For Fast without an explicit independent gate, self-review the complete issue
+change against acceptance, callers, meaningful failure paths, traceability, and
+raw check evidence. Reconcile scope and proof before advancing; skip the
+independent pipeline below.
+
+For Extensive or an explicit independent gate, invoke `$code-review` against the complete issue-base-to-current-head diff and
 the canonical issue. Use the issue's requested review effort, or let
 `$code-review` derive it from risk. Use an **Independent Reviewer** context that
 did not implement the candidate, and keep every finder and verifier read-only.
@@ -293,7 +301,9 @@ other independent findings are still being discovered.
 
 ### 5. Route Findings And Correct The Change
 
-The Independent Reviewer owns evidence-based verdicts. As Delivery Operator,
+When independent review applies, the Independent Reviewer owns evidence-based
+verdicts; in Fast self-review, verify findings against raw evidence yourself.
+As Delivery Operator,
 inspect that evidence and own the final workflow route and checkpoint advance
 decision under the issue's Review Loop Contract:
 
@@ -330,10 +340,13 @@ After a correction batch:
    dependency, runtime-configuration, deployment, or test-data surface could
    affect, plus every Design Audit Matrix row invalidated by a production,
    asset, font, design-system, evidence-reference, or approved-design change.
-2. Run a clean `$code-review` pass against the new head.
-3. Re-verify prior findings and inspect the complete resulting diff for
-   regressions or new issues.
-4. Reconcile the new queue with prior finding IDs and dispositions.
+2. Update self-review or required independent review under the core
+   [Review and Corrections](../engineering-for-certainty/references/rigor-and-verification.md#review-and-corrections)
+   contract. Verify carried coverage; return a current-candidate verdict. Broad
+   or uncertain impact requires full independent re-review when independence
+   applies; explicit stronger gates still control.
+3. Re-verify prior findings and inspect correction interactions for regressions.
+4. Reconcile the queue with prior finding IDs and dispositions.
 
 Continue while corrections are authorized and each cycle makes measurable
 progress. Escalate to `USER_DECISION` when the same root cause survives two
@@ -371,7 +384,7 @@ Issue Completion Record and the delivery handoff.
 
 If the effective publication boundary from the governing issue or explicit user
 instruction disables publication, commit the local completion evidence and
-obtain an Independent Reviewer audit of the current head and written record. If
+check the current head and written record using self-review or required independent review. If
 that same source defines a local completion target, apply the narrower
 Completion Condition below. Otherwise return an incomplete handoff at the
 publication gate. In either case, report every unperformed publication step as
@@ -391,24 +404,27 @@ Monitor every required automated check for the current PR head.
 
 When pull-request automation creates a required preview environment, run the
 pending Runtime Acceptance scenarios against the deployed head, update the Issue
-Completion Record, obtain an independent `$code-review` audit of the new runtime
+Completion Record, obtain self-review or required independent audit of the new runtime
 evidence, and invoke `$pull-request-creation` again to reconcile draft or ready
 state.
 
 - For an attributable in-scope failure, diagnose it, apply the smallest
   authorized correction, run affected local proof, commit and push, then return
-  to independent review before trusting the new head.
+  to affected proof and updated self-review or required independent review
+  before trusting the new head.
 - For a known flaky check, retry only when repository policy permits it and the
   retry cannot hide a deterministic defect.
 - For an unrelated failure, service outage, missing secret, permission problem,
   or externally owned gate, record the evidence and pause instead of editing
   unrelated code or claiming success.
 
-Any production code, configuration, test, generated artifact, or product or
-operational documentation change made after review makes the previous
-acceptance and final-review proof stale. A later canonical issue, roadmap, backlog, human-review-index, feature-walkthrough explanation, or
-completion-evidence commit requires current-head review and record reconciliation, but it does not invalidate runtime proof unless its diff changes
-or contradicts the behavior, acceptance, test, or environment contract.
+Inspect every later production, configuration, test, generated, documentation,
+or evidence change for invalidated acceptance, runtime, and review coverage.
+Recheck affected proof and reconcile the record under the core correction
+contract. Evidence-only descendants may preserve runtime proof only after their
+actual diff is verified to change no behavior, acceptance, test, or environment
+contract. Current-head review means updated self-review or required independent
+review; it does not automatically restart the full independent pipeline.
 
 ### 10. Reconcile And Complete Shipping
 
@@ -448,8 +464,9 @@ Declare delivery complete only when:
 - every triggered design source check and Design Audit Matrix row has current
   evidence, no unresolved design drift or conflict remains, and the required
   independent Design Audit passed against the exact current candidate;
-- the current head has passed independent `$code-review`, and any commits after
-  the recorded behavior-changing head are verified evidence-only descendants;
+- the current candidate has passed self-review or required independent review,
+  with valid carried-forward coverage and updated verdicts where used; later
+  evidence-only descendants have been checked for invalidated proof;
 - every confirmed finding has a recorded disposition and no unresolved blocker
   remains;
 - every deferred finding has a verified backlog entry or exact existing owner

@@ -41,11 +41,12 @@ For each checkpoint:
    Audit](../../engineering-frontend/references/design-conformance.md).
 4. Create a coherent local checkpoint commit under the repository's history
    conventions and freeze its candidate head SHA.
-5. Invoke `$code-review` in Checkpoint Review Mode using an Independent Reviewer
-   context that did not implement the checkpoint.
+5. Use self-review in Fast unless the checkpoint explicitly requires
+   independence. For Extensive or an explicit gate, invoke `$code-review` in
+   Checkpoint Review Mode using a context that did not implement the candidate.
 6. Use the issue base as the first checkpoint base. For later checkpoints, use
    the previous accepted checkpoint SHA as the primary review base.
-7. Require the Independent Reviewer to inspect the new range plus its
+7. Require the responsible self-reviewer or Independent Reviewer to inspect the new range plus its
    integration seams with earlier accepted checkpoints and any shared contract
    it changes.
 8. Wait for complete checkpoint discovery, verification, deduplication, and
@@ -55,7 +56,8 @@ For each checkpoint:
 10. Apply one coherent batch of independent `AUTO_CORRECT` findings where
    practical.
 11. Re-run invalidated validation and specialist proof, freeze the corrected
-    head, and re-review the same checkpoint.
+    head, and update the same checkpoint review under the core Review and
+    Corrections contract; carry forward only verified coverage.
 12. Record the accepted head SHA only when the checkpoint passes its advance
     rule.
 13. If this is a UI-first user-review checkpoint and a pull request is the
@@ -117,7 +119,7 @@ Escalate to `USER_DECISION` when:
 ## After The Last Checkpoint
 
 Return to the main `$issue-delivery` workflow. Run complete issue-owned
-validation and a final full integration review of the issue-base-to-current-head
-diff before the normal pull-request creation or readiness update. An early
+validation and a combined-change check (independent full integration review
+for Extensive or an explicit gate) of the issue-base-to-current-head diff before the normal pull-request creation or readiness update. An early
 checkpoint-preview draft remains draft until the full issue proof and final
 review pass.

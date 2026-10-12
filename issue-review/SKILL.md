@@ -24,10 +24,11 @@ Use plain language at a Grade 10 reading level in the rewritten issue, review fi
 Use the user's engineering-for-certainty doctrine as the default engineering standard when reviewing software issues: preserve repo conventions, validate trust boundaries, keep adapters thin and domain logic explicit, prefer explicit expected-failure contracts, and require tests for critical behavior and failure paths.
 
 This skill prepares a **formal issue** when the user requests one or an
-issue-driven delivery workflow requires one. A demonstrably Quick task can use
-the task-level path in `$engineering-for-certainty` without creating an issue.
-For an issue that does exist, record the selected rigor and its short risk
-reason; keep issue-specific plans and checks proportional while preserving the
+issue-driven delivery workflow requires one. Otherwise a task can use the
+task-level path in `$engineering-for-certainty` without creating an issue.
+Fast is the default for eligible formal issues as well as tasks; Extensive
+follows changed consequences, uncertainty, or explicit request. For an issue
+that exists, record the mode and short risk reason; keep issue-specific plans and checks proportional while preserving the
 issue's explicit acceptance, traceability, and review gates. Do not expand a
 small issue into a broad architecture survey without evidence of coupling.
 
@@ -247,7 +248,7 @@ reconcile each affected surface.
 
 ### 8. Test Approach
 
-Name the test file or test layer. Include at least one concrete scenario in the repo's local test style. Critical behavior changes must include tests for success, expected failures, validation failures, and error mapping where those cases apply.
+Name the existing test, test layer, or suitable manual/visual check that proves each changed outcome. Add tests where they provide lasting protection; a Fast issue need not add a new test merely because it is formal. High-impact behavior changes must include tests for success, expected failures, validation failures, and error mapping where those cases apply.
 
 Before implementation, include a traceability ledger with one row per acceptance criterion:
 
@@ -255,16 +256,15 @@ Before implementation, include a traceability ledger with one row per acceptance
 |---|---|---|
 | `<criterion ID and outcome>` | `<file + symbol/module>` | `<test file + case name, or justified manual check>` |
 
-Split criteria that have multiple independently observable outcomes. Every row must name the code that owns the behavior and the exact evidence that will prove it; broad entries such as "frontend," "service layer," or "covered by tests" do not pass. Manual verification may substitute for automated criterion proof only when automation is impractical and the issue explains why. Runtime Acceptance proof remains required for observable runtime changes; a current automated test may supply a scenario when it exercises the assembled system through the real external boundary and asserts that exact outcome.
+Split criteria that have multiple independently observable outcomes. Every row must name the code that owns the behavior and the exact evidence that will prove it; broad entries such as "frontend," "service layer," or "covered by tests" do not pass. Suitable focused manual or visual evidence may prove a criterion under the core rigor contract; record what it establishes and any material gap. Preserve explicit automated-test gates. Runtime Acceptance proof remains required for observable runtime changes; a current automated test may supply a scenario when it exercises the assembled system through the real external boundary and asserts that exact outcome.
 
-Require a post-implementation issue-against-diff audit by an **Independent
-Reviewer** that did not implement the candidate and does not rely on the
-Implementation Worker's completion summary. Reconcile every ledger row against
-the actual production diff and test evidence, identify unplanned changes, and
-leave the issue unverified while any row lacks evidence. A deliberately
-separated pass in the same implementation context is supplemental evidence, not
-independent review; record the limitation and keep the independent-review gate
-unsatisfied.
+Require a post-implementation issue-against-diff check: reconcile every ledger
+row against the actual production diff and evidence, identify unplanned changes,
+and leave the issue unverified while any row lacks proof. Fast uses Delivery
+Operator self-review unless an explicit independent gate applies. Extensive
+requires an Independent Reviewer that did not implement the candidate and checks
+raw evidence rather than trusting the completion summary. Self-review cannot
+satisfy that independence gate.
 
 For literal runtime mechanisms, new artifacts governed by shared invariants, or proof split across local and live environments, read [Conditional Claims And Proof](references/conditional-claims-and-proof.md).
 
@@ -310,11 +310,11 @@ The issue must make the robust implementation path clear:
 
 ### 12. Issue Completion Record
 
-Every formal issue defines the write-back and status propagation required at completion. Read [Issue Completion Record](references/issue-completion-record.md) when drafting completion requirements or reviewing a completed issue. The Delivery Operator writes the evidence index; the final Independent Reviewer verifies it. Missing issue-owned proof keeps status at `Needs Verification`.
+Every formal issue defines the write-back and status propagation required at completion. Read [Issue Completion Record](references/issue-completion-record.md) when drafting completion requirements or reviewing a completed issue. The Delivery Operator writes and checks the evidence index; an Independent Reviewer verifies it when the selected mode or an explicit gate requires independence. Missing issue-owned proof keeps status at `Needs Verification`.
 
 ### 13. Review Loop Contract
 
-Every rewritten issue states how implementation hands off to review and how verified findings are routed. Read [Review Loop Template](references/review-loop-template.md) when the issue is intended for `$issue-delivery`; otherwise state a human-gated workflow and disable automatic correction explicitly. Every correction batch requires invalidated proof to be rerun and a fresh full resulting-change review.
+Every rewritten issue states how implementation hands off to review and how verified findings are routed. Read [Review Loop Template](references/review-loop-template.md) when the issue is intended for `$issue-delivery`; otherwise state a human-gated workflow and disable automatic correction explicitly. After corrections, rerun invalidated proof and update review under the core Review and Corrections contract; carry forward verified coverage and repeat full review when impact is broad or uncertain.
 
 For delivery, read [Delivery and Human Review](../engineering-for-certainty/references/delivery-and-human-review.md).
 Record the verified-merge completion default or the explicit narrower boundary,
@@ -324,7 +324,7 @@ change; queuing important work never makes unsafe work releasable.
 
 ## Conditional Gates and Execution
 
-For affected auth, telemetry, resilience, persistence, external data, frontend states, version-dependent behavior, or parallel implementation, read the relevant parts of [Conditional Gates and Execution](references/conditional-gates-and-execution.md). Optional parallel work must pass the delegation break-even rule in `$engineering-for-certainty`; distinct ownership and isolation remain required. A final independent full integration review follows all checkpoints and correction batches.
+For affected auth, telemetry, resilience, persistence, external data, frontend states, version-dependent behavior, or parallel implementation, read the relevant parts of [Conditional Gates and Execution](references/conditional-gates-and-execution.md). Optional parallel work must pass the delegation break-even rule in `$engineering-for-certainty`; distinct ownership and isolation remain required. A final combined-change check follows checkpoints; Extensive and explicit independent gates require full integration review, with correction coverage maintained under the core contract.
 
 ## Questioning Discipline
 

@@ -12,10 +12,11 @@ A standalone request to create a PR stops at that requested boundary. Inside
 authorized delivery, return current-head evidence to the owning operator for
 CI and verified merge; do not introduce a routine human approval stop.
 
-For a completed Quick or Standard task without a canonical issue, read and
+For completed Fast or Extensive work without a canonical issue, read and
 follow [Task-Level Pull Request](references/task-level-pr.md) instead of the
-issue-specific preconditions and workflow below. Critical or explicitly
-issue-driven work stays on the formal issue path. Do not demand a new issue
+issue-specific preconditions and workflow below. Explicitly issue-driven work
+stays on the formal issue path in either mode; assurance alone does not require
+a ceremonial issue. Do not demand a new issue
 solely to publish an eligible task-level change.
 
 For the formal issue path, accept a publication handoff only from the Delivery
@@ -43,8 +44,8 @@ Resolve and read:
   Approved Issue Commit SHA;
 - the complete local diff, commits, untracked files, and validation evidence;
 - the traceability ledger, Runtime Acceptance Plan and current scenario evidence
-  when observable runtime behaviour changed, and final independent review
-  evidence.
+  when observable runtime behaviour changed, and final self-review or required
+  independent review evidence.
 - for design-backed frontend work, the approved Design Reference Manifest,
   resolvable Evidence Bundle, complete classified Design Audit Matrix,
   source-drift result, and independent Design Audit evidence.
@@ -143,8 +144,9 @@ Confirm that:
 - every Implementation Worker result was returned to and inspected by the
   Delivery Operator;
 - the combined canonical branch, not only helper branches, passed required validation;
-- the Independent Reviewer completed the final review and accepted findings
-  were fixed and re-reviewed;
+- final self-review or required independent review covers the current candidate;
+  accepted findings were fixed, affected proof rerun, and carried coverage checked
+  under the core Review and Corrections contract;
 - triggered doctrine for migrations, auth/security, resilience, observability, and frontend work is satisfied;
 - the Migration Proof Harness evidence exists when a database migration is present;
 - material deviations are reflected in the canonical issue;
@@ -165,7 +167,7 @@ Confirm that:
 
 If remote-only validation or a pull-request-created preview Runtime Acceptance
 Pass is the only remaining evidence, leave the issue `Needs Verification` and
-use draft readiness until that evidence and the independent final audit succeed.
+use draft readiness until that evidence and the required self-review or independent audit succeed.
 A post-merge-only staging pass may remain a linked downstream release gate with
 an owner and trigger; it blocks release, not issue-owned publication proof.
 
@@ -248,7 +250,8 @@ browser-check the HTML explanation from the verified handoff, publish through
 configured hosting, and place **View feature walkthrough** prominently in the
 description. Keep a compact summary beside the link. This presentation work
 does not authorize changing the feature or inventing proof. Include artifact
-commits in required current-head checks and independent review. A hosting-only
+commits in affected current-head checks and self-review or required independent
+review; carry forward only coverage verified under the core correction contract. A hosting-only
 failure leaves explicit publication-pending status and a tracked repair under
 Delivery and Human Review; it does not alone force Draft or block shipping.
 Verify `human-review:pending`, and add

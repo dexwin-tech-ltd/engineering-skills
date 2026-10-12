@@ -22,8 +22,9 @@ The record must contain:
   gate; for design-backed work, include the baseline, source-drift result,
   Design Audit Matrix outcomes, approved deviations, comparison methods, and
   independent audit result;
-- the final `$code-review` outcome and the disposition of every confirmed
-  finding;
+- the selected assurance mode, final self-review or required `$code-review`
+  outcome, any carried-forward coverage and current-candidate verdict, and the
+  disposition of every confirmed finding;
 - when checkpoint reviews were used, the checkpoint ID, accepted head SHA,
   review range, review outcome, correction dispositions, and invalidated proof
   re-run for each checkpoint;
@@ -48,12 +49,13 @@ Pending human review alone does not reopen completed delivery.
 Do not require the record to name the commit that contains the record itself.
 When later commits change only the canonical issue, roadmap or index, backlog
 entries, or completion evidence, record the last behavior-changing reviewed
-head and require an independent current-head review to verify that every later
+head and require current-head self-review or required independent review to verify that every later
 commit is evidence-only and invalidates no recorded proof.
 
-The **Delivery Operator** owns the write-back. The final **Independent
-Reviewer** must verify the completed record against the raw diff, test output,
-and review evidence; the reviewer does not become the canonical issue writer. Update any
+The **Delivery Operator** owns and checks the write-back. For Extensive or an
+explicit independent gate, the **Independent Reviewer** verifies the completed
+record against raw diff, check output, and review evidence; the reviewer does
+not become the canonical issue writer. Fast otherwise uses self-review. Update any
 roadmap, index, or completed-work archive that tracks the issue's status in the
 same write pass so those surfaces cannot contradict the issue.
 

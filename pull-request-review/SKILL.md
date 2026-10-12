@@ -5,21 +5,22 @@ description: Review GitHub PRs through verified code analysis, coordinate author
 
 # Pull Request Review
 
-Use `$code-review` as the sole analysis engine by invoking a distinct read-only
-Independent Reviewer context. This skill is a composing workflow, not the
-Independent Reviewer. Own the GitHub-specific workflow: resolve the pull
+For requested or required independent analysis, use `$code-review` as the sole
+analysis engine in a distinct read-only Independent Reviewer context. This skill
+is a composing workflow, not the Independent Reviewer. Own the GitHub-specific workflow: resolve the pull
 request, reconcile existing threads, adjudicate new verified findings,
 coordinate issue-owned correction when authorized, publish selected comments,
 deliver qualifying learning feedback, and verify the resulting review state.
 
-A clean task-level Quick shipping handoff may use its direct proof and final
-diff inspection without routine independent code review, unless an explicit
-review request or repository gate requires it. Standard, Critical, and formal
-issue work retain all required independent-review gates.
+A clean Fast shipping handoff, including formal issue delivery, may use direct
+proof and final self-review without routine independent code review. Extensive
+and explicit user, issue, repository, or specialist review gates retain required
+independence. A shipping-only Fast invocation does not load the independent
+pipeline unless a concrete concern warrants it; explicit PR review still does.
 
-Do not duplicate or weaken `code-review` doctrine. If the canonical skill or
-one of its triggered engineering dependencies is unavailable, stop and name
-every missing skill.
+Do not duplicate or weaken `code-review` doctrine. When independent analysis
+is required, stop and name any missing analysis skill or triggered dependency.
+A clean Fast shipping handoff does not require an unused review dependency.
 
 **Review-to-Merge Mode** additionally requires `$issue-review`,
 `$issue-delivery`, and `$grilling` when issue-owned corrections or material
@@ -117,6 +118,11 @@ Leave every other workflow-owned thread open and report what remains. For human-
 
 ### 3. Run Code Review
 
+For a clean Fast shipping-only handoff without an explicit independent gate,
+verify direct evidence and final self-review, then use Review-to-Merge Mode
+without invoking the independent pipeline below. An explicit review request
+still requires its requested analysis.
+
 Load and follow `$code-review` against the current PR head. Provide it the PR
 description, governing issue, complete diff, relevant repository contracts,
 validation evidence, and current unresolved-thread claims so it can avoid
@@ -124,8 +130,9 @@ duplicates.
 
 In composed shipping, valid independent review evidence for the exact full
 candidate may satisfy this stage. Verify its range, provenance, findings, and
-currency; rerun only when required coverage or independence is absent or proof
-was invalidated. Never substitute an implementer's self-review summary.
+currency, including the reviewer's verification of carried coverage under the
+core correction contract. Rerun only affected review unless required coverage
+or independence is absent, or impact is broad or uncertain. Never substitute an implementer's self-review summary.
 
 Keep finder and verifier contexts logically independent. Never convert an
 existing comment, reviewer opinion, or delegated review-context claim directly

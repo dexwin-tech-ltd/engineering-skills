@@ -31,14 +31,16 @@ Before editing, verify:
   the required compression or decomposition check.
 - **Review checkpoints**: substantial slices use a small ordered set of
   semantic, green, behavior-complete checkpoints; every checkpoint owns
-  criteria, validation, reading inputs, and an advance condition; the final
-  full integration review remains required.
+  criteria, validation, reading inputs, and an advance condition. The final
+  combined-change check uses self-review in Fast or full independent integration
+  review in Extensive or under an explicit independent gate.
 - **Goal safety**: a durable goal cannot change a finding route, expand
   correction authority, suppress an adverse finding, or cross a non-clean
   checkpoint.
 - **Contracts**: auth, trust boundaries, schemas, events, migrations, error mappings, and expected-failure behavior match repo conventions; coded errors include the complete matrix and invalid-envelope behavior.
 - **Triggered doctrine**: apply the relevant observability, resilience, auth/security, and frontend requirements, including async transition tables and literal platform mechanisms when applicable.
-- **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and the final clean-context `$code-review` passes are named.
+- **Execution and review**: parallel work has non-overlapping ownership, helper commits integrate into the canonical branch, combined validation is explicit, and self-review or required clean-context `$code-review` is named, with
+  correction scope and carried-coverage validity explicit.
 - **Review loop**: the issue explicitly selects automatic or human-gated delivery, routes mechanical corrections separately from user-owned decisions and blockers, requires current-head revalidation and re-review, and defines its churn threshold and verified-merge or explicit narrower stopping condition. Human-review selection and release authority agree with Delivery and Human Review; existing human gates remain explicit.
 - **Deferred follow-up**: when invoked for `DEFER_FOLLOW_UP`, every finding is
   still eligible under the Follow-Up Inbox contract, deduplicated by root

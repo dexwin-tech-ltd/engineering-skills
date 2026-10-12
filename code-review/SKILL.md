@@ -24,11 +24,17 @@ Treat parallelism as an execution technique, not as a review angle. Use logicall
 Use a current issue or task handoff for intent, changed files, prior checks,
 known risks, and review range. Verify its claims against the raw diff and
 governing contracts rather than repeating the implementer's repository survey.
-For Standard work, one meaningful independent review is the default; add
-finder or verifier contexts only when risk, scope, or disputed evidence makes
-their extra cost useful. A task-level Quick change does not invoke this skill
-routinely. Critical work receives the deeper independent scrutiny its affected
-invariants require.
+Fast work does not invoke this skill routinely, including formal issues. A
+concrete concern or explicit review gate can require it. Extensive requires an
+initial independent review of the complete change; add finder or verifier
+contexts only when risk, scope, or disputed evidence makes their cost useful.
+Consequential invariants receive the deeper scrutiny and direct proof they need.
+For follow-up review, use the core
+[Review and Corrections](../engineering-for-certainty/references/rigor-and-verification.md#review-and-corrections)
+contract: examine the new range and interactions, verify carried coverage, and
+issue an updated current-candidate verdict. Apply the pipeline below to that
+scope; require full review again when impact is broad or uncertain. An explicit
+review request retains its requested scope even when implementation used Fast.
 
 Keep finder prompts independent. Give each finder raw artifacts, governing contracts, and a bounded review surface without other finders' conclusions. Give verifiers a normalized candidate claim and raw evidence without the finder's preferred verdict.
 
@@ -177,9 +183,9 @@ Honor an explicit user effort level. Otherwise scale effort by change risk, not 
 - **High**: run independent focused passes, activate relevant specialist angles, and independently verify material candidates.
 - **Max**: use the widest justified fan-out, trace broader contracts and architecture, and run the strongest safe targeted validation.
 
-These are review-depth levels, not replacements for Quick, Standard, and
-Critical implementation rigor. Choose the review depth that the actual risk
-requires; Standard does not automatically mean Medium, nor Critical Max.
+These are review-depth levels, separate from Fast and Extensive implementation
+modes and finding severity. Choose the depth actual risk requires; Extensive
+does not automatically mean Max. A focused review of Fast work can use Low.
 
 Increase effort for privilege boundaries, irreversible writes, migrations, public contracts, concurrency, financial or sensitive data, core workflows, and weak test coverage. State the chosen effort and reviewed scope in the final response.
 

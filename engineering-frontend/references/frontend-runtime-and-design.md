@@ -4,12 +4,14 @@ Read for observable frontend issues or changes governed by an authoritative desi
 
 ## Runtime Acceptance And Design Conformance
 
-For a task-level Quick change without a formal issue, use the focused direct
-UI check from `$engineering-for-certainty` and inspect the final diff. A local
-copy or styling change does not create a full issue-level scenario or design
-matrix. Escalate if it changes interactions, accessibility behavior, shared
-design tokens, multiple states, or an authoritative design contract whose
-compliance cannot be established with a focused check.
+Fast applies to ordinary bounded frontend tasks and formal issues. Use direct
+UI proof and final self-review; cover affected interactions, accessibility,
+tokens, and states. Expand checks where focused proof cannot establish the
+outcome. Multiple states or ordinary integration alone do not require Extensive;
+consequential risk or unresolved uncertainty does. A local task-level copy or
+styling change does not create a full issue-level scenario or design matrix.
+Formal runtime and authoritative-design gates below remain binding, including
+any required independent Design Audit.
 
 For every frontend issue that changes observable runtime behaviour, follow
 `$engineering-for-certainty`'s

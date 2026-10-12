@@ -9,11 +9,11 @@ Use this skill by default for coding projects. It is the core doctrine for imple
 
 ## Always-Loaded Contract
 
-Preserve the repository's existing stack and conventions unless the user asks for a migration. During a structural refactor, preserve behavior while normalizing naming and layout within the refactored scope. Validate external inputs at their boundary, keep adapters thin and domain logic explicit, model expected failures with the repository's result contract, and use test-first development for Critical invariants and material failures when a useful seam exists. Do not change architecture or product meaning on an unresolved assumption.
+Preserve the repository's existing stack and conventions unless the user asks for a migration. During a structural refactor, preserve behavior while normalizing naming and layout within the refactored scope. Validate external inputs at their boundary, keep adapters thin and domain logic explicit, model expected failures with the repository's result contract, and use test-first development for high-impact invariants and material failures when a useful seam exists. Do not change architecture or product meaning on an unresolved assumption.
 
 For new or materially changed tests, protect intended behavior or independent contracts. Select test boundaries and assertions by behavior and risk; a passing check of an internal detail does not establish that the behavior works.
 
-Before planning or implementation, read [Risk, Rigor, and Verification](references/rigor-and-verification.md). Standard is the default. Quick requires demonstrated local, reversible risk and direct proof; Critical protects affected high-impact invariants. Classify changed behavior rather than files or line count. Escalate if the boundary or available proof is uncertain. Repository and approved-issue gates still apply. Standard and Critical require a fresh independent review of the full resulting change after each correction batch.
+Before planning or implementation, read [Risk, Rigor, and Verification](references/rigor-and-verification.md). Fast is the default for ordinary bounded tasks and formal issues. Extensive is opt-in or required by consequential changed behavior or unresolved uncertainty. Both require direct proof and final self-review; Extensive requires independent review of the complete change. After corrections, rerun affected proof and update required review, carrying forward only evidence whose validity is established. Broad or uncertain corrections require full re-review. Explicit repository and approved-issue gates still apply.
 
 For new or materially changed code, read [Style and Clarity](references/style-and-clarity.md). Apply it where it clarifies purpose and safe change paths while preserving a stronger local convention.
 
@@ -61,12 +61,14 @@ Before editing code:
 
 ## Completion Self-Check
 
-Before declaring completion, inspect the final diff and confirm that changed behavior and acceptance criteria have current direct proof; affected boundaries, contracts, failure paths, and sensitive invariants are covered; triggered companion guidance and repository gates are satisfied; and no blocking finding or unresolved high-risk uncertainty remains. For Standard and Critical, confirm the required independent review covers the current full change. A Quick task still needs this self-check, even without a routine independent reviewer. Record an omitted required check and alternative assurance explicitly; do not call missing proof verified.
+Before declaring completion, inspect the final diff and confirm that changed behavior and acceptance criteria have current direct proof; affected boundaries, contracts, failure paths, and sensitive invariants are covered; triggered companion guidance and repository gates are satisfied; and no blocking finding or unresolved high-risk uncertainty remains. For Extensive or an explicit independent-review gate, confirm the initial full review and any carried-forward coverage support the exact current candidate. Fast still needs this self-check without a routine independent reviewer. Record an omitted required check and alternative assurance explicitly; do not call missing proof verified.
 
 ## Completion Evidence and Handoff
 
 Before declaring work complete, report the smallest useful evidence packet for
-the selected rigor level. Include only applicable items:
+the selected mode in the existing chat, issue, or PR. Create separate records
+only when continuity, operations, or explicit requirements justify them. Include
+only applicable items:
 
 - changed behavior, contracts, and affected surfaces
 - user-owned decisions accepted during the work

@@ -50,22 +50,19 @@ issues, branches, or pull requests.
 - Validate each helper branch, then integrate in dependency order. Resolve conflicts only on the canonical branch and re-run every affected traceability row.
 - Run the complete triggered validation and issue-against-diff audit on the combined canonical branch.
 
-After all checkpoints are accepted, run the complete triggered validation,
-issue-against-diff audit, and final `$code-review` against the combined
-issue-base-to-current-head diff. Revisit interactions across checkpoints,
-shared contracts, configuration, deleted behavior, and integration seams.
-Checkpoint evidence supports this review but cannot replace it.
+After checkpoints, run required validation and the issue-against-diff check on
+the combined candidate. Fast uses self-review unless an explicit gate requires
+independence. Extensive requires final `$code-review` of the full combined
+issue-base-to-current-head diff, including cross-checkpoint interactions,
+contracts, configuration, deleted behavior, and integration seams. Checkpoint
+reviews cannot replace that initial full review. Use the core Review and
+Corrections contract for later revisions.
 
-Make final code review the last implementation gate. For multi-slice,
-medium-risk, or high-risk changes, require multiple fresh Independent Reviewer
-contexts when available: independent finder passes using `$code-review` and a
-separate skeptical verifier that receives raw evidence without the finder's
-expected verdict. For tiny low-risk changes, allow one Independent Reviewer
-with a separate skeptical pass inside that fresh review context. If no fresh
-review context is available, use deliberately separated self-review only as
-supplemental evidence, record the limitation, and keep the independent-review
-gate unsatisfied.
+Add finder or verifier contexts only when risk, scope, or disputed evidence
+justifies their cost. A separate skeptical pass inside one fresh Independent
+Reviewer context may suffice. If required independence is unavailable, record
+the blocker; self-review cannot satisfy that gate.
 
-Reconcile and deduplicate every confirmed finding, obtain user adjudication when the workflow requires it, fix accepted blockers, and re-run affected proof. Then complete the Issue Completion Record gate, including reviewer verification of the written record, before declaring the issue complete.
+Reconcile and deduplicate every confirmed finding, obtain user adjudication when the workflow requires it, fix accepted blockers, and re-run affected proof. Then complete the Issue Completion Record gate, including self-review or required independent verification of the written record, before declaring the issue complete.
 
 If the repo has domain-specific gates, apply them after discovery. Examples include approved-only content, event schema invariants, tenant boundaries, import provenance, or feature-flag rules.

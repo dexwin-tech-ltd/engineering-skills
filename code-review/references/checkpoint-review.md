@@ -61,5 +61,8 @@ review outcome, routes, or checkpoint result.
 ## Final Integration Boundary
 
 The outcome covers only the declared checkpoint range and seams. After all
-checkpoints, the Delivery Operator must request final Independent Review of the
-full issue-base-to-current-head diff.
+checkpoints, Extensive or an explicit final independent gate requires initial
+Independent Review of the full issue-base-to-current-head diff. Fast otherwise
+uses a combined-change self-check; checkpoint-specific independence alone does
+not silently create a new final gate. Later corrections follow the core Review
+and Corrections contract, including verification of carried coverage.

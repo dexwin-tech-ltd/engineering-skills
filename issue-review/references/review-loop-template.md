@@ -13,6 +13,10 @@ For an issue intended for `$issue-delivery`, include:
 ```md
 ## Review Loop Contract
 
+- Assurance mode: `<Fast by default for bounded behavior; Extensive when requested
+  or consequential risk/uncertainty requires it>`; record the reason and any
+  explicit stronger proof or review gates. Formal delivery alone adds no
+  independent-review requirement.
 - Delivery mode: `$issue-delivery` through verified merge, followed by the
   established authorized release process; record any explicit narrower boundary.
 - Human review: selective after merge under Delivery and Human Review; record
@@ -22,8 +26,9 @@ For an issue intended for `$issue-delivery`, include:
 - Review checkpoints: `<none; treat the issue as one delivery unit>` or
   `<ordered checkpoint IDs and outcomes>`.
 - Automatic transitions: implementation -> checkpoint validation ->
-  checkpoint review -> authorized corrections -> checkpoint revalidation and
-  re-review -> next checkpoint -> final full validation and integration review
+  self-review or required independent review -> authorized corrections -> affected
+  revalidation and updated review -> next checkpoint -> combined validation and
+  self-review or required full independent integration review
   -> pull request -> CI follow-through -> merge-gate verification -> verified
   merge -> authorized release follow-through and tracking reconciliation.
 - Checkpoint advance rule: advance only from a clean accepted checkpoint head.
@@ -49,18 +54,20 @@ For an issue intended for `$issue-delivery`, include:
   non-blocking and it does not weaken an acceptance criterion or highest-risk
   verification gate, record the risk and permit a `CLEAN` checkpoint result.
   Otherwise use `USER_DECISION` as the checkpoint result.
-- Re-review rule: after every correction batch, re-run invalidated proof and
-  obtain a fresh independent review of the full resulting issue-base-to-current-
-  head change; preserve finding IDs and dispositions.
+- Re-review rule: rerun correction-invalidated proof and update self-review or
+  required independent review for the current candidate. Carry forward coverage
+  only after checking continuing validity; broad or uncertain impact requires
+  full re-review. Preserve finding IDs and dispositions.
 - Churn threshold: escalate when the same root cause survives two correction
   attempts or the fix oscillates. Use a stricter issue-specific limit when risk
   warrants it.
-- Final integration review: checkpoint reviews do not replace a final
-  `$code-review` of the complete issue-base-to-current-head diff.
+- Final integration check: inspect the combined issue-base-to-current-head
+  change. Extensive or an explicit independent gate requires final `$code-review`;
+  checkpoint reviews do not replace that initial full integration review.
 - Goal behavior: a durable goal supplies persistence only while an authorized
   transition exists. It never changes a finding verdict or route, expands
   correction authority, or permits crossing a non-clean checkpoint.
-- Completion target: current-head acceptance evidence, clean independent
+- Completion target: current-head acceptance evidence, current self-review or required independent
   review, green required automated CI, current Issue Completion Record, and a
   verified merged PR with required human-review tracking and accurate release
   state, or the explicit narrower target. Pending post-merge human review alone

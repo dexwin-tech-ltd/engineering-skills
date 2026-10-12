@@ -20,12 +20,13 @@ runtime and design proof, current-head CI, and repository gates. Use
 [$pull-request-review's merge gates](../../pull-request-review/references/review-to-merge.md#merge-gates)
 for the exact candidate. Reuse valid current-head evidence; do not commission
 another full review merely to transfer between skills. New or invalidated proof
-still requires the normal revalidation and independent review.
+requires affected revalidation and updated self-review or required independent
+review under the core Review and Corrections contract.
 
 Pause for unresolved material decisions, explicit human gates, missing required
 proof, known blocking defects, or consequences that cannot be adequately
 contained or recovered. A sensitive but approved, bounded, recoverable change
-can use post-merge human review after its Critical proof passes; Critical alone
+can use post-merge human review after its required Extensive proof passes; Extensive alone
 does not add a blanket human merge gate. Do not waive required reviewer
 approvals, change repository protections, impersonate an approver, or bypass
 checks. A post-merge queue is not a substitute for safe shipping.
@@ -139,9 +140,9 @@ Clear bounded human feedback authorizes investigation and delivery of a
 confirmed correction within the original approved intent, without another
 ceremonial approval. Verify the claim before editing. Use a new branch and PR
 from a current verified base; link the original PR and feedback both ways.
-Never push a fix onto a merged head or rewrite its history. An eligible Quick
-or Standard task-level correction can use a bounded handoff; Critical and
-formal issue work use the formal issue planning and completion gates.
+Never push a fix onto a merged head or rewrite its history. A task-level
+correction can use a bounded handoff with its selected Fast or Extensive proof;
+explicitly issue-driven work retains formal planning and completion gates.
 Mechanical capture of established intent and
 verified findings is authorized; new scope or design choices are not.
 

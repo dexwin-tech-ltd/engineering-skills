@@ -9,10 +9,11 @@ The smallest issue that is independently implementable, testable, and reviewable
 _Avoid_: Micro-task, smallest possible task
 
 **Engineering Rigor**:
-The Quick, Standard, or Critical verification path selected from the behavior
-and invariants a change can affect. Standard is the default; uncertainty or
-new coupling can raise the level. A formal issue's approved gates remain
-binding. The active harness records actual usage and cost when available;
+The Fast or Extensive assurance mode selected from changed behavior and its
+consequences. Fast is the default for bounded tasks and formal issues. Extensive
+is opt-in or required by consequential risk or unresolved uncertainty. Both need
+direct proof; Extensive needs independent review. Explicit approved gates remain
+binding; corrections repeat affected proof and verify any carried coverage. The active harness records actual usage and cost when available;
 model estimates are not measurement evidence.
 _Avoid_: File-type label, line-count threshold, waiver of required proof
 
@@ -45,8 +46,9 @@ integration agent after final review and before the issue is marked done. It
 records the final status, completion date, affected surfaces, reviewed change
 head, reconciled traceability evidence, validation results, review outcome,
 deviations, residual risks, deferred checks, and available branch, commit, or
-pull-request references. A later current head may contain only independently
-verified issue, roadmap, or completion-evidence descendants; the record never
+pull-request references. A later current head may contain verified issue,
+roadmap, or completion-evidence descendants, using self-review or required
+independent review; the record never
 attempts to name the commit that contains itself.
 _Avoid_: Completion summary, PR-only evidence, chat-only handoff
 
@@ -119,7 +121,7 @@ _Avoid_: Product decision-maker, provider-specific planner, inaccessible intervi
 
 **Delivery Operator**:
 The agent role active in `$issue-delivery` that carries one approved issue
-through implementation, issue-owned validation, independent code review,
+through implementation, issue-owned validation, risk-scaled review,
 authorized correction loops, pull-request creation, and CI follow-up. It
 sequences checkpoints, supplies complete bounded assignments, inspects results
 before advancing, and remains accountable when implementation is delegated. It
@@ -159,7 +161,8 @@ _Avoid_: Model mapping in a shared skill, cheapest-agent inference, implicit per
 **Review Loop Contract**:
 The issue-owned authority and stopping contract that separates automatic
 mechanical corrections from user decisions and blockers, then requires
-revalidation and independent re-review of every corrected head.
+affected revalidation and updated self-review or required independent verdicts
+for corrected candidates, carrying forward only verified coverage.
 _Avoid_: Fix everything, reviewer edits, implied goal authority
 
 **Review Checkpoint**:
@@ -169,20 +172,23 @@ candidate head, and an explicit advance condition.
 _Avoid_: Arbitrary commit, line-count slice, separate issue, separate PR
 
 **Accepted Checkpoint Head**:
-The immutable commit SHA that passed checkpoint-owned validation and independent
-review after every authorized correction. The next checkpoint begins from this
+The immutable commit SHA that passed checkpoint-owned validation and self-review
+or required independent review after authorized corrections. The next checkpoint begins from this
 head.
 _Avoid_: Latest local state, originally reviewed SHA, moving review target
 
 **Final Integration Review**:
-The independent code review of the complete issue-base-to-current-head diff
-after all review checkpoints pass. It checks cross-checkpoint interactions and
-remains required even when every checkpoint was reviewed separately.
+The combined-change check after checkpoints, including cross-checkpoint
+interactions. Extensive or an explicit independent gate requires initial code
+review of the full issue-base-to-current-head diff; checkpoint reviews do not
+replace it. Fast otherwise uses self-review. Later corrections follow the core
+coverage-carrying contract.
 _Avoid_: Last checkpoint review, cumulative assumption
 
 **Ready-to-Merge Handoff**:
 The delivery state in which the current pull-request head satisfies the issue,
-has current validation and independent review evidence, has green required
+has current validation and self-review or required independent review evidence,
+has green required
 automated CI, and has no unresolved confirmed finding or blocker. Only human
 approval where explicitly required and the merge action remain; this is an
 intermediate state in normal delivery or final only at an explicit narrower
@@ -258,11 +264,12 @@ _Avoid_: Generic PR review, merge bot, branch-protection bypass
 
 **Delivery and Human Review**:
 The default shipping contract for authorized implementation, delivery, and
-fixes: required engineering proof and independent review precede verified merge;
+fixes: required engineering proof and self-review or required independent review
+precede verified merge;
 the established authorized release process may continue before human review.
 Explicit narrower instructions, human gates, repository rules, unresolved
 material decisions, and unsafe or unrecoverable consequences still pause work.
-_Avoid_: Unconditional auto-merge, new production authority, waived agent review
+_Avoid_: Unconditional auto-merge, new production authority, waived required review
 
 **Post-Merge Human Review**:
 Human inspection of selected important, significantly cross-cutting,
@@ -421,17 +428,18 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 
 ## Relationships
 
-- A task-level Quick change can finish with direct targeted proof and final
-  diff inspection without a canonical issue or routine independent model
-  review. Standard uses one meaningful independent review; each correction
-  batch receives a fresh review of the full resulting change. Critical protects
-  affected high-impact invariants with specialist proof and deeper review.
+- Fast tasks and formal issues use direct proof and final self-review without
+  routine independent review. Extensive requires deeper risk-directed evidence
+  and initial full independent review. Corrections update affected proof and
+  review, carrying forward only verified coverage; broad or uncertain impact
+  requires full re-review. Explicit stronger gates remain binding.
 - Context crosses an agent, session, or publication boundary as a compact
   handoff. Reuse an approved issue and current check results when they exist;
   verify the raw diff and evidence rather than accepting a summary as proof.
-- `$pull-request-creation` may publish completed task-level Quick or Standard
-  work without a canonical issue under its separate task-level contract.
-  Critical and issue-driven publication retain the formal issue gates.
+- `$pull-request-creation` may publish completed Fast or Extensive task-level
+  work without a canonical issue. Explicitly issue-driven publication retains
+  formal scope, acceptance, completion, and repository gates; a ticket alone
+  does not require independent review.
 
 - `$issue-review`'s active governing agent is the **Planning Agent**. Bounded
   non-interactive investigation may be delegated when the active harness
@@ -489,11 +497,11 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   eventual **Implementation Worktree**. Later implementation begins only from a
   verified base that contains the **Approved Issue Commit**, then keeps all
   subsequent issue and implementation changes on the implementation branch.
-- Every completed issue owns one **Issue Completion Record** in its canonical issue file; the implementation or integration agent writes it, and the final reviewer verifies it before the issue is marked done.
+- Every completed issue owns one concise **Issue Completion Record** in its canonical issue file. The operator writes and self-checks it; Extensive or an explicit independent gate also requires reviewer verification.
 - An **Issue Completion Record** binds acceptance and runtime proof to the last
   behavior-changing reviewed head. A merge candidate may descend from that head
-  only through independently reviewed canonical issue, roadmap, or completion-
-  evidence commits whose diff does not invalidate the recorded proof.
+  only through verified canonical issue, roadmap, or completion-
+  evidence commits, using self-review or required independent review, whose diff does not invalidate the recorded proof.
 - Every issue that changes observable runtime behaviour owns a **Runtime
   Acceptance Pass**. A non-runtime issue records that the pass is not applicable
   and explains why.
@@ -607,8 +615,8 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
   acceptance, validation, review, thread, conflict, approval, and required-CI
   gates. It never bypasses branch protection or uses an administrative override.
 - **Delivery and Human Review** applies to formal issues and task-level work.
-  Quick still needs direct proof; Standard and Critical still need their
-  required independent review. Post-merge selection follows actual impact,
+  Fast still needs direct proof; Extensive and explicit independent gates need
+  current independent review, including verification of any carried coverage. Post-merge selection follows actual impact,
   coupling, reversibility, and critical behavior rather than file type or size.
 - Selected PRs reach the merged base with their **Pending Human Review Index**
   entry and compact guided description already prepared. Live provider state
