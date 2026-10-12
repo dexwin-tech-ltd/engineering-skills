@@ -18,7 +18,7 @@ Emit a Frontend Operational Event only at an owned boundary or meaningful transi
 - an offline or online transition that materially changes an active workflow
 - an aggregate client-logger health signal such as a dropped-event count
 
-Do not log component renders, routine effects, keystrokes, form values, every request or response, every navigation or click, expected validation or domain failures without a named operational requirement, product analytics, raw errors, stacks, console arguments, storage values, arbitrary objects, or URLs with query strings.
+Do not log component renders, routine effects, keystrokes, every request or response, every navigation or click, expected validation or domain failures without a named operational requirement, or product analytics. Preserve useful filtered error messages, stacks, causes, and selected relevant input/output values at the boundaries above under `$engineering-observability`. Do not directly serialize errors or dump console arguments, storage, form state, or arbitrary objects; select context that explains the operation and apply the common privacy and size limits.
 
 - Emit once per failure occurrence or meaningful state transition, not once per render, retry, or observer.
 - Deduplicate repeated signatures in a bounded window and aggregate repeated low-value events into counts.
@@ -34,5 +34,5 @@ Do not log component renders, routine effects, keystrokes, form values, every re
 - Use supported automatic instrumentation plus targeted manual spans at meaningful journey and adapter boundaries.
 - Propagate W3C trace context only to an explicit allowlist of first-party or trusted origins. Context propagation is not telemetry export.
 - Export client span data only through the controlled backend trace endpoint. Never send it directly to an OpenTelemetry Collector, Better Stack, or another provider, and never ship exporter credentials to the client.
-- Never attach auth data, form values, user-entered content, raw URLs or query strings, direct identity, or arbitrary baggage to client spans.
+- Attach only declared, bounded diagnostic context to client spans. Relevant form/user values and selected URL/query fields follow `$engineering-observability`'s filtering and personal-information rules; credentials, protected content, raw object dumps, and arbitrary baggage remain excluded. Client-claimed identity never becomes backend authority.
 - Apply client-specific sampling, queue, payload, and privacy limits. Keep product analytics separate from operational traces.

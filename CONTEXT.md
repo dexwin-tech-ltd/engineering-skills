@@ -338,11 +338,11 @@ An isolated disposable local database container that proves a database migration
 _Avoid_: Migration test, structural-migration container
 
 **Diagnostic Database Metadata**:
-An allowlisted set of non-value database error identifiers used for operational diagnosis without logging error prose, SQL, parameters, or unknown driver fields.
+Bounded machine-readable database error identifiers, such as SQLSTATE, table, column, and constraint, that complement filtered explanations and selected relevant values without serializing the driver object.
 _Avoid_: Raw database error, serialized driver error
 
 **Safe Log Event**:
-A typed default-deny telemetry record whose event family owns a closed schema of bounded operational fields and excludes raw errors, arbitrary context, and direct personal data.
+A typed telemetry record whose event family owns a closed bounded schema, including shared filtered error diagnostics and selected relevant values. It excludes credentials, protected content, and direct arbitrary-object serialization; personal identifiers require a concrete diagnostic purpose, while relevant internal IDs are routine.
 _Avoid_: Sanitized arbitrary object, logger context bag
 
 **Client Telemetry Ingestion**:

@@ -1,6 +1,6 @@
 ---
 name: engineering-observability
-description: Explicit observability doctrine for backend and frontend operational telemetry, including safe structured logging, OpenTelemetry tracing, W3C context propagation, metrics, redaction, correlation, client ingestion, test-message separation, capacity protection, retention, and sink failure. Use when work touches logs, metrics, traces, spans, telemetry, alerts, audits, request IDs, frontend logging and tracing, or secret-bearing test message sinks.
+description: Explicit observability doctrine for useful diagnostic logs, metrics, traces, audits, redaction, correlation, client ingestion, retention, and sink failure. Use when work touches operational telemetry, error capture, logging privacy or access, or secret-bearing test message sinks.
 ---
 
 # Engineering Observability
@@ -26,30 +26,41 @@ Apply this skill to:
 - Send logs and audits through typed event schemas, metrics through named instruments with bounded attributes, and traces through an approved tracer provider, instrumentation, processors, and exporters.
 - Inject the logger, tracer, meter, or a narrow signal-specific facade into services and repositories; do not import hidden telemetry singletons into domain code.
 - When a bespoke logger, tracer, or facade object is hand-built for a script, CLI, or test harness instead of using the shared implementation, verify it forwards every parameter its declared interface accepts. A structurally-typed shim can satisfy an interface while silently discarding an argument, dropping all structured context from every call site that relies on it.
-- Accept typed Safe Log Events, not arbitrary context bags, raw request objects, raw errors, or spread objects. Give metrics and manual spans explicit allowlisted attribute contracts.
-- Define a closed schema per event family. Reject unknown keys and bound every accepted string, array, nesting level, and payload size before forwarding.
+- Accept typed Safe Log Events with explicit diagnostic fields. A shared error processor may accept an unknown error as input; normalize and filter it before any sink, exporter, or fallback receives it. Never forward raw error or request objects, arbitrary context bags, or spread objects directly.
+- Define a closed schema per event family, reusing shared diagnostic shapes rather than approving every error phrase or creating an adapter for every unfamiliar failure. Reject unknown envelope/context keys and bound accepted strings, arrays, nesting, cause depth, and total size. Give metrics and manual spans explicit attribute contracts.
 - Keep logging out of business transactions and critical request completion. Logging failure must not change a successful business outcome unless the event is an explicitly authoritative audit requirement.
 - When `NODE_ENV` is `production`, missing required configuration for the repository's selected logging sink or required tracing exporter is a startup error. When the repository selects Better Stack, this includes its required Better Stack configuration. In `development`, default to console logging and a local or no-op tracing exporter when remote sinks are absent. Treat an unset `NODE_ENV` as development only in a verified local development environment.
 - If the primary sink fails, use a bounded sanitized stderr or console fallback and surface safe aggregate health or alert signals when the repo supports them. Never recursively log a logger failure through the failing path.
 
-## Safe Log Event Contract
+## Useful Diagnostic Evidence And Safe Log Events
+
+Ordinary production logs must help explain unexpected failures, including ones
+not anticipated when their event schemas were written. Preserve useful error
+messages, stack frames, cause chains, relevant input/output values, and business
+state after filtering and size limits. Codes and metadata complement that
+evidence; they do not replace its explanation.
+
+For error processing, value selection, and worked investigation cases, read
+[Diagnostic Capture And Filtering](references/diagnostic-capture.md).
 
 Prefer controlled fields such as:
 
 ```text
 event, level, service, component, operation, stage, outcome,
 errorClass, errorCode, correlationId, requestId, durationMs,
-retryCount, environment, deploymentVersion
+retryCount, environment, deploymentVersion, actorId, tenantId,
+resourceId, traceId, spanId, jobId, error, context, diagnosticOmissions
 ```
 
-- Use stable event and error codes instead of free-form explanations.
-- Never log secrets, API keys, tokens, cookies, authorization headers, session identifiers, connection strings, encryption material, or raw request and response bodies.
-- Never log direct personal data, user-entered values, form fields, file contents, URLs with query strings, console arguments, storage contents, or arbitrary third-party payloads.
-- Do not persist raw `Error.message`, `stack`, `cause`, schema issues, provider errors, or serialized error objects. Diagnose with controlled operation, stage, class, code, correlation, and deployment metadata.
-- Normalize error class through an allowlist. Do not trust an arbitrary constructor name or driver property.
-- Allow an approved opaque actor or record identifier only when the event cannot meet its operational or audit purpose without it. Prefer keyed pseudonymization when joinability is needed without direct identity, and document retention and access implications.
-- Sanitize CR, LF, delimiters, and other log-injection characters in every remaining string field before encoding.
-- Treat redaction as defense in depth, not as permission to accept arbitrary input.
+- Use stable event and error codes alongside diagnostic explanations. Keep unfamiliar error messages through the shared processor; a missing source adapter is not reason to discard the explanation.
+- Never persist credentials, API keys, bearer/session tokens or identifiers, passwords, OTPs, authentication cookies or headers, credential-bearing connection strings, or private encryption material. Extract a useful non-secret endpoint or configuration fact when needed rather than retaining the credential-bearing object.
+- Keep private message bodies, document/file contents, health details, government identifiers, and full payment credentials out of routine logs. Capturing protected content needs a separate explicitly scoped investigation decision; this policy supplies no blanket permission for it.
+- Routinely include relevant diagnostic values and selected request/response or provider payload sections. User-entered or form-supplied values are not automatically prohibited. Full payload capture needs a concrete diagnostic reason and the same filtering and limits; do not automatically dump headers, storage, console arguments, or object graphs.
+- Prefer internal IDs or masked values for people. Names, emails, phone numbers, and addresses may be retained only when the actual value is necessary to answer a concrete investigative question; document that purpose in the event/capture contract, not through a fresh approval for each occurrence. Presence in an error is not sufficient reason. Treat an email used as a database key as personal information, not an opaque ID.
+- Include relevant existing actor, tenant, and resource IDs routinely, plus execution IDs appropriate to the boundary. Derive authoritative context from trusted application state. Hashing IDs is optional when a project needs it, not a default investigation obstacle. Do not use these IDs or diagnostic prose as metric labels or span names.
+- Filter sensitive portions rather than deleting whole explanations. When a known format cannot be separated safely, omit the affected portion and retain the remaining evidence. Mark filtering and truncation without reproducing the removed content. Free-text filtering is fallible; source-aware handling and realistic checks are required where errors echo protected values.
+- Encode multiline messages and stacks as structured string fields with escaped control characters; prevent CR/LF or delimiters from forging records without destroying stack-frame readability.
+- Real data keeps these privacy boundaries in every environment. Verified synthetic fixtures permit broader payload/state capture; usable credentials stay excluded. Development may enable debug detail and less sampling. Production still retains rich failure evidence under its declared capacity budget.
 
 ### Test Message Sinks Are Not Telemetry
 
@@ -70,13 +81,13 @@ It is a delivery adapter, not an operational log or Safe Log Event.
 
 ## Effect Integration
 
-Apply `$engineering-effect` when wiring Effect logging and tracing. Configure logger/tracer services centrally through Layers; built-in annotations, causes, SQL tracing, or query loggers do not waive the allowlist. Do not serialize Cause/Exit, database SQL/parameters, schema issues, or raw errors into operational signals. Map them to bounded controlled metadata. Verify automatic instrumentation and exporter behavior, keep sink failure separate from business success, and preserve controlled frontend ingestion and sampling.
+Apply `$engineering-effect` when wiring Effect logging and tracing. Configure logger/tracer services centrally through Layers. Route Cause/Exit, schema issues, SQL diagnostics, annotations, and query-logger output through the common diagnostic processor rather than serializing runtime objects directly. Preserve useful failure explanations, stack frames, mixed causes, and selected relevant values within the privacy and size contract. Verify automatic instrumentation and exporter behavior, keep sink failure separate from business success, and preserve controlled frontend ingestion and sampling.
 
 ## Source-Specific Failure Adapters
 
-Create small allowlist-based adapters for database, HTTP/provider, queue, job, validation, and platform failures. Unknown fields never pass through automatically.
+Use the shared processor for unfamiliar failures. Add small source-specific adapters for database, HTTP/provider, queue, job, validation, and platform errors when their formats need value-aware filtering or useful field extraction. Unknown object properties never pass through automatically; unfamiliar diagnostic prose can survive filtering in the shared error shape.
 
-For a recognized PostgreSQL driver error, allow only bounded normalized fields when present:
+For a recognized PostgreSQL driver error, include these bounded normalized metadata fields when present, alongside its filtered diagnostics:
 
 ```text
 db.sqlstate
@@ -87,12 +98,12 @@ db.constraint
 ```
 
 - Read `code`, `schema`, `table`, `column`, and `constraint` from machine-readable driver properties and normalize their log field names.
-- Never parse error prose to recover metadata.
-- Never log `message`, `stack`, `detail`, `hint`, query text, parameters, values, internal query or context, positions, or unknown driver properties.
-- Omit an identifier when the application permits database object names derived from tenant or user data.
-- Keep missing metadata normal; do not widen the allowlist to fill a diagnostic gap.
+- Prefer machine-readable properties over parsing prose for database identifiers.
+- Preserve filtered message, stack, cause, and useful positions. Select `detail`, `hint`, query templates, or parameters only when diagnostically relevant; database prose and values frequently echo personal or protected data and need source-aware filtering. Do not serialize the complete driver object or query context.
+- Apply the personal-information rule to database object names derived from people; tenant/resource identifiers may be retained when relevant.
+- Keep missing metadata normal. Preserve the explanation through the shared diagnostic shape rather than widening arbitrary driver-property capture.
 
-Output-validation failures and unexpected infrastructure failures must still produce a Safe Log Event through their owning source adapter.
+Output-validation failures and unexpected infrastructure failures must produce a Safe Log Event through the shared processor and any applicable source adapter.
 
 ## Tracing And Correlation
 
@@ -110,12 +121,13 @@ For tracing or any changed sink, exporter, queue, sampling, capacity, timeout, o
 
 - Test production versus development startup behavior for every required configured sink where a valid seam exists.
 - Test event schemas, unknown-key rejection, length and size limits, log-injection sanitization, and correlation propagation.
-- Seed sensitive values into raw errors, requests, database parameters, provider responses, and frontend payloads; prove that none reaches logs, metrics, traces, audits, or fallbacks.
+- For material logging changes, verify representative investigations using final emitted records: what failed and where, the causal chain, relevant values/state, linked people/records/executions, and any filtering, truncation, sampling, or drops. Exercise the affected real pipeline and a changed fallback; schema checks alone do not prove usefulness. Policy-only changes use worked cases and consistent guidance; consuming projects must supply runtime proof when adopting it.
+- Seed excluded credentials and protected content into nested errors, requests, database parameters, provider responses, and frontend payloads; prove they do not reach sinks, traces, audits, fallbacks, or exporter diagnostics. Verify unnecessary personal identifiers are masked/omitted and necessary permitted identifiers survive. Confirm filtering retains the useful explanation, including for unfamiliar errors.
 - Test every source adapter's allowed and forbidden fields, including missing database metadata.
 - When a Test Message Sink exists, prove it is unavailable in production and
   cannot forward secret-bearing content into logs, audits, metrics, traces,
   errors, CI artifacts, fallbacks, or exporters.
-- Test frontend event and trace ingestion authentication, reduced anonymous contracts when present, forged identity and authority, PII smuggling, schema/version rules, span/event/attribute/link limits, batch and body limits, rate limits, and generic failures.
+- Test frontend event and trace ingestion authentication, reduced anonymous contracts when present, forged identity and authority, excluded-data smuggling, schema/version rules, diagnostic filtering, span/event/attribute/link limits, batch and body limits, rate limits, and generic failures.
 - Exercise the real changed HTTP, queue, job, webhook, or client-to-backend boundary where a valid integration environment exists. Prove W3C context injection/extraction, correct parent or link relationships, root-span creation, semantic names and kinds, bounded attributes, and the final exported trace.
 - Test error and expected-outcome semantics, parent-based sampling, unsampled application correctness, and that client trace export reaches only the controlled backend.
 - Load-test sustained traffic, bursts, malicious clients, repeated frontend-error loops, a full queue, sink timeouts, and provider outages against the Telemetry Budget.

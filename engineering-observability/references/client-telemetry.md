@@ -11,7 +11,7 @@ Read for frontend operational events, client spans or ingestion, or a direct cra
 - Authenticate ingestion by default. If pre-auth telemetry is required, expose a reduced anonymous event set with lower limits and no client-provided identity.
 - Apply rate limits and abuse protection before expensive decoding or forwarding when the framework permits. Do not persist or log raw rate-limit keys such as IP addresses.
 - Attach server-owned ingestion time, request ID, verified actor or tenant context, environment, and deployment metadata after validation.
-- Reject raw messages, stacks, breadcrumbs, console arguments, storage values, request bodies, form values, and URLs with query strings.
+- Permit bounded diagnostic messages, stack frames, causes, selected breadcrumbs, and relevant input/output values in declared event/trace shapes. Apply filtering on the client before transmission and again at ingestion; client filtering is not a trusted safety or authority boundary. Do not accept arbitrary console/storage/request dumps or undeclared fields. Credentials and protected content remain excluded; personal identifiers require the common concrete diagnostic purpose.
 - Return a generic response. Invalid telemetry must not disclose validation internals or create another unsafe log containing the rejected payload.
 - Prevent recursive ingestion: client or endpoint logging failures must not emit another frontend event through the same path.
 
@@ -27,7 +27,7 @@ backend-authority requirements.
 Allow the exception only when all of these conditions hold:
 
 - The vendor's client key or token is explicitly designed for public client embedding: write-only, project-scoped, and vendor-rate-limited. Never embed a write credential for the project's own logging, tracing, or telemetry backend.
-- Default PII capture and session replay are disabled unless separately reviewed. Restrict breadcrumbs and automatic capture to non-sensitive fields; never capture request or response bodies, headers, user-entered input, auth data, storage values, or URLs with query strings. Treat exception messages and stacks as crash-report payloads governed by this exception, never as Safe Log Events.
+- Default automatic personal-data capture and session replay remain disabled unless separately reviewed. Preserve useful exception messages, stack frames, causes, and selected relevant breadcrumbs/context through a client-side export hook applying the same diagnostic filtering, necessity, and size rules as backend logs. Never export credentials or protected content. Disable automatic body/header/storage/console dumps; select relevant values explicitly. Verify the final SDK payload and its own diagnostics because this direct route has no controlled backend to scrub it later.
 - Crash data remains advisory and diagnostic. Never use it as authoritative identity, security, authorization, or audit evidence.
 - When an exception is causally associated with an outbound request, attach the same approved opaque execution reference to the request, corresponding backend log, and crash event. Prefer the active trace ID when tracing exists; otherwise follow the project's approved request or correlation convention. Treat a client-supplied identifier only as an advisory join key, and do not invent a backend relationship for a client-only crash.
 

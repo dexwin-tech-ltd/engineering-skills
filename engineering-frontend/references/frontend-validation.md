@@ -14,7 +14,7 @@ the required journey and integration gates below.
 - For mobile unit/component tests, prefer the repo's existing Expo/Jest integration, commonly `expo-jest`, instead of introducing a parallel test stack without a strong reason.
 - Web E2E tests are mandatory for important user-visible flows when a web app exists. Prefer Playwright.
 - Mobile E2E tests are mandatory for important user-visible flows when a mobile app exists. Prefer Maestro.
-- Test one-event-per-transition telemetry, deduplication or aggregation, production sampling and debug-event policy, queue bounds and drops, and the absence of PII or raw error objects.
+- Test one-event-per-transition telemetry, deduplication or aggregation, production sampling and debug-event policy, and queue bounds/drops. Verify useful filtered diagnostics and relevant values survive while credentials, protected content, unnecessary personal identifiers, and direct raw-object serialization do not. Apply `$engineering-observability`'s investigation proof when logging behavior materially changes.
 - When client tracing changes, test origin-allowlisted context propagation, controlled-backend-only span export, client sampling and limits, meaningful span ownership, and the absence of sensitive attributes or baggage.
 - For frontend-first work, test production hooks, flows, views, components, accessibility behavior, and E2E journeys through the mock adapter; do not replace those layers with hook, query-result, flow, or component mocks.
 - Verify that mock adapter scenarios satisfy the exact production operation types and runtime contracts and cover every UI-relevant outcome without impossible states or random defaults.
