@@ -1,6 +1,6 @@
 ---
 name: pull-request-creation
-description: Verify completed task-level or issue-driven work, publish intended commits, and create or update a truthful GitHub pull request. Use when the user asks to turn completed local work into a reviewable PR.
+description: Publish verified task-level or issue-driven work as a truthful GitHub pull request, or reserve its identity early during authorized delivery when completion bookkeeping needs the PR URL.
 ---
 
 # Pull Request Creation
@@ -11,6 +11,13 @@ Read [Delivery and Human Review](../engineering-for-certainty/references/deliver
 A standalone request to create a PR stops at that requested boundary. Inside
 authorized delivery, return current-head evidence to the owning operator for
 CI and verified merge; do not introduce a routine human approval stop.
+
+When approved delivery needs a PR URL for completion bookkeeping, use
+[PR Identity Reservation](references/pr-identity-reservation.md) early, preferably
+from an existing approved planning or metadata commit. This bounded draft mode
+uses its own preconditions instead of the completed-work preconditions below.
+It grants no readiness, review, preview, merge, or deployment clearance. Without
+that need, use the normal completed-work path.
 
 For completed Fast or Extensive work without a canonical issue, read and
 follow [Task-Level Pull Request](references/task-level-pr.md) instead of the
@@ -26,8 +33,9 @@ assignment into publication authority.
 
 Do not implement missing feature work, perform code review, repair CI, invent evidence,
 or broaden scope. Stop when the work is not ready unless the user explicitly
-authorizes a work-in-progress PR or the approved issue's UI checkpoint-preview
-plan requires the narrow draft path below.
+authorizes a work-in-progress PR, the bounded identity-reservation mode applies,
+or the approved issue's UI checkpoint-preview plan requires the narrow draft
+path below. These draft modes do not waive final completion proof.
 
 ## Preconditions
 
@@ -54,9 +62,9 @@ If no canonical issue exists, ask for the issue identity before publishing. Dist
 
 ### UI Checkpoint Preview Draft
 
-`$issue-delivery` may invoke this skill before full issue completion only when
-an accepted UI-first checkpoint needs a pull request to create its pre-merge
-preview. Require the approved issue's checkpoint-preview plan, the Delivery
+`$issue-delivery` uses this separate draft path when an accepted UI-first
+checkpoint needs a pull request to create its pre-merge preview before full
+issue completion. Require the approved issue's checkpoint-preview plan, the Delivery
 Operator's publication authority, the accepted frontend head SHA, its current
 validation and independent checkpoint review, and evidence for every
 checkpoint-owned acceptance and design row. Verify the Branch Contract and
@@ -229,9 +237,10 @@ Do not paste empty boilerplate, claim checks that did not run, or hide unresolve
 Choose exactly one outcome from evidence:
 
 - **Do not create:** material implementation or evidence is incomplete and
-  neither user-authorized WIP publication nor the approved UI
-  checkpoint-preview path applies.
-- **Draft:** the user explicitly requested a draft boundary or WIP publication, required evidence
+  neither bounded identity reservation, user-authorized WIP publication, nor
+  the approved UI checkpoint-preview path applies.
+- **Draft:** bounded identity reservation applies, the user explicitly requested
+  a draft boundary or WIP publication, required evidence
   can only run after PR creation, or the approved UI checkpoint-preview path
   applies. Missing required issue proof keeps the issue `Needs Verification`;
   an intentionally retained draft alone does not make verified proof missing.
@@ -257,10 +266,14 @@ Delivery and Human Review; it does not alone force Draft or block shipping.
 Verify `human-review:pending`, and add
 the PR URL and brief description to root `PRS_PENDING_HUMAN_REVIEW.md` on this
 branch before merge. Follow Delivery and Human Review for exact-label creation,
-selection reasons, isolation, and reconciliation. Once the URL exists, publish
-the bookkeeping commit to this same PR; rerun invalidated proof, obtain required
-current-head verification, and follow CI on the resulting head. Keep the last
-behavior-changing reviewed revision distinct from bookkeeping descendants.
+selection reasons, isolation, and reconciliation. When the URL was reserved
+early, finish known walkthrough, queue, and completion bookkeeping before final
+combined-candidate validation and ready-for-review publication. Verify existing
+enrollment rather than recreating it. If bookkeeping is added later, publish it
+to this same PR, rerun invalidated proof, update required current-head review,
+and follow CI on the resulting head. Preserve normal hooks in either sequence.
+Keep the last behavior-changing reviewed revision distinct from bookkeeping
+descendants.
 Routine PRs and bookkeeping-only maintenance need no human-review entry.
 Include the verified rendered walkthrough URL or its explicit pending status
 in the queue entry. Preserve the final delivered explanation after merge and
@@ -306,7 +319,10 @@ for its visual explanation approach.
 
 ## Write Safety
 
-- Treat mixed worktrees, branch mismatches, missing issues, and incomplete evidence as stop conditions.
+- Treat mixed worktrees, branch mismatches, and missing issue or evidence
+  requirements for the selected publication mode as stop conditions. Task-level
+  work does not require a canonical issue; an identity draft does not claim
+  final completion proof.
 - Never stage unrelated user changes or use destructive Git recovery.
 - Never publish secrets, private fixtures, raw logs, or sensitive local paths in the PR body.
 - The owning delivery operator coordinates merge under Delivery and Human Review;

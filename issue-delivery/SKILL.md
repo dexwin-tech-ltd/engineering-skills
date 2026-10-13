@@ -164,6 +164,15 @@ Publish a short pre-work handoff containing the issue, branch, base ref, base
 SHA, Approved Issue Commit SHA, runtime worktree path, selected validation, and
 triggered doctrine.
 
+If completion bookkeeping needs the PR URL and publication is authorized, invoke
+`$pull-request-creation`'s
+[PR Identity Reservation](../pull-request-creation/references/pr-identity-reservation.md)
+now when a genuine approved planning or metadata commit is available. Reuse an
+existing PR. Keep its draft identity separate from checkpoint acceptance and
+final readiness; retain the issue's state and every preview, proof, and approval
+gate. Skip this optional stage when it has no concrete benefit or its
+preconditions cannot be met.
+
 ### 2. Deliver Review Checkpoints
 
 If the issue defines multiple review checkpoints, read

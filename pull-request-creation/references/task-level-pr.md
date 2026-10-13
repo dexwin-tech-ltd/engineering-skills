@@ -6,6 +6,11 @@ request and compact task handoff govern scope. Explicitly issue-driven work uses
 the formal path in `SKILL.md` in either mode; assurance alone does not require it. Do not create a ceremonial issue
 merely to publish an eligible task-level change.
 
+When authorized delivery needs the PR URL before final bookkeeping, use
+[PR Identity Reservation](pr-identity-reservation.md) before this completed-work
+path. The approved task handoff supplies scope; no canonical issue or artificial
+planning file is required merely to obtain a URL. Return here for full readiness.
+
 ## Preconditions
 
 The responsible agent supplies the requested outcome, changed files, risk level

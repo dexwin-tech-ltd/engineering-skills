@@ -313,8 +313,17 @@ open pull request, and proof that no local or unpushed work would be lost.
 _Avoid_: Force-delete, wildcard deletion, unconditional worktree removal
 
 **Pull Request Creation**:
-The publication workflow that verifies completed local work against its issue and branch contract before pushing and opening or updating the GitHub pull request.
+The workflow that publishes verified completed work against its task or issue
+and branch contract. During authorized delivery, its separate PR Identity
+Reservation mode may obtain a draft URL early for completion bookkeeping.
 _Avoid_: Implementation, code review, PR body drafting
+
+**PR Identity Reservation**:
+The bounded creation or reuse of a draft PR during authorized delivery when its
+URL is needed for completion bookkeeping. It preserves normal publication
+hooks and supplies no checkpoint acceptance, review readiness, preview,
+merge, or deployment clearance. Full completion gates apply before readiness.
+_Avoid_: Unverified ready PR, fake planning commit, automatic preview approval
 
 **Pull Request Readiness**:
 The evidence-derived state that determines whether publication is blocked, produces a draft, or produces a pull request ready for review.
@@ -439,7 +448,9 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - `$pull-request-creation` may publish completed Fast or Extensive task-level
   work without a canonical issue. Explicitly issue-driven publication retains
   formal scope, acceptance, completion, and repository gates; a ticket alone
-  does not require independent review.
+  does not require independent review. PR Identity Reservation may obtain a
+  needed draft URL earlier within authorized delivery, under its separate
+  preconditions; it never grants readiness or weakens completion gates.
 
 - `$issue-review`'s active governing agent is the **Planning Agent**. Bounded
   non-interactive investigation may be delegated when the active harness
@@ -566,7 +577,7 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - `$engineering-for-certainty` owns the risk-scaled **Runtime Acceptance Pass**
   rule; `$issue-review` authors a formal issue's plan; the **Delivery Operator**
   executes it; **Code Review** audits its coverage and evidence; **Pull Request
-  Creation** gates publication on current proof; and the triggered frontend,
+  Creation** gates ready-for-review publication on current proof; and the triggered frontend,
   auth/security, and observability doctrines own their specialist constraints.
 - Every implementation-ready issue states a **Review Loop Contract**. A durable
   goal supplies persistence but does not expand correction authority.

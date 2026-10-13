@@ -56,6 +56,14 @@ Bookkeeping-only queue maintenance is exempt; a repair is assessed normally.
 
 ## Prepare the queue before merge
 
+When completion bookkeeping needs the PR URL, prefer early
+[PR Identity Reservation](../../pull-request-creation/references/pr-identity-reservation.md)
+within authorized delivery. Finish known walkthrough, queue, and completion
+updates before final combined-candidate validation and ready-for-review
+publication. A reserved draft is not proof of completion; all normal hooks,
+current-head validation, required review, and CI remain binding. Reservation
+cannot remove costs imposed by unconditional hooks or guarantee fewer pushes.
+
 For each selected PR, the publishing operator must:
 
 1. Prepare the compact guided description using

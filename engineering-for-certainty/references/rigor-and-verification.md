@@ -39,6 +39,15 @@ existing checks. Expand when a changed contract, failing check, or other evidenc
 reveals coupling. Reuse current plans and verified facts; do not repeat broad
 scans, full suites, or checks without a newly invalidated assumption.
 
+When several checks are required, run existing cheap, relevant configuration
+and invariant checks before costly runtime or mutation checks whose validity
+depends on that setup. Recheck after the final relevant configuration or imported
+change; an earlier pass does not cover it. Fix a failed prerequisite before
+spending on dependent proof. Select checks for the changed surface, rather than
+adding a blanket preflight or a new script to every delivery. This ordering
+preserves behavioral proof, required gates, and any repository-mandated order;
+it does not authorize changing or bypassing hooks.
+
 - **Both modes:** establish changed behavior and meaningful failure paths with
   direct evidence. Reuse existing tests when they cover the new outcome. Add
   tests where they protect meaningful logic, failure handling, or a costly
