@@ -159,7 +159,7 @@ failed Slack delivery remains nonblocking under the main skill's rules.
 Do not merge from an earlier clean review, a mutation response, a stale CI run,
 or an Issue Completion Record whose reviewed change head does not contain the
 validated behavior. The record does not name its own containing commit. Permit
-later issue, backlog, feature-walkthrough explanation, or completion-evidence commits only after updating review of the
+later issue, backlog, or completion-evidence commits only after updating review of the
 current candidate and verifying that those descendants invalidate no
 acceptance or runtime proof.
 
@@ -171,7 +171,7 @@ Immediately before merge, re-read the pull request and verify:
 - the pull request is open, non-draft, conflict-free, and not superseded;
 - for formal issue work, the governing issue and Issue Completion Record name
   the reviewed behavior-changing head, and every later current-head commit is
-  verified by self-review or required independent review as issue, backlog, human-review-index, feature-walkthrough explanation, or completion evidence only;
+  verified by self-review or required independent review as issue, backlog, human-review-index, or completion evidence only;
 - for eligible task-level work without an issue, the approved task handoff
   instead records scope, selected rigor, exact checks, required independent
   review, findings, and current candidate identity; do not invent an issue
@@ -185,12 +185,10 @@ Immediately before merge, re-read the pull request and verify:
   or repository policy blocks merge; and
 - every required CI check for that exact head is green.
 
-For selected human-review work, also verify the compact guided description,
+For selected human-review work, also verify the minimal description,
 `human-review:pending`, and the correct `PRS_PENDING_HUMAN_REVIEW.md` entry in
-the actual candidate tree. Check the browser-verified walkthrough artifact and
-rendered PR/index links, or explicit hosting/access publication-pending status
-with a durable repair owner/trigger. A hosting-only failure is nonblocking under
-Delivery and Human Review; missing feature proof or incorrect preparation is not.
+the actual candidate tree. No review webpage or prepared explanation artifact is
+required. The minimal description never waives required feature proof.
 Refresh the base and check queue entries after
 integration or conflict resolution; never overwrite another pending entry.
 Routine work can merge without human-review tracking. Apply the shared

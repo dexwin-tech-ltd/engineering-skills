@@ -58,7 +58,7 @@ Bookkeeping-only queue maintenance is exempt; a repair is assessed normally.
 
 When completion bookkeeping needs the PR URL, prefer early
 [PR Identity Reservation](../../pull-request-creation/references/pr-identity-reservation.md)
-within authorized delivery. Finish known walkthrough, queue, and completion
+within authorized delivery. Finish known queue and completion
 updates before final combined-candidate validation and ready-for-review
 publication. A reserved draft is not proof of completion; all normal hooks,
 current-head validation, required review, and CI remain binding. Reservation
@@ -66,18 +66,17 @@ cannot remove costs imposed by unconditional hooks or guarantee fewer pushes.
 
 For each selected PR, the publishing operator must:
 
-1. Prepare the compact guided description using
+1. Prepare the minimal description using
    [the PR writing guide](../../pull-request-creation/references/pr-body-writing.md#human-review-after-merge)
-   and invoke [$feature-walkthrough](../../feature-walkthrough/SKILL.md) to
-   prepare, browser-check, and publish the standalone HTML explanation. Place
-   its verified rendered link prominently in the PR; retain the compact summary.
+   with the problem/result, brief validation, and material caveats when relevant.
+   Include the selection reason briefly. Do not automatically create a review
+   webpage or require a prepared code tour, diagram, or other explanation artifact.
 2. Apply and read back `human-review:pending`. Creating this exact label when
    absent is part of authorized delivery; preserve unrelated labels and any
    repository reviewer-reassessment labels.
 3. Once the PR URL exists, add one entry keyed by that URL to root
    `PRS_PENDING_HUMAN_REVIEW.md` on the PR branch. Create the file if absent;
-   include a brief description, selection reason, useful review focus, and the
-   verified rendered walkthrough link or explicit publication-pending status.
+   include a brief description and selection reason or useful review focus.
    Preserve other entries. The entry reaches the base with the original merge,
    not through a separate post-merge enrollment PR.
 4. Include the bookkeeping commit in final current-head verification and CI.
@@ -85,22 +84,18 @@ For each selected PR, the publishing operator must:
    repository rules prevent required tracking, report the exact blocker rather
    than silently exempting important work.
 
-Walkthrough publication is a separate state. A hosting outage, missing authorized
-setup, or failed access check can leave **Walkthrough publication pending** while
-otherwise-ready feature shipping proceeds. Record the cause and durable repair
-owner/trigger in the PR and index; withhold unsafe uploads and unverified links.
-Missing preparation, false claims, or required feature proof still need correction.
-This exception does not waive repository gates, the label, or the queue entry.
-The publishing operator remains responsible for walkthrough repair; do not claim
-the walkthrough is delivered until rendering and access have been verified.
-Retain each delivered PR's explanation after human review completes.
+At review time, let the human choose conversation, code inspection, or requested
+visuals and artifacts. Answer from the original diff and verified evidence;
+there is no standing webpage creation, hosting, repair, or preservation duty.
+Existing walkthrough files are historical artifacts with no ongoing publication
+obligation. Review presentation never replaces required engineering proof.
 
 Example entry (replace the illustrative URL):
 
 ```markdown
 - [#142 — Centralize permission checks](https://github.com/OWNER/REPO/pull/142)
   Changes authorization across API routes. Review focus: access boundaries
-  and compatibility. [View feature walkthrough](https://docs.example.com/pr-142/revision-abc123/).
+  and compatibility.
 ```
 
 The merged pending queue is `is:pr is:merged label:"human-review:pending"`,

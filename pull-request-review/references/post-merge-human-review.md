@@ -12,31 +12,28 @@ PRs with `human-review:pending` in the requested repositories. List brief
 descriptions and reasons, consequential items first and then older items.
 Report known missing entries and incomplete access. Inspection alone does not
 authorize recording outcomes, changing labels, or editing the file.
-Include each verified walkthrough link or known publication-pending state.
 
 For a specific PR, verify its repository, merged status, original review range,
-head, resulting merge/squash commit, approved intent, and guided description.
+head, resulting merge/squash commit, approved intent, and PR description.
 Recover the frozen original PR diff through provider evidence or immutable
 revision identities. Do not review today's entire main branch or compare a
 deleted head to a moving base. Have the delivery operator prepare missing
 objects; Independent Reviewers do not fetch or switch branches. If original
 evidence cannot be recovered, name the gap instead of inventing the diff.
 
-Lead with a small explanation of the problem and changed behavior. Show one
-useful screenshot, before/after example, diagram, or code entry point when it
-helps. Let the human choose where to go deeper. The
+Lead with a small explanation of the problem and changed behavior. Let the
+human choose how to review and where to go deeper. Answer questions from the
+original diff and evidence; provide a visual or another artifact when requested
+or agreed useful in the conversation. The
 [PR writing guide](../../pull-request-creation/references/pr-body-writing.md#human-review-after-merge)
 sets the compact presentation standard; do not paste a full issue or evidence
 ledger into chat.
 
-Prefer the PR's **View feature walkthrough** link for layered orientation.
-Verify that it describes the original delivered revision and respects repository
-visibility. Use [$feature-walkthrough](../../feature-walkthrough/SKILL.md) when
-creation or repair is authorized; a read-only queue/explanation request does not
-authorize remote publication. If hosting is pending or unavailable, guide the
-human from the PR, original evidence, or an agent-opened local HTML copy and
-report the gap. Opening the page or passing agent checks never completes human
-review. Keep its archived explanation after queue removal.
+Do not automatically create a review webpage or require one before discussion.
+A read-only queue or explanation request does not authorize remote publication.
+Existing walkthroughs are historical artifacts with no hosting or repair duty.
+Conversation or passing agent checks never completes human review without the
+human's explicit outcome.
 
 Identify known deployment state separately. If current production includes
 later changes, explain that inspecting it does not establish the behavior of

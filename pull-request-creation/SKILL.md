@@ -164,7 +164,7 @@ Confirm that:
   scenario was rerun, and applicable auth and Design Conformance evidence is
   secret-free and complete. When the current head is later, verify that every
   intervening commit changes only canonical issue, roadmap, backlog,
-  human-review index, feature-walkthrough explanation, or completion-evidence surfaces and invalidates no
+  human-review index, or completion-evidence surfaces and invalidates no
   recorded proof.
 - for design-backed frontend work, the authoritative source was rechecked
   against the approved baseline; the frozen images and HTML/Tailwind reference
@@ -213,24 +213,12 @@ template fields and the applicable evidence below. Read the local
 [PR Body Writing Guide](references/pr-body-writing.md) when composing or
 revising the description.
 
-Write a conditional PR body containing only applicable sections:
-
-1. Canonical local issue and GitHub issue link.
-2. Problem and intended outcome.
-3. What changed.
-4. Explicitly excluded scope.
-5. Important design decisions.
-6. Exact automated validation and Runtime Acceptance results, including the
-   tested revision and local, preview, or staging environment.
-7. Migration proof evidence.
-8. Security, privacy, resilience, and observability effects.
-9. UI screenshots, the issue-owned Design Evidence Bundle and Design Audit
-   result when applicable, and accessibility evidence.
-10. Risks and rollback or recovery path.
-11. Stack position and dependencies.
-12. Deliberately deferred follow-up work.
-
-Do not paste empty boilerplate, claim checks that did not run, or hide unresolved work in a completed-looking checklist.
+Keep the description to a short problem/result summary, brief validation, and
+material caveats. Link the canonical issue or existing evidence when applicable.
+Preserve required repository template fields. Detailed validation, Runtime
+Acceptance, migration, security, and design evidence still govern readiness;
+keep those records in their existing homes rather than copying them into the PR.
+Do not claim checks that did not run or hide blockers behind a concise summary.
 
 ### 6. Derive Pull Request Readiness
 
@@ -254,30 +242,20 @@ Pending GitHub CI alone does not make a completed PR a draft. When draft status 
 ### 7. Enroll Selected PRs And Verify Remote State
 
 Assess the actual final change for post-merge human review. For selected work,
-invoke [$feature-walkthrough](../feature-walkthrough/SKILL.md) to prepare and
-browser-check the HTML explanation from the verified handoff, publish through
-configured hosting, and place **View feature walkthrough** prominently in the
-description. Keep a compact summary beside the link. This presentation work
-does not authorize changing the feature or inventing proof. Include artifact
-commits in affected current-head checks and self-review or required independent
-review; carry forward only coverage verified under the core correction contract. A hosting-only
-failure leaves explicit publication-pending status and a tracked repair under
-Delivery and Human Review; it does not alone force Draft or block shipping.
-Verify `human-review:pending`, and add
-the PR URL and brief description to root `PRS_PENDING_HUMAN_REVIEW.md` on this
-branch before merge. Follow Delivery and Human Review for exact-label creation,
-selection reasons, isolation, and reconciliation. When the URL was reserved
-early, finish known walkthrough, queue, and completion bookkeeping before final
-combined-candidate validation and ready-for-review publication. Verify existing
-enrollment rather than recreating it. If bookkeeping is added later, publish it
-to this same PR, rerun invalidated proof, update required current-head review,
-and follow CI on the resulting head. Preserve normal hooks in either sequence.
-Keep the last behavior-changing reviewed revision distinct from bookkeeping
-descendants.
-Routine PRs and bookkeeping-only maintenance need no human-review entry.
-Include the verified rendered walkthrough URL or its explicit pending status
-in the queue entry. Preserve the final delivered explanation after merge and
-human-review completion; a source-file link is only a labeled fallback.
+include the selection reason briefly in the minimal description. Verify
+`human-review:pending`, and add the PR URL, brief description, and selection
+reason or review focus to root `PRS_PENDING_HUMAN_REVIEW.md` on this branch before
+merge. Follow Delivery and Human Review for exact-label creation, isolation,
+and reconciliation. Do not automatically create a review webpage.
+
+When the URL was reserved early, finish known queue and completion bookkeeping
+before final combined-candidate validation and ready-for-review publication.
+Verify existing enrollment rather than recreating it. If bookkeeping is added
+later, publish it to this same PR, rerun invalidated proof, update required
+current-head review, and follow CI on the resulting head. Preserve normal hooks
+in either sequence. Keep the last behavior-changing reviewed revision distinct
+from bookkeeping descendants. Routine PRs and bookkeeping-only maintenance need
+no human-review entry.
 
 Re-read the PR and verify the repository, number, URL, base, head, head SHA, title, body, draft state, issue links, and stack dependency. Confirm the remote branch contains the intended local commit.
 
@@ -285,28 +263,12 @@ Report the PR URL, readiness, branch and base, commits published, validation evi
 
 ## PR Body Guidance
 
-Lead with the concrete problem and resulting behavior. Use the project's domain
-terms, consulting its glossary when available. Scale detail to the change;
-simple PRs may need only a short explanation and relevant validation.
-
-Choose the smallest explanation that makes the change clear. Use a sketch when
-it adds clarity; show a full block when a diff would hide important context.
-Keep sketches beside the text they explain and verify them against the final
-diff. Format-selection rules and original examples live in the local
-[PR Body Writing Guide](references/pr-body-writing.md).
-
-For behavior changes, pair observed before and after evidence when available.
-Use screenshots for visible differences and actual test results or execution
-output for runtime behavior. Distinguish an explanation of expected behavior
-from an observed result. If the earlier state was not captured, say so when
-material; never invent a failing run or screenshot. Reuse the verified handoff's
-evidence and retain its revision and environment. Presentation does not replace
-required proof or authorize new implementation work.
-
-For material risks, name the affected users, consumers, data, or systems and
-explain reversibility: what rollback restores, what it cannot restore, and any
-backup, recovery, or roll-forward requirement. Keep these claims grounded in
-the change and existing evidence. Avoid vague risk labels or speculative lists.
+Use a short problem/result summary, brief validation, and material caveats when
+relevant. Add an issue link when one exists. Preserve required repository
+fields, but do not require diagrams, code tours, screenshots, or lengthy evidence
+sections merely to explain a PR. Link required proof in its existing home.
+Detailed explanation belongs in review conversation when the human wants it.
+See the local [PR Body Writing Guide](references/pr-body-writing.md).
 
 All required PR-writing guidance is maintained in this skill and its local
 reference files. The source links below record historical inspiration only;

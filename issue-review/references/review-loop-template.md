@@ -22,7 +22,7 @@ For an issue intended for `$issue-delivery`, include:
 - Human review: selective after merge under Delivery and Human Review; record
   the provisional selection and reason, then reassess the final PR. Selected
   work needs `human-review:pending`, a root `PRS_PENDING_HUMAN_REVIEW.md` entry,
-  and compact guided review material before merge.
+  and a minimal PR description before merge.
 - Review checkpoints: `<none; treat the issue as one delivery unit>` or
   `<ordered checkpoint IDs and outcomes>`.
 - Automatic transitions: implementation -> checkpoint validation ->

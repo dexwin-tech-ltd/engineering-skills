@@ -1,6 +1,6 @@
 # eng-for-certainty
 
-This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `a353f7b89e89c29500d98051ec000b7a024a04fa`.
+This repository is automatically synced from [seyofori/skills](https://github.com/seyofori/skills) at source commit `12d94b4d6e2107ba2e35556172c199e6e8cc0fec`.
 
 Do not edit this repository directly. Make changes in `seyofori/skills` and let the sync workflow publish them here.
 
@@ -11,6 +11,10 @@ See [CONTEXT.md](CONTEXT.md) for the shared workflow vocabulary and ownership bo
 `deliver-issue` was renamed to `issue-delivery`. Update explicit
 `$deliver-issue` invocations to `$issue-delivery`, then remove or
 replace stale local `deliver-issue` installations.
+
+`feature-walkthrough` has been retired. Remove stale local
+installations; PR review no longer requires generated webpages or
+their hosting. Existing walkthrough files are historical artifacts.
 
 ## Included skills
 
@@ -24,7 +28,6 @@ replace stale local `deliver-issue` installations.
 - `pull-request-review`
 - `pr-review-and-fix`
 - `pull-request-creation`
-- `feature-walkthrough`
 - `issue-delivery`
 - `issue-review`
 - `grilling`
@@ -102,16 +105,13 @@ re-reviewed automatically. Important, significantly cross-cutting,
 hard-to-change, or critical-system PRs receive
 `human-review:pending` and a root
 `PRS_PENDING_HUMAN_REVIEW.md` entry with their link and brief
-description. Routine PRs need no human review. The original PR holds
-compact guided review material, a rendered HTML walkthrough link, and
-the explicit human outcome. `feature-walkthrough` creates the layered,
-self-contained page and publishes through repository-configured static
-hosting that follows repository visibility. Old PR explanations remain
-available after review; temporary tunnels are only immediate previews.
-A hosting-only failure stays explicitly publication-pending with a
-tracked repair and does not block otherwise-ready feature shipping. The
-label and file reflect that outcome. Pending human review alone does
-not block completed delivery or later shipping.
+description. Routine PRs need no human review. PR descriptions stay
+minimal: problem/result, brief validation, and material caveats. The
+human chooses conversation, code inspection, or requested visuals at
+review time; review webpages are not automatically created. The
+original PR holds the explicit human outcome, and the label and file
+reflect that outcome. Pending human review alone does not block
+completed delivery or later shipping.
 
 ### 3. Handle human decision gates
 
@@ -184,13 +184,13 @@ observability issue from being reviewed without its governing doctrine.
 Install pull request review with the complete review-to-merge doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill feature-walkthrough   --skill issue-delivery   --skill pull-request-review
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill issue-delivery   --skill pull-request-review
 ```
 
 Install autonomous PR review and correction with its complete doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review   --skill pull-request-creation   --skill feature-walkthrough   --skill issue-review   --skill issue-delivery   --skill grilling   --skill pr-review-and-fix
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill pull-request-review   --skill pull-request-creation   --skill issue-review   --skill issue-delivery   --skill grilling   --skill pr-review-and-fix
 ```
 
 This workflow follows repository AGENTS.md label rules, records human
@@ -202,14 +202,14 @@ reassessment boundary still stops before merge.
 Install pull request creation:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill feature-walkthrough   --skill pull-request-creation
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill pull-request-creation
 ```
 
 Install the delivery operator with its implementation, review, and
 merge doctrine:
 
 ```bash
-npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill feature-walkthrough   --skill pull-request-review   --skill issue-delivery
+npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review   --skill grilling   --skill issue-review   --skill pull-request-creation   --skill pull-request-review   --skill issue-delivery
 ```
 
 Install docs-backed grilling:

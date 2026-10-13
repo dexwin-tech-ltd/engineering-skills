@@ -50,7 +50,7 @@ final combined-candidate checks, rather than forcing another cycle afterward.
 
 ## Complete the same PR
 
-Finish implementation and known walkthrough, queue, and completion bookkeeping
+Finish implementation and known queue and completion bookkeeping
 on the same branch. Use the normal task-level or issue-driven publication path
 to validate and review the full final candidate, run required hooks, publish it,
 and verify current-head CI. Verify the existing PR's final description and

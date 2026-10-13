@@ -96,7 +96,7 @@ After a correction or later commit, in either mode:
 
 Do not restart discovery solely because a local correction changed the head.
 Do not attach an earlier clean verdict to a newer revision without current
-verification. This rule also applies to evidence-only, walkthrough, and queue
+verification. This rule also applies to evidence-only and queue
 commits: verify their actual effects before carrying forward proof. A required
 initial full integration review cannot be replaced by separate checkpoint reviews.
 
@@ -122,8 +122,8 @@ Formal issues retain one concise completion record in the canonical issue.
 Create a separate document only for cross-session or cross-agent continuity,
 lasting operational guidance, or an explicit requirement. Extensive needs fuller
 evidence, not automatically more files. Keep each fact in one clear home and
-link to raw logs rather than copying them. Existing selected-human-review
-walkthrough and repository documentation requirements remain in force.
+link to raw logs rather than copying them. Existing selective human-review
+tracking and repository documentation requirements remain in force.
 
 Before optional delegation, check the break-even case: is there a bounded output
 that can be verified, and is the likely elapsed-time or cost saving greater than

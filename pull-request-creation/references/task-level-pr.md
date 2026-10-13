@@ -45,9 +45,9 @@ history without explicit authorization.
    Follow the repository's title and PR-template conventions and the shared
    [PR Body Guidance](../SKILL.md#pr-body-guidance). Read the local
    [PR Body Writing Guide](pr-body-writing.md) when composing or revising the
-   description. Include the
-   outcome, changed scope, checks actually run, required independent review evidence when
-   applicable, and material risks. Link a GitHub issue only when one exists
+   description. Keep it to a short problem/result summary, brief validation,
+   and material caveats. Link detailed required evidence rather than copying it.
+   Link a GitHub issue only when one exists
    and should close on merge. Omit empty boilerplate and sensitive data.
 4. Use **Draft** for an explicit draft-only boundary, explicitly requested work
    in progress, or proof that
