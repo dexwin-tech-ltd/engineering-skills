@@ -1,6 +1,6 @@
 # Effect Testing
 
-Read for tests of Effect services, workflows, scopes, time, and schema properties. Apply core verification rules, including the behavior-based property-testing and mutation-analysis triggers.
+Read for tests of Effect services, workflows, scopes, time, and schema properties. Apply core verification rules, including behavior-based property testing and the selective [Mutation Analysis](../../engineering-for-certainty/references/verification-details.md#mutation-analysis) policy.
 
 ## What Effect Covers
 
@@ -14,7 +14,7 @@ Prefer `@effect/vitest` in new Effect backend/web projects. Use its supported ef
 
 ## What Remains
 
-Effect test services do not prove a real database query, HTTP serialization, browser lifecycle, native runtime, or migration. Keep real HTTP/database integration and the isolated Migration Proof Harness; RTL for components/flows; Playwright/Maestro for supported user journeys; and Stryker or the selected mutation tool for triggered invariants. Keep runtime acceptance and independent review.
+Effect test services do not prove a real database query, HTTP serialization, browser lifecycle, native runtime, or migration. Keep real HTTP/database integration and the isolated Migration Proof Harness; RTL for components/flows; and Playwright/Maestro for supported user journeys. Use a mutation tool only for an audit selected under the core policy, respecting project pauses. Keep runtime acceptance and independent review.
 
 Choose assertions against observable contracts rather than Effect implementation details or framework helpers. Flaky tests require diagnosis; routine retry-until-green is not verification. A constrained retry for a known harness transient must remain visible and does not erase the original failure.
 

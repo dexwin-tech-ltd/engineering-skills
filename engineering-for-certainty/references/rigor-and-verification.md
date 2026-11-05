@@ -57,10 +57,12 @@ it does not authorize changing or bypassing hooks.
   wiring when local checks could conceal an integration failure. Briefly report
   what was checked and meaningful gaps; do not call missing evidence verified.
 - **Extensive:** explicitly test affected invariants and important failure modes.
-  Use integration, adverse-case, recovery, migration, property, mutation, or
-  security proof where the behavior triggers it. Neither a full application suite
-  nor a surrounding architecture audit is mandatory merely because the mode is
-  Extensive. A whole-system audit is a separate explicit request.
+  Use integration, adverse-case, recovery, migration, property, or security proof
+  where the behavior triggers it. Apply the separate, selective
+  [Mutation Analysis](verification-details.md#mutation-analysis) policy;
+  Extensive alone does not require mutation testing. Neither a full application
+  suite nor a surrounding architecture audit is mandatory merely because the
+  mode is Extensive. A whole-system audit is a separate explicit request.
 
 For new or materially changed tests, apply
 [Testing Doctrine](verification-details.md#testing-doctrine). Formal observable

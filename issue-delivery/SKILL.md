@@ -254,6 +254,9 @@ Issue Completion Record instead of copying the working index wholesale.
 Run every applicable traceability row against the combined canonical branch.
 Run formatting, linting, unit, integration, E2E, migration, mutation, security,
 accessibility, or manual proof required by the issue and triggered doctrine.
+Apply the core [Mutation Analysis](../engineering-for-certainty/references/verification-details.md#mutation-analysis)
+selection and reuse policy, including current project pauses. An Extensive
+classification or issue workflow alone does not create a mutation-testing gate.
 
 After applicable automated validation passes, reconcile the issue's Runtime
 Acceptance Plan using `$engineering-for-certainty`'s Runtime Acceptance Pass

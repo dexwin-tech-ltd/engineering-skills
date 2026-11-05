@@ -59,7 +59,7 @@ Prioritize critical behavior correctness, then meaningful failure and validation
   whether assertions reject plausible wrong behavior; preserving a sorted
   list's length alone accepts an unchanged unsorted list. Avoid redundant cases
   that add no distinct confidence. This does not require deliberately breaking
-  code for every test. Triggered mutation analysis still applies.
+  code for every test. Apply the selective Mutation Analysis policy below.
 - For debugging, build a deterministic repro loop and convert the minimized
   repro into a regression test before fixing when a valid seam exists.
   Demonstrate failure for the intended reason on the broken behavior when
@@ -127,8 +127,8 @@ alone or a few passing examples does not establish sufficient assurance.
 - Record affected properties, generator scope, execution budget, results, and
   replay information for failures in existing validation evidence. Generated
   cases provide evidence for the exercised space, not a proof for every input.
-  Preserve required integration, runtime, mutation-analysis, and independent
-  review gates.
+  Preserve required integration, runtime, and independent review gates, plus
+  any applicable explicit mutation-analysis gate under the policy below.
 
 ### Runtime Acceptance
 
@@ -160,44 +160,66 @@ keep the work unverified while required issue-owned proof is missing or stale.
 
 ### Mutation Analysis
 
-- Use mutation analysis as a post-green adversarial audit. Start with
-  behavior-first tests, reach green, then strengthen observable-contract
-  assertions against meaningful survivors and rerun both ordinary and mutation
-  suites; do not write mutant-specific implementation checks.
-- Include applicable example and property tests. For property tests under
-  mutation analysis, use a bounded, reproducible property-test configuration
-  for the unmodified baseline and mutant runs; retain the configuration and
-  verify failure replay with the chosen tool. Keep broader varied exploration separate
-  and retain its discovered failures as stable regression cases. Investigate
-  meaningful survivors for weak assertions or generator gaps. Property tests
-  do not waive mutation triggers, survivor review, or required reruns. Their
-  runtime cost does not justify silently excluding code or treating mutation
-  timeouts as passes.
-- Require it when a plausible small mutation could cause unauthorized access;
-  incorrect money, entitlement, grading, ranking, or scoring; an invalid state
-  transition or invariant; persisted-data damage; consequential validation
-  failure; an incorrect public contract or exhaustive outcome mapping; or a wrong
-  reusable domain decision.
-- Base the trigger on impact, not directory, test type, or line count. Simple
-  wiring, generated code, framework adapters, presentation-only code, and
-  non-behavioral transformations are normally out of scope. When triggered, run
-  the affected scope or record why the technique is unsuitable.
-- Gate on reviewed-survivor completeness and non-regression, not a universal
-  score. Establish a non-blocking baseline, prevent unjustified regression, and
-  tighten it as meaningful survivors are eliminated.
-- Classify every survivor. Meaningful survivors and uncovered mutants block
-  completion; equivalent or irrelevant survivors require recorded justification.
-  Require every survivor to be addressed, not every mutant to be killed.
-- Store run-specific classifications in the canonical issue, pull request, or CI
-  artifact, not a permanent mutant allowlist. Permit only narrow, justified,
-  version-controlled structural exclusions; never exclude code or operators to
-  improve the score.
-- Treat timeouts, runner errors, and tool failures as inconclusive and fail closed
-  until resolved or an alternative assurance technique is approved. Invalid
-  mutants proven by compilation or type checking are not test gaps.
-- Keep mutation analysis out of Git hooks. Run targeted local or agent validation
-  and pull-request CI when triggered, plus a periodic clean full run to refresh
-  the baseline and catch incremental-analysis blind spots.
-- Preserve an established tool. Otherwise prefer StrykerJS for TypeScript and
-  JavaScript, and the ecosystem-appropriate engine for other languages. Adapt its
-  runner, monorepo, performance, and reporting configuration to the repository.
+Mutation testing is optional by default. Require it only for an applicable
+explicit user, repository, or approved-issue gate, or a concrete unresolved gap
+in whether tests detect consequential wrong behavior that needs mutation
+analysis to establish sufficient assurance. Name the affected rule, suspected
+wrong behavior, and what ordinary tests or review have not established. Base
+the gap on actual assertions, a regression, or review evidence; imagining that
+code could be mutated is not enough. If adequate direct tests or another
+suitable technique resolve that gap, no extra
+mutation gate is needed. Merely changing reusable logic, state transitions,
+public contracts, money, authorization, or data integrity does not trigger it;
+retain their required behavioral, integration, security, and review proof.
+Extensive assurance does not require every testing technique.
+
+Honor current project pauses and user overrides before selecting an audit; do
+not resume mutation testing or add its tooling while a pause applies. A pause
+does not waive required behavioral proof. Do not silently waive an applicable
+explicit gate that has not been superseded by an authorized instruction.
+
+- **Select and bound the audit:** state the rule, representative faults, affected
+  tests, and an execution budget proportionate to the remaining uncertainty in
+  the existing task or PR. Run after the unmodified baseline is green. Target
+  the changed rule and relevant interactions; do not expand to a whole package
+  or application without a concrete dependency or coverage reason. Preserve an
+  established tool. Introduce tooling only when the expected value justifies
+  setup; prefer StrykerJS for JavaScript/TypeScript when a new engine is useful.
+- **Reuse valid evidence:** reuse prior results across stages and agents only
+  after checking the relevant production code, tests and helpers, configuration,
+  toolchain/dependencies, and environment. Use incremental analysis where
+  supported, but do not assume its cache detects every invalidator. Rerun the
+  affected scope after relevant changes; unrelated documentation or bookkeeping
+  does not require repeating the audit. Run a clean broader audit only when a
+  concrete concern, cache limitation, or explicit project policy warrants it;
+  do not introduce a mandatory periodic full run or schedule by default.
+- **Exercise behavior:** include applicable example and property tests in the
+  selected scope. Use bounded, reproducible property-test settings for the
+  baseline and mutants, and verify failure replay. Keep broader varied
+  exploration separate. Strengthen observable-contract assertions or generators
+  against meaningful findings, then rerun affected ordinary tests and the
+  selected mutation checks; do not add implementation checks for specific
+  mutants.
+- **Review useful findings:** filter proven equivalent or irrelevant mutants
+  early using transparent tool analysis or concise group-level reasoning.
+  Review relevant survivors and uncovered behavior against the selected rule.
+  A confirmed defect or unresolved required assurance gap still blocks under
+  the governing proof and review gates. An unfinished optional sample does not
+  create a blanket completion gate. Do not require a handwritten classification
+  of every irrelevant mutant or a universal score; never suppress meaningful
+  findings or exclusions merely to improve a score. Invalid mutants rejected
+  by compilation or type checking are not test gaps.
+- **Stop proportionately:** treat timeouts, runner errors, and exhausted budgets
+  as inconclusive, never as passed. Stop an optional audit at its budget and
+  record its partial evidence and remaining uncertainty without repeatedly
+  rerunning the entire audit. A required audit or essential behavioral proof
+  remains incomplete until resolved through affected revalidation or suitable
+  alternative assurance; changing an explicit gate requires its authorized
+  decision path. Known defects and unresolved consequential risks cannot be
+  waved through because an optional audit ran out of time.
+- **Keep evidence small:** record scope, budget, outcome, meaningful findings,
+  reused evidence, and incomplete checks in the existing task, issue, or PR.
+  Link a tool report when useful; do not create per-mutant documents, duplicate
+  evidence bundles, or permanent mutant allowlists. Keep mutation analysis out
+  of Git hooks. Add local or PR checks only for the selected audit or an explicit
+  project requirement, without automatically making optional audits merge gates.
