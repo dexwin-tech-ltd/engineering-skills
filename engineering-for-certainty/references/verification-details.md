@@ -73,6 +73,9 @@ Prioritize critical behavior correctness, then meaningful failure and validation
   failures rather than routinely retrying until green. Any bounded retry for a
   known infrastructure transient must remain visible, with its reason and the
   original failure retained.
+- When reporting or acting on a performance claim, use
+  [Performance Verification](performance-verification.md) to compare equivalent
+  work under a reproducible workload.
 
 ### Execution and Conventions
 
@@ -129,6 +132,9 @@ alone or a few passing examples does not establish sufficient assurance.
   cases provide evidence for the exercised space, not a proof for every input.
   Preserve required integration, runtime, and independent review gates, plus
   any applicable explicit mutation-analysis gate under the policy below.
+
+For a concrete consequential invariant with a gap in test coverage, consider
+[Formal Verification](formal-verification.md) as supplemental evidence.
 
 ### Runtime Acceptance
 

@@ -60,7 +60,9 @@ For an issue intended for `$issue-delivery`, include:
   full re-review. Preserve finding IDs and dispositions.
 - Churn threshold: escalate when the same root cause survives two correction
   attempts or the fix oscillates. Use a stricter issue-specific limit when risk
-  warrants it.
+  warrants it. When both failed attempts shared one premise,
+  [test that assumption](../../engineering-for-certainty/references/rigor-and-verification.md#test-the-shared-assumption)
+  and bring the result to the existing escalation.
 - Final integration check: inspect the combined issue-base-to-current-head
   change. Extensive or an explicit independent gate requires final `$code-review`;
   checkpoint reviews do not replace that initial full integration review.

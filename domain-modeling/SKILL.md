@@ -30,6 +30,25 @@ Create files lazily. Create `CONTEXT.md` only when the first domain term is acce
 - **Cross-reference code**: inspect the implementation when the user describes current behavior. Surface contradictions rather than choosing silently.
 - **Separate fact from decision**: inspect facts. When composed with `$grilling`, feed unresolved terminology and boundary decisions into its current frontier instead of starting a second interview loop.
 
+## Compare Consequential Boundaries
+
+Compare at least two viable designs when they differ materially in state
+ownership, caller contract, failure or recovery behavior, or reversibility
+and a wrong choice would be costly. For bounded changes on a settled path,
+follow the established pattern.
+
+Apply the same constraints to each option. Walk one primary caller scenario
+and one consequential edge case. Name who owns state, what the caller sees,
+how failure and recovery work, and what it would cost to change course.
+When an observation could decide between the options, run a small, safe,
+authorized local prototype. Treat the prototype as disposable evidence
+unless an approved later issue selects it for reuse.
+
+Recommend an option and cite the trade-off or observation that decides it.
+Present material user-owned choices through the active decision path. Record
+the accepted rationale only when the [existing ADR criteria](#offer-adrs-sparingly)
+apply.
+
 ## Update `CONTEXT.md` after acceptance
 
 Use [CONTEXT-FORMAT.md](CONTEXT-FORMAT.md).

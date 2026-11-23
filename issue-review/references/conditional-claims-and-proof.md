@@ -22,6 +22,24 @@ If this issue changes or extends a rule, convention, or domain concept that anot
 
 If the issue changes a config value, protocol, or URL with existing consumers, search for every consumer and inspect each one even when the expected conclusion is "no code change needed." State whether the change alters each consumer's failure modes, error classification, or default error state as well as its happy path. Pay particular attention to generic health checks, doctor commands, and catch-all error handlers, where a new expected failure can otherwise become a misleading operator message.
 
+For a material claim about downstream impact, name the smallest fact or set
+of facts that the claim depends on, the highest-risk affected consumer, and
+the result that would disprove the claim. Keep the inventory and trace all
+material consumers. A passing probe for one consumer proves only its
+exercised contract.
+
+When the conclusion depends on runtime wiring, a dependency, or a default,
+use a focused executable probe. Prefer an existing integration test or an
+authorized local check across the real consumer boundary. Use source and
+binding contract evidence when they settle the behavior directly. If proof
+remains incomplete, name the gap and apply the existing claim routing and
+[Runtime Acceptance](../../engineering-for-certainty/references/runtime-acceptance.md)
+rules.
+
+In the issue's traceability ledger, record each material claim, its decisive
+assumption, the exact consumer and input, the environment, and the observed or
+otherwise established result. Label any remaining inference.
+
 ## Exact Mechanism And Integration Proof
 
 When an acceptance criterion names a specific runtime mechanism (a "scheduled" job, a "background" retry, an "on reconnect" handler), the Test Approach must state whether verification exercises that literal mechanism or a named, justified proxy (e.g. a manual one-shot invocation of the same script the scheduler calls). An unstated substitution leaves a criterion looking tested when only an adjacent code path was actually exercised.

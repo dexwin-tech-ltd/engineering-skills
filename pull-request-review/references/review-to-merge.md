@@ -165,6 +165,9 @@ acceptance or runtime proof.
 
 ## Merge Gates
 
+For a dependency stack, follow [Stacked Pull Requests](stacked-pull-requests.md)
+to choose the next PR and recertify its exact evidence after base movement.
+
 Immediately before merge, re-read the pull request and verify:
 
 - repository, pull-request number, base, head branch, and exact head SHA;
@@ -220,6 +223,9 @@ downstream pull request is safely retargeted or the cleanup reports that it must
 remain.
 
 ## Guarded Branch Cleanup
+
+For stack order, retargeting and review after base movement, follow
+[Stacked Pull Requests](stacked-pull-requests.md).
 
 Delete the exact remote head branch only after verified merge and only when it
 is not the default branch, protected, shared, reused, or the head or base of an

@@ -48,6 +48,15 @@ human outcome. Answer concrete questions with code and evidence. Use
 verification or a requested deeper audit requires it; do not automatically run
 another complete review merely to orient the human.
 
+For a design question, use the reviewed revision, code and available test or
+runtime evidence to explain behavior. If relevant, verify the current
+revision separately. For why a choice was made, look in the narrowest
+authorized sources for the accepted ADR or issue decision, the introducing
+PR or commit, and any later accepted decision that changed the choice.
+Cite the record that supports each claim about intent. Identify superseding
+decisions and label any inference from behavior. Say when the record leaves
+the rationale open.
+
 Keep new defect claims, design preferences, and missing context distinct. Clear
 bounded feedback can start verified correction delivery; material choices need
 grilling. A question such as "what does this function do?" authorizes an

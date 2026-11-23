@@ -116,6 +116,24 @@ finding or high-risk uncertainty remains, and eligible follow-ups have their
 [Follow-Up Inbox](follow-up-inbox.md) disposition. Additional passes need a
 concrete reason; do not search indefinitely for hypothetical improvements.
 
+### Test the Shared Assumption
+
+When two distinct fixes for the same failure relied on the same assumption and
+both failed, test that assumption before proposing a third fix. Write it as
+one falsifiable sentence and name the observations that would support or refute
+it. Run the cheapest safe check that can distinguish them, such as observing
+which configuration the failing caller actually loaded. Compare the result
+with both attempts before choosing the next action.
+
+A single infrastructure retry and failures with unrelated causes keep their
+own evidence. An oscillating fix still follows the existing churn rule. If the
+correction threshold already calls for `USER_DECISION`, bring the evidence to
+that decision before editing. Replan if the premise changes the approved
+approach. When safe proof is unavailable, use the existing
+[Review Loop Contract](../../code-review/references/review-loop-contract.md#finding-routes)
+to route the gap. Carry the finding and candidate identity forward and rerun
+affected proof and review on the next authorized candidate.
+
 ## Records and Delegation
 
 Use the smallest record the lifecycle needs. Keep ordinary planning and working

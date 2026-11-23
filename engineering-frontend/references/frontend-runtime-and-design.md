@@ -52,3 +52,23 @@ audit is missing, inaccessible, failed, or stale. A material implementation
 mismatch fails the pass. A conflict with accepted behaviour, accessibility, the
 design system, or platform conventions requires a decision instead of a silent
 deviation.
+
+## Visual Parity for UI Migrations
+
+When approved scope promises visual equivalence, freeze the before revision and
+its renders before changing the implementation. Record the states, supported
+viewports, device or browser build, content, fonts, time and animation
+settings. Specify the expected matches and any agreed tolerance or mask.
+
+Reuse the project's image comparison tool. Capture each paired state under
+equivalent conditions. Keep the reference, candidate, and diff for failures.
+Check whether the tolerance or mask could hide a material change. If the
+reference is missing, keep parity unverified until a reliable baseline is
+recovered. Route a proposed baseline reset or expected visual change through
+[Change Control](../../engineering-for-certainty/references/change-control.md).
+
+Verify required interactions and accessibility separately, including keyboard
+behavior where applicable. Image comparison supplies visual evidence. Follow
+the existing [Runtime Acceptance](../../engineering-for-certainty/references/runtime-acceptance.md)
+and [Design Conformance](design-conformance.md) gates where the underlying
+issue triggers them.

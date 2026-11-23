@@ -364,7 +364,9 @@ Continue while corrections are authorized and each cycle makes measurable
 progress. Escalate to `USER_DECISION` when the same root cause survives two
 attempted correction cycles, the fix oscillates between alternatives, or a new
 finding exposes ambiguity in the approved issue. An issue-specific Review Loop
-Contract may set a stricter threshold.
+Contract may set a stricter threshold. When both failed corrections shared
+one premise, [test that assumption](../engineering-for-certainty/references/rigor-and-verification.md#test-the-shared-assumption)
+before proposing another fix and carry the evidence into the existing decision.
 
 Do not treat a clean review of an earlier commit as evidence for the current
 head.
@@ -514,5 +516,9 @@ active durable goal incomplete. Report:
 - the smallest decision, authority, credential, or external state needed;
 - options and a recommendation when it is a user-owned decision; and
 - the exact next action after the blocker clears.
+
+When an authorized delivery resumes after a handoff, pause, or session change,
+use [Session Continuity](references/session-continuity.md) to reconcile the
+existing evidence and identify the first permitted transition.
 
 Never hide an unresolved issue behind a caveated `Done` or a completed goal.

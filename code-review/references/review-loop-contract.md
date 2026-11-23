@@ -60,7 +60,9 @@ Use `USER_DECISION` for material intent, scope, architecture, public contract,
 schema, migration, permission, security, dependency, or test-strategy choices;
 `NEEDS_CONTEXT`; product-sensitive `CONDITIONAL` results; evidence disagreement;
 oscillating fixes; or the same root cause surviving the issue's correction
-threshold. Use `BLOCKED` for
+threshold. If the failed corrections shared one premise,
+[test that assumption](../../engineering-for-certainty/references/rigor-and-verification.md#test-the-shared-assumption)
+and bring the result to the existing decision. Use `BLOCKED` for
 missing authority, access, external state, skills, or prerequisites. Use
 `RESIDUAL_RISK` for a `CONDITIONAL` result whose explicit assumption does not
 justify changing implementation.
