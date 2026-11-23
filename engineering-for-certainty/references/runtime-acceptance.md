@@ -70,6 +70,39 @@ and require the approved baseline, Evidence Bundle, source-drift check, complete
 Design Audit Matrix, and independent audit. Apply `$engineering-observability`
 whenever a test message sink or telemetry boundary is involved.
 
+### Reusable Project Verification Recipe
+
+When a project lacks a reliable verification entry point or agents keep
+rediscovering the setup, put a short recipe in its existing test documentation
+or verification guide. Start with the project's launch scripts, automation,
+and existing scenario tests. Use the recipe for the scenarios the current
+change needs.
+
+1. **Launch an isolated candidate.** Give the exact startup command, expected
+   commit or build, environment, and deterministic test data. Explain how to
+   choose an isolated port or workspace and how to identify the processes or
+   resources the run creates. For authentication or messaging, follow the
+   approved [Test Identity Plan and Test Message Sink rules](../../engineering-auth-security/SKILL.md#runtime-authentication-acceptance).
+2. **Check readiness and identity.** Give the readiness probe, expected
+   result, and time limit. Confirm that the usable instance and its inputs
+   match the expected candidate before trusting its output. If it is
+   unavailable or serving an older candidate, record what was observed,
+   correct the startup or inputs, and rerun the affected checks.
+3. **Exercise one focused scenario.** Name the real caller boundary, exact
+   command or action, expected outcome or side effect, and the evidence to
+   record in the [Evidence Ledger](#evidence-ledger). Reuse an existing run
+   when it proves the same boundary, exact candidate, relevant environment
+   and inputs, and required outcome. Run the missing scenario when existing
+   evidence covers only part of it.
+4. **Clean up the run.** Give the teardown command or other cleanup steps for
+   the resources this run owns. Confirm they stopped or were removed and
+   that unrelated resources are intact. Record any cleanup the run could
+   not complete.
+
+Update only the affected recipe steps when startup, readiness, selectors,
+test data, or cleanup change. Reprove the affected scenarios under
+[Staleness and Status](#staleness-and-status).
+
 ## Evidence Ledger
 
 Record a concise evidence index rather than raw dumps:
