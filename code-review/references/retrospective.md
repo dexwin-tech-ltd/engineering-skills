@@ -34,7 +34,7 @@ Present the retrospective separately from the code findings. For each proposed s
 - Why the change is generalizable and how it would have made the defect less likely.
 - Any cost, false-positive risk, or added review burden.
 
-End with one of these explicit outcomes:
+Close the issue-preparation portion with one of these explicit outcomes:
 
 - `Proposed issue-review improvements:` followed by the proposals, and ask the user whether to apply them.
 - `No issue-review update warranted.` followed by the evidence-bound reason.
@@ -42,3 +42,34 @@ End with one of these explicit outcomes:
 Never edit the `issue-review` skill from the Independent Reviewer context.
 Return any authorized update to a Planning Agent or Delivery Operator for
 mutation and validation.
+
+## Recurring Agent Mistakes
+
+Use the same retrospective trigger. Inspect only the repositories and evidence
+the user authorized. Look for at least two distinct, verified occurrences of
+the same failure mechanism. Link the evidence for each occurrence and group
+multiple reports of one execution together. Handle a single occurrence through
+the ordinary finding route.
+
+Use the evidence to find the prevention point:
+
+1. Check existing safeguards first. If a valid safeguard was skipped or
+   bypassed, verify the path it covers and where the actual path diverged.
+   Recommend making the existing safeguard effective on that path.
+2. Otherwise, prefer the smallest practical change at the earliest effective
+   point. Consider one safe path in the architecture, then a type or schema
+   constraint, then a targeted lint or CI check with a useful failure message,
+   then a behavioral test. Use concise guidance when the choice needs judgment.
+3. For an executable safeguard, name a prior wrong input or sequence that
+   should fail for the expected reason and a valid case that should pass
+   through the same boundary. For an architectural change, specify how to show
+   that the unsafe path is unavailable or rejected.
+
+Return the verified occurrences, shared mechanism, proposed owner, smallest
+change, trade-off, and exact proof plan in the retrospective. Keep genuine
+issue-preparation gaps on the existing route above. Deduplicate proposals that
+address the same prevention point.
+
+The Independent Reviewer provides a proposal. A separately authorized delivery
+context applies the change and verifies the proof. Use the project's issue or
+backlog conventions when the user authorizes a follow-up.

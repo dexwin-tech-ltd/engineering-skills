@@ -137,6 +137,11 @@ still applies even when optional delegation is not worthwhile.
 
 ## Rollout Evaluation
 
+For a proposed material change to agent behavior, use
+[a blinded skill comparison](skill-behavior-evaluation.md) before rollout to
+check the effect on representative tasks. The delivery checkpoint below uses
+actual delivery records.
+
 Introduce Fast as the shared default. The delivery operator evaluating the tenth
 substantive Fast delivery after this rollout performs the initial evaluation;
 if history or metrics are unavailable, name the gap rather than invent a count
