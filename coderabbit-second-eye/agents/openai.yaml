@@ -1,0 +1,7 @@
+interface:
+  display_name: "CodeRabbit Second Eye"
+  short_description: "Optional CodeRabbit pass into code-review; CLI setup is engineer-owned."
+  default_prompt: "Use $coderabbit-second-eye as a second-eye pass for this review scope, then hand candidates into $code-review verify and queue. If the CodeRabbit CLI is missing, skip with the ad-hoc setup hint—do not install it unless I ask."
+
+policy:
+  allow_implicit_invocation: false
