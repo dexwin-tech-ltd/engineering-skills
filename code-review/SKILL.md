@@ -201,6 +201,24 @@ Treat every observation as a candidate, not a finding. Run each relevant angle i
 
 Read [Finder Angles](references/finder-angles.md) to plan coverage. Inspect every relevant hunk and removed behavior (A and B); trace changed contracts and apply only specialist angles triggered by the changed surface. A finder packet may cover several angles; do not create one agent per angle. For frontend work, read the applicable [Frontend Review Checks](../engineering-frontend/references/frontend-review-checks.md).
 
+### Optional CodeRabbit Second Eye
+
+After this phase's own finder packets complete and before Phase 2, follow
+[Second Eye Contract](references/second-eye-contract.md).
+
+When review effort is Medium, High, or Max, or the user explicitly requested
+independent review or a CodeRabbit second eye, soft-load
+`$coderabbit-second-eye` if it is installed and follow it. Pass the Phase 0
+scope and effort. Accept only Candidate Standard items plus pass status; never
+treat vendor output as confirmed findings.
+
+Do not invoke CodeRabbit CLIs from this skill directly. If
+`$coderabbit-second-eye` is missing or returns `skipped` / `failed` on a
+qualified run, continue the review and have the second-eye skill (or this
+hook) inform the developer with its ad-hoc setup hint—what is missing, why
+the pass matters, and that CLI/vendor-skill install is engineer-owned. On Low
+effort, do not nag about a missing second eye unless the user asked for it.
+
 ## Candidate Standard
 
 Normalize each candidate before verification:
