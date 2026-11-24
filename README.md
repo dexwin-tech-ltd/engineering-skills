@@ -180,12 +180,14 @@ npx skills add seyofori/eng-for-certainty   --skill coderabbit-second-eye
 ```
 
 **Ad-hoc (engineer-owned, not installed by this family):** CodeRabbit CLI
-signed in on the machine, and optionally `npx skills add coderabbitai/skills`.
-If those are missing on a Medium+ review, `$code-review` continues and the
-agent posts a one-time skip hint (why it matters + what to install yourself).
-CodeRabbit's own `code-review` skill is for simple no-handoff reviews; use
-`$coderabbit-second-eye` when results should enter `$code-review` verify and
-queue.
+signed in on the machine. That is enough for `$coderabbit-second-eye`.
+Optionally install only non-colliding CodeRabbit skills such as
+`coderabbit-config` (`npx skills add coderabbitai/skills --skill coderabbit-config`).
+**Do not** install CodeRabbit's skill named `code-review` — it conflicts with
+this family's `$code-review`. Use the CodeRabbit marketplace plugin
+(namespaced) if you want their interactive review skill. If the CLI is missing
+on a Medium+ review, `$code-review` continues and the agent posts a one-time
+skip hint.
 
 Install issue review with its complete engineering doctrine:
 

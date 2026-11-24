@@ -209,7 +209,8 @@ ensure missing CodeRabbit repository configuration through tooling already on
 the machine after repo analysis and explicit approval. Absence is non-blocking;
 the workflow hints why the pass matters and continues.
 _Avoid_: Replacement for Code Review, confirmed finding without verification,
-CodeRabbit installer, duplicate of CodeRabbit's standalone `code-review` skill
+CodeRabbit installer, installing CodeRabbit's bare `code-review` skill beside
+this family's `$code-review`
 
 **Style and Clarity Pass**:
 A required **Code Review** finder angle that evaluates whether changed code communicates its purpose and safe change path clearly enough to prevent credible maintenance or misuse risk.
@@ -737,7 +738,8 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 > **Engineer:** "Can CodeRabbit replace **Code Review**?"
 > **Reviewer:** "No. A **CodeRabbit Second Eye** only adds candidates after our
 > finders; **Code Review** still verifies before anything enters the **Review
-> Queue**. For a quick CLI-only look with no handoff, use CodeRabbit's own skill."
+> Queue**. Use the CodeRabbit CLI (not their bare `code-review` skill, which
+> collides with ours) for that pass."
 
 ## Flagged ambiguities
 
@@ -745,7 +747,10 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - CodeRabbit's installable skill is also named `code-review` - resolved: this
   family's Independent Reviewer remains **Code Review** (`$code-review`); the
   integration skill is **CodeRabbit Second Eye** (`$coderabbit-second-eye`);
-  CodeRabbit's own skill stays available for simple no-handoff CLI reviews.
+  engineers must not install CodeRabbit's bare `code-review` skill alongside
+  it. Use the CodeRabbit CLI (and optional `coderabbit-config`) for second-eye
+  setup, or a namespaced CodeRabbit plugin command for simple no-handoff
+  reviews.
 - "Delivery operator" implied authority to make every decision - resolved: the
   **Delivery Operator** automates transitions and mechanical correction loops,
   while the issue's **Review Loop Contract** preserves user-owned product,

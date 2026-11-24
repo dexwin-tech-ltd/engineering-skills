@@ -12,9 +12,13 @@ $code-review).
 
 Ad-hoc setup (you own this, outside eng-for-certainty):
 1. Install and sign in to the CodeRabbit CLI — see CodeRabbit CLI docs.
-2. Optional: install CodeRabbit's skills (`npx skills add coderabbitai/skills`)
-   for their review/config helpers. Their skill named `code-review` is not
-   this family's $code-review.
+   $coderabbit-second-eye uses the CLI; that is enough for the second eye.
+2. Optional: install only non-colliding CodeRabbit skills, e.g.
+   `npx skills add coderabbitai/skills --skill coderabbit-config`
+   Do NOT install CodeRabbit's skill named `code-review` — it collides with
+   this family's $code-review (same skill name / directory). Prefer the
+   CodeRabbit marketplace plugin (namespaced, e.g. /coderabbit:code-review)
+   if you want their interactive review skill.
 3. Re-run the review (or $coderabbit-second-eye) after the CLI is usable.
 
 This integration skill (if needed):
@@ -27,5 +31,7 @@ Rules:
   standalone `$coderabbit-second-eye` cannot start.
 - Do not run installers or paste install-script curls unless the engineer
   explicitly asks you to help install.
+- Do not recommend installing CodeRabbit's bare `code-review` skill alongside
+  this family's `$code-review`.
 - On Low effort, stay quiet about missing CodeRabbit unless they asked for
   the second eye.
