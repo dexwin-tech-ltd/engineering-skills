@@ -199,6 +199,18 @@ _Avoid_: PR opened, ready for review, merged, deployed
 Platform-neutral analysis that verifies candidate defects and reports confirmed findings without external writes by default.
 _Avoid_: PR review, provider-specific review doctrine
 
+**CodeRabbit Second Eye**:
+An optional complementary pass that runs CodeRabbit after **Code Review**'s own
+finders on Medium or higher effort (or an explicit independent-review request),
+then returns CodeRabbit output as candidates for the same normalize and verify
+path. It assumes the engineer already installed and authenticated the CodeRabbit
+CLI (and optionally CodeRabbit's skills); it does not own that setup. It may
+ensure missing CodeRabbit repository configuration through tooling already on
+the machine after repo analysis and explicit approval. Absence is non-blocking;
+the workflow hints why the pass matters and continues.
+_Avoid_: Replacement for Code Review, confirmed finding without verification,
+CodeRabbit installer, duplicate of CodeRabbit's standalone `code-review` skill
+
 **Style and Clarity Pass**:
 A required **Code Review** finder angle that evaluates whether changed code communicates its purpose and safe change path clearly enough to prevent credible maintenance or misuse risk.
 _Avoid_: Formatting-only preference, subjective code taste
@@ -671,6 +683,11 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 - Explicit open-PR **Pull Request Review** authorizes automatic pull-request and eligible private Slack delivery of qualifying **Learning Feedback** after the review settles. Shipping-only handoffs and post-merge human-review guidance do not inherit those communications. The workflow publishes no empty summary, verifies each attempted delivery, reports every skipped or failed destination, and never blocks review or merge solely because Slack delivery is unavailable.
 - A **Stacked Pull Request** depends on exactly one earlier base in an ordered stack; independent slices target the canonical base branch directly.
 - A **Code Review** produces one **Review Queue** after investigating, verifying, deduplicating, and ranking the complete finding landscape.
+- A **CodeRabbit Second Eye** is optional tooling under **Code Review**: when
+  installed and effort qualifies, it runs after **Code Review**'s own finders;
+  its items enter the candidate ledger and never become findings without
+  verification. Engineers may still use CodeRabbit's standalone review skill
+  for a simple review with no handoff into this pipeline.
 - A **Code Review** includes a **Style and Clarity Pass**; it reports only a cited convention violation or an evidence-backed clarity risk with a concrete maintenance, misuse, or defect consequence. Broader style advice appears only in an explicitly requested style-focused review.
 - A **Style and Clarity Pass** prefers **Schema Validation** for an untrusted input or cohesive internal value contract when it makes the contract clearer; it prefers Zod when the repository uses or selects it, while live-state business policy remains outside the schema. New Effect projects prefer Effect Schema.
 - A **Style and Clarity Pass** prefers a **Functional Core** with a named **Imperative Shell** when that separation makes the change path clearer; it does not replace a naturally imperative resource, transaction, streaming, or framework operation with a less readable abstraction.
@@ -716,10 +733,19 @@ _Avoid_: Explicitly requested re-review, outdated-line cleanup
 >
 > **Engineer:** "How far through the findings are we?"
 > **Reviewer:** "**Queue Progress** is Finding 11 of 30, with 19 remaining after this one."
+>
+> **Engineer:** "Can CodeRabbit replace **Code Review**?"
+> **Reviewer:** "No. A **CodeRabbit Second Eye** only adds candidates after our
+> finders; **Code Review** still verifies before anything enters the **Review
+> Queue**. For a quick CLI-only look with no handoff, use CodeRabbit's own skill."
 
 ## Flagged ambiguities
 
 - "PR review" and "code review" were used interchangeably - resolved: **Code Review** owns analysis, while **Pull Request Review** owns GitHub adjudication and publication.
+- CodeRabbit's installable skill is also named `code-review` - resolved: this
+  family's Independent Reviewer remains **Code Review** (`$code-review`); the
+  integration skill is **CodeRabbit Second Eye** (`$coderabbit-second-eye`);
+  CodeRabbit's own skill stays available for simple no-handoff CLI reviews.
 - "Delivery operator" implied authority to make every decision - resolved: the
   **Delivery Operator** automates transitions and mechanical correction loops,
   while the issue's **Review Loop Contract** preserves user-owned product,
