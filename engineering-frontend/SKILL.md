@@ -1,6 +1,6 @@
 ---
 name: engineering-frontend
-description: Frontend engineering doctrine for web/mobile architecture, API integration, forms, accessibility, design conformance, operational telemetry and tracing, runtime acceptance, and testing. Use with engineering-for-certainty when work touches frontend modules, routes/screens, API adapters, hooks, flows/views, Effect Atom or TanStack Query/Form, accessibility, design-backed UI, client telemetry, or web/mobile unit/E2E coverage.
+description: Frontend engineering doctrine for web/mobile architecture, API integration, forms, accessibility, design conformance, operational telemetry and tracing, runtime acceptance, and testing. Use with engineering-for-certainty when work touches frontend modules, routes/screens, API adapters, hooks, flows/views, Effect Atom or TanStack Query/Form, accessibility, design-backed UI, client telemetry, or web/mobile unit/E2E coverage. Also use when sharing interactive UI previews for human review or handling comments on a preview.
 ---
 
 # Engineering Frontend
@@ -21,6 +21,7 @@ Read only the references whose triggers apply. If the affected behavior or coupl
 - **API adapters, input/output validation, transport and domain error mapping:** [Frontend API Integration](references/api-integration.md).
 - **Frontend work before its backend exists:** [Frontend-First API Mocks](references/frontend-first-api-mocks.md). Only backend-calling adapter implementations are mocked; consuming layers retain production contracts.
 - **Material UI in a feature that also needs backend integration:** [UI-First Review](references/ui-first-review.md). Prepare the interactive frontend stage first, plan named scenarios, review it on staging, and keep the later real-backend gate explicit.
+- **Material interactive previews shared for human review, or a request for comments on a preview:** [Preview Commenting](references/preview-commenting.md). Offer pinned comments in the review handoff and let the user choose whether to enable them.
 - **Query hooks, cache identity, loader/prefetch integration, or server-state unions:** [Server State Hooks](references/server-state-hooks.md).
 - **Effect Atom queries, mutations, or runtime ownership:** `$engineering-effect` and [Server State Hooks](references/server-state-hooks.md). Hooks expose application-owned state and attempt-specific actions.
 - **Established neverthrow/TanStack mutation hooks:** [Result Mutation Hooks](references/result-mutation-hooks.md). Expected failures resolve as Result; reactive state and attempt-specific run share one mutation instance.

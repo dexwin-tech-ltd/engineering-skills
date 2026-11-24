@@ -84,7 +84,8 @@ invalidates any review evidence it could affect.
 Engineering completes its frontend validation and independent review before
 requesting the user's UI approval. The user's approval covers the demonstrated
 appearance and client behavior at that revision. Record the approval or
-requested changes against that revision and the scenario list. Do not begin
+requested changes against that revision and the scenario list. Include the
+[preview commenting offer](preview-commenting.md) in the review handoff. Do not begin
 backend integration merely because automated checks or checkpoint review are
 clean. A component harness, screenshot, or mock adapter alone is not running
 staging proof.
