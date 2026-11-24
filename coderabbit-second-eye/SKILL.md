@@ -51,13 +51,17 @@ the missing skill; do not invent an Independent Reviewer protocol.
 
 ## Phase A: Environment and authentication
 
-1. Resolve the `coderabbit` binary. If it is not found, return `skipped` and
+1. Run the [conflict check](references/conflict-check.md). If CodeRabbit's bare
+   `code-review` skill is present, emit the one-time non-blocking hint, then
+   continue.
+2. Resolve the `coderabbit` binary. If it is not found, return `skipped` and
    hint that the engineer must install and sign in to the CodeRabbit CLI on
-   their own (see CodeRabbit CLI docs). Do not run an installer.
-2. Check authentication with `coderabbit auth status --agent` (or plain
+   their own (see CodeRabbit CLI docs and [Ad-hoc setup](references/ad-hoc-setup.md)).
+   Do not run an installer.
+3. Check authentication with `coderabbit auth status --agent` (or plain
    `coderabbit auth status` if `--agent` is unsupported). Proceed only when
    the result shows authenticated.
-3. Run `coderabbit doctor` only when setup is incomplete or uncertain.
+4. Run `coderabbit doctor` only when setup is incomplete or uncertain.
 
 Authentication is **per engineer** and owned by the CodeRabbit CLI. The agent
 never completes login alone, never asks for passwords or OAuth tokens, and

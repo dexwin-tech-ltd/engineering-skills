@@ -33,5 +33,8 @@ Rules:
   explicitly asks you to help install.
 - Do not recommend installing CodeRabbit's bare `code-review` skill alongside
   this family's `$code-review`.
+- When that skill is already installed, Phase A uses
+  [conflict-check.md](conflict-check.md) for a one-time non-blocking hint; do
+  not uninstall it for them.
 - On Low effort, stay quiet about missing CodeRabbit unless they asked for
   the second eye.

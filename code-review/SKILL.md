@@ -216,8 +216,11 @@ Do not invoke CodeRabbit CLIs from this skill directly. If
 `$coderabbit-second-eye` is missing or returns `skipped` / `failed` on a
 qualified run, continue the review and have the second-eye skill (or this
 hook) inform the developer with its ad-hoc setup hint—what is missing, why
-the pass matters, and that CLI/vendor-skill install is engineer-owned. On Low
-effort, do not nag about a missing second eye unless the user asked for it.
+the pass matters, and that CLI/vendor-skill install is engineer-owned. The
+second-eye skill owns detecting a conflicting CodeRabbit bare `code-review`
+skill install and emitting a non-blocking hint; do not duplicate that check
+here. On Low effort, do not nag about a missing second eye unless the user
+asked for it.
 
 ## Candidate Standard
 
