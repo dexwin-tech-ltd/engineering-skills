@@ -25,6 +25,7 @@ their hosting. Existing walkthrough files are historical artifacts.
 - `engineering-auth-security`
 - `engineering-frontend`
 - `code-review`
+- `coderabbit-second-eye`
 - `pull-request-review`
 - `pr-review-and-fix`
 - `pull-request-creation`
@@ -170,6 +171,23 @@ Install code review with its complete engineering doctrine:
 ```bash
 npx skills add seyofori/eng-for-certainty   --skill engineering-for-certainty   --skill engineering-observability   --skill engineering-resilience   --skill engineering-effect   --skill engineering-auth-security   --skill engineering-frontend   --skill code-review
 ```
+
+Install the optional CodeRabbit second-eye companion (Medium+ `$code-review`
+soft-loads it when present; absence is non-blocking):
+
+```bash
+npx skills add seyofori/eng-for-certainty   --skill coderabbit-second-eye
+```
+
+**Ad-hoc (engineer-owned, not installed by this family):** CodeRabbit CLI
+signed in on the machine. That is enough for `$coderabbit-second-eye`.
+Optionally install only non-colliding CodeRabbit skills such as
+`coderabbit-config` (`npx skills add coderabbitai/skills --skill coderabbit-config`).
+**Do not** install CodeRabbit's skill named `code-review` — it conflicts with
+this family's `$code-review`. Use the CodeRabbit marketplace plugin
+(namespaced) if you want their interactive review skill. If the CLI is missing
+on a Medium+ review, `$code-review` continues and the agent posts a one-time
+skip hint.
 
 Install issue review with its complete engineering doctrine:
 
