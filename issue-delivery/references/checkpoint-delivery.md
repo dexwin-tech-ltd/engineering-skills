@@ -68,12 +68,12 @@ For each checkpoint:
     still pending. If the preview cannot be obtained, do not advance.
 14. If this is a UI-first user-review checkpoint, run or reconcile the
     separately authorized staging deployment of the accepted UI candidate,
-    record its exact build and scenario links, and wait for the user's UI
-    approval. A clean engineering review is not that approval. If staging was
-    replaced, recheck the affected evidence before requesting approval. If the
+    follow [Interactive Preview Review](../../engineering-frontend/references/interactive-preview-review.md)
+    for the exact-build handoff, and wait for the user's UI approval. If staging
+    was replaced, recheck the affected evidence before requesting approval. If the
     user requests changes, correct and re-review the affected checkpoint work,
     record the corrected accepted head, update the same draft pull request
-    when it owns the preview, then restage that candidate for approval.
+    when it owns the preview, then restage and verify the revised handoff.
 15. Begin the next checkpoint from the accepted head only after every planned
     user-review gate has passed.
 

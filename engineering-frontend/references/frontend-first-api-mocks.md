@@ -333,10 +333,11 @@ the exported API functions and consuming hooks and flows retain their
 production contracts.
 
 The review router or controller reads the scenario name from the URL and maps
-it exhaustively to a complete typed fixture and outcome set. The floating
-selector updates that name. On a change, isolate or cancel in-flight work and
-reset affected query caches and flow state; otherwise a late result from the
-previous scenario could contaminate the new one. Direct links, refresh, and
+it exhaustively to a complete typed fixture and outcome set. Selecting a
+scenario in the [Scenarios panel](interactive-preview-review.md) updates that
+name. On a change, isolate or cancel in-flight work and reset affected query
+caches and flow state so late results from the previous scenario cannot
+appear in the new one. Direct links, refresh, and
 back/forward navigation must select the same scenario. Keep raw fixture data
 and secrets out of the URL. The URL does nothing when mock mode is not enabled
 by the non-production build or deployment configuration.

@@ -54,13 +54,12 @@ flows or hooks with display-only state injection. Exercise transitions such as
 retry and pagination as well as their visible results.
 
 For web review builds, each named, deterministic scenario has a stable URL
-identifier, such as `?uiScenario=orders.empty`. The floating selector updates
-that identifier. Direct opening, refreshing, and browser back/forward navigation
-must recreate the corresponding setup. The URL contains a scenario name, not
-raw fixture data, personal data, or secrets. Reject unknown names with a safe
-documented fallback or clear review error; never silently display a different
-named scenario. Keep the selector keyboard accessible, labelled, and usable at
-supported viewports without covering the content under review.
+identifier, such as `?uiScenario=orders.empty`. Selecting a scenario in the
+[Scenarios panel](interactive-preview-review.md#select-and-test-scenarios-in-one-panel)
+updates that identifier. Direct opening, refreshing, and browser back/forward
+navigation must recreate the corresponding setup. Keep raw fixture data,
+personal data, and secrets out of scenario URLs. For an unknown name, show a
+clear review error or tell the reviewer which safe documented fallback is active.
 
 The URL selects a preset only after trusted build or deployment configuration
 has enabled mock mode. It cannot enable mock mode by itself. On a scenario
@@ -82,13 +81,12 @@ viewports, runtime results, and design comparisons. A later staging deployment
 invalidates any review evidence it could affect.
 
 Engineering completes its frontend validation and independent review before
-requesting the user's UI approval. The user's approval covers the demonstrated
-appearance and client behavior at that revision. Record the approval or
-requested changes against that revision and the scenario list. Include the
-[preview commenting offer](preview-commenting.md) in the review handoff. Do not begin
-backend integration merely because automated checks or checkpoint review are
-clean. A component harness, screenshot, or mock adapter alone is not running
-staging proof.
+requesting the user's UI approval. Use
+[Interactive Preview Review](interactive-preview-review.md) for the first
+handoff and each feedback revision. Record approval or requested changes
+against the exact build and scenario scope. Backend integration starts after
+the user's UI approval. A component harness, screenshot, or mock adapter alone
+is not running staging proof.
 
 Unfinished feature code may enter a production build only behind a default-off
 gate that prevents direct access to its routes and any related operations. A
@@ -97,9 +95,8 @@ If the project cannot enforce the gate reliably, defer deploying the unfinished
 code to production. Verify that the production deployment receives the
 production artifact and configuration, never the staging mock build, and that
 existing production routes remain healthy.
-Production configuration rejects mock mode; the floating selector and
-synthetic review controls cannot run there and should be excluded from
-production bundles when the toolchain permits.
+Production configuration rejects mock mode. Exclude the review toolbar and
+comment operations from production builds and routes.
 
 ## Integrate And Recheck
 
